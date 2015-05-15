@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="{% block meta_content %}{# FIXME: add content #}{% endblock %}">
+    <meta name="author" content="">
+
+    {% block favicons %}
+    {% endblock %}
+
+    <title>
+        {% block title %}
+            {% trans %}"Block Explorer for Bitcoin, Litecoin, Dogecoin and More"{% endtrans %}
+        {% endblock %}
+        | BlockCypher
+    </title>
+
+    {% block stylesheets %}{% endblock %}
+
+    {% block extra_head %}{% endblock %}
+
+</head>
+
+<body>
+{#  Fixed navbar #}
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <a class="navbar-brand" href="{{ path('bc_homepage') }}" title="BlockCypher REST API PHP Sample">
+                <strong class="logo acc"></strong>
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="nav-collapse">
+
+            <ul class="nav navbar-nav navbar-right">
+                {% if not is_home %}
+                    <li>
+                        <form class="navbar-form navbar-search" role="search" method="post"
+                              action="{{ path('bc_homepage') }}">
+                            {#{% csrf_token %}#}
+                            {#<input type="hidden" value="{% firstof coin_symbol 'btc' %}" id="id_coin_symbol" name="coin_symbol">#}
+                            <input type="hidden" value="{{ [coin_symbol,'btc']|first }}" id="id_coin_symbol"
+                                   name="coin_symbol">
+
+                            <div class="input-group">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                                            aria-expanded="false">
+                                        <span id="search-dropdown-label">{% if coin_symbol %}{{ coin_symbol|coin_symbol_to_display_shortname }}{% else %}BTC{% endif %}</span>
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="javascript:void(0);" onclick="setCoin('btc', 'BTC')">Bitcoin</a>
+                                        </li>
+                                        <li><a href="javascript:void(0);"
+                                               onclick="setCoin('btc-testnet', 'BTC Testnet')">Bitcoin Testnet</a></li>
+                                        <li><a href="javascript:void(0);" onclick="setCoin('ltc', 'LTC')">Litecoin</a>
+                                        </li>
+                                        <li><a href="javascript:void(0);" onclick="setCoin('doge', 'DOGE')">DogeCoin</a>
+                                        </li>
+                                        <li><a href="javascript:void(0);" onclick="setCoin('uro', 'URO')">URO</a></li>
+                                        <li><a href="javascript:void(0);" onclick="setCoin('bcy', 'BC Testnet')">BlockCypher
+                                                Testnet</a></li>
+                                    </ul>
+                                </div>
+                                <input name="search_string" id="id_search_string" type="text"
+                                       class="form-control search-input" placeholder="Address, transaction or block">
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-primary" title="Search"><i class="fa fa-search"></i></button>
+                  </span>
+                            </div>
+                        </form>
+                    </li>
+                {% endif %}
+                {% if coin_symbol %}
+                    <li class="hidden-sm">
+                        <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': coin_symbol}) }}"
+                           style="padding:7px 0 7px 15px;" title="{{ coin_symbol|coin_symbol_to_display_name }}">
+                            <div class="header-coin {{ coin_symbol }} acc">{{ coin_symbol|coin_symbol_to_display_name }}</div>
+                        </a>
+                    </li>
+                {% endif %}
+                <li class="dropdown hidden-sm">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        {% if not coin_symbol %}
+                            Blockchains
+                        {% endif %}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'btc'}) }}">Bitcoin</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'btc-tesnet'}) }}">Bitcoin
+                                Testnet</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'ltc'}) }}">Litecoin</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'doge'}) }}">Dogecoin</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'uro'}) }}">URO</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'bty'}) }}">BlockCypher
+                                Testnet</a>
+                        </li>
+                    </ul>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="dropdown {# hidden-sm #}">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                            Account
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="{{ path('bc_dashboard') }}">{% trans %}"Dashboard"{% endtrans %}</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('bc_app_common_todo.logout_request') }}">{% trans %}"Sign
+                                    Out"{% endtrans %}</a>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{{ path('bc_app_common_todo.user_login') }}">{% trans %}"Sign In"{% endtrans %}</a>
+                    </li>
+                {% endif %}
+                </li>
+                {#
+                <li id="profile-menu" class="dropdown navbar-form">
+                    {% if tcp__ENABLE_TRANSLATIONS %}
+                        {% get_current_language as LANGUAGE_CODE %}
+                        {% get_language_info for LANGUAGE_CODE as lang %}
+                        <button class="dropdown-toggle btn-default btn" data-toggle="dropdown">
+                            <strong>{{lang.name_local}}</strong>
+                            <b class="caret"></b>
+                        </button>
+                        <div class="dropdown-menu">
+                            <form class="form-horizontal" action="{% url 'set_language' %}" method="post">
+                                {% csrf_token %}
+                                <input name="next" type="hidden" value="{{ redirect_to }}" />
+
+                                <div class="switch-toggle well">
+                                    {% get_language_info_list for LANGUAGES as languages %}
+                                    {% for language in languages %}
+                                        <input id="{{ language.code }}" name="language" value="{{ language.code }}" type="radio" onclick="this.form.submit()"{% if language.code == LANGUAGE_CODE %} checked{% endif %}>
+                                        <label for="{{ language.code }}">
+                                            {{ language.name_local }}
+                                        </label>
+                                    {% endfor %}
+                                    <a class="btn btn-primary"></a>
+                                </div>
+
+                                <p>{% trans "Translations are currently in Beta."%}</p>
+                            </form>
+                            <div class="clearfix"></div>
+                        </div>
+                    {% endif %}
+                </li>
+                #}
+            </ul>
+
+        </div>
+    </div>
+
+</div>
+
+{% if is_home %}
+<div class="main-container home">
+    {# Including the messages for the homepage in the home template #}
+    {% else %}
+    <div class="main-container">
+        {# Page Header Stuff #}
+        <div class="page-header">
+            <div class="container">
+                {% block page_header %}
+                {% endblock %}
+            </div>
+        </div>
+        {% include "BlockCypherAppCommonInfrastructureLayoutBundle:partials:messages.html.twig" %}
+        {% endif %}
+
+        {# Begin page content #}
+        {% block content %}
+        {% endblock %}
+
+        {% if coin_symbol == 'btc-testnet' %}
+            <div class="container">
+                <p>
+                    Check out our
+                    <a href="https://accounts.blockcypher.com/testnet-faucet{% if address %}?a={{ address }}{% endif %}">Free
+                        Bitcoin Testnet Faucet</a>.
+                </p>
+            </div>
+        {% elseif coin_symbol == 'bcy' %}
+            <div class="container">
+                <p>
+                    Check out our
+                    <a href="https://accounts.blockcypher.com/blockcypher-faucet{% if address %}?a={{ address }}{% endif %}">Blockcypher
+                        Faucet</a>.
+                </p>
+            </div>
+        {% endif %}
+
+    </div>
+
+    {# Footer #}
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <p>We are social
+                        <a href="https://twitter.com/blockcypher" class="social" target="_blank">
+                            <i class="fa fa-twitter"></i>
+                        </a>
+                        <a href="https://www.facebook.com/blockcypher" class="social" target="_blank">
+                            <i class="fa fa-facebook"></i>
+                        </a>
+                        <a href="https://github.com/blockcypher" class="social" target="_blank">
+                            <i class="fa fa-github-alt"></i>
+                        </a>
+                    </p>
+                </div>
+                <div class="col-sm-4 text-center">
+                    <p class="text-center reset">
+                        <a href="https://github.com/blockcypher/explorer" class="btn btn-default btn-lg btn-gh">
+                            <i class="fa fa-github"></i>
+                            Fork me on GitHub
+                        </a>
+                    </p>
+                </div>
+                <div class="col-sm-4">
+                    <p class="text-right">
+                        Powered by <a href="http://www.blockcypher.com/">BlockCypher Web Services</a><br>
+                        © 2014 - BlockCypher
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+    {% block javascripts %}{% endblock %}
+
+    {% block extra_js %}{% endblock %}
+    {% include "BlockCypherAppCommonInfrastructureLayoutBundle:partials:ga.html.twig" %}
+</body>
+</html>

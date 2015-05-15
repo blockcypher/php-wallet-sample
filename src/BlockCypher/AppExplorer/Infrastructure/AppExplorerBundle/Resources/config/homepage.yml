@@ -1,0 +1,10 @@
+parameters:
+
+    bc_app_explorer_homepage.homepage_controller.class: BlockCypher\AppExplorer\Infrastructure\AppExplorerBundle\Controller\HomepageController
+
+services:
+
+    bc_app_explorer_homepage.homepage_controller:
+        class: %bc_app_explorer_homepage.homepage_controller.class%
+        arguments:
+          - @templating

@@ -1,0 +1,27 @@
+parameters:
+
+    # controllers
+
+    bc_app_explorer_block.block_overview_controller.class: BlockCypher\AppExplorer\Infrastructure\AppExplorerBundle\Controller\BlockOverviewController
+
+    # sercice facades
+
+    bc_app_explorer_block.block_service_facade.class: BlockCypher\AppExplorer\Presentation\Facade\Internal\BlockServiceFacadeImpl
+
+services:
+
+    # controllers
+
+    bc_app_explorer_block.block_overview_controller:
+        class: %bc_app_explorer_block.block_overview_controller.class%
+        arguments:
+         - @templating
+         - @bc_app_explorer_block.block_service_facade
+
+    # sercice facades
+
+    bc_app_explorer_block.block_service_facade:
+        class: %bc_app_explorer_block.block_service_facade.class%
+        arguments:
+          - @bc_app_common_blockcypher.block_service
+          - @bc_app_common_blockcypher.transaction_service

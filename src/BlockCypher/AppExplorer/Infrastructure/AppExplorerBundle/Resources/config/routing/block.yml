@@ -1,0 +1,4 @@
+#https://live.blockcypher.com/btc/block/292336/
+bc_app_explorer_block.overview:
+    pattern:  /{coinSymbol}/{hashOrHeight}/
+    defaults: { _controller: "bc_app_explorer_block.block_overview_controller" }

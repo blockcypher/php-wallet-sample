@@ -1,0 +1,4 @@
+imports:
+  - { resource: address.yml }
+  - { resource: block.yml }
+  - { resource: homepage.yml }

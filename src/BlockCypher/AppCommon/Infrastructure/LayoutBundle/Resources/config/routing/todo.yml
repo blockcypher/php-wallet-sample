@@ -1,0 +1,44 @@
+# TODO: list of not implemented routes
+
+bc_app_common_todo.logout_request:
+    path:     /logout
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+bc_app_common_todo.user_login:
+    path:     /login
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+# /btc/latest-unconfirmed-tx/
+bc_app_common_todo.latest_unconfirmed_tx:
+    path:     /{coinSymbol}/latest-unconfirmed-tx/
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+# /btc/latest-unconfirmed-tx/
+bc_app_common_todo.subscribe_forwarding:
+    path:     /subscribe/
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+# btc/forwarding/
+bc_app_common_todo.forward_forwarding:
+    path:     /forwarding/
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+# show-widgets/btc/1BTCorgHwCg6u2YSAWKgS17qUad6kHmtQW/
+bc_app_common_todo.widgets_overview:
+    path:     /show-widgets/{coinSymbol}/{address}/
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+# btc/latest-block/
+bc_app_common_todo.latest_block:
+    path:     /{coinSymbol}/latest-block/
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+# btc/pushtx/
+bc_app_common_todo.pushtx_forwarding:
+    path:     /pushtx/
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+# btc/decodetx/
+bc_app_common_todo.decodetx_forwarding:
+    path:     /decodetx/
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }

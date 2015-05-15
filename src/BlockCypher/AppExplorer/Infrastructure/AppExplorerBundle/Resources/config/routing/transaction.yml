@@ -1,0 +1,4 @@
+#https://live.blockcypher.com/ltc/tx/32229e5865cefc2146c33714dea123c37084d7f75bff81749e19a20167381bb1/
+bc_app_explorer_transaction.overview:
+    pattern:  /{coinSymbol}/{hash}/
+    defaults: { _controller: "block_cypher_address_presentation_infrastructure_address.transaction_overview_controller" }

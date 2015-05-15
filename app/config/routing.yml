@@ -1,0 +1,24 @@
+# homepage
+
+bc_homepage:
+    pattern:  /
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+# TODO
+bc_dashboard:
+    pattern:  /dashboard
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+# AppCommon
+
+bc_app_common:
+    resource: "@BlockCypherAppCommonInfrastructureLayoutBundle/Resources/config/routing.yml"
+    prefix:   /common
+
+# AppExplorer
+
+bc_app_explorer:
+    resource: "@BlockCypherAppExplorerInfrastructureAppExplorerBundle/Resources/config/routing.yml"
+    prefix:   /explorer
+
+# AppWallet

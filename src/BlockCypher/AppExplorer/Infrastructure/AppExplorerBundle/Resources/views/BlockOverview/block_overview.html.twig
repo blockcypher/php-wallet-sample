@@ -1,0 +1,218 @@
+{% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
+
+{% block title %}
+    {% set currency_name = coin_symbol|coin_symbol_to_currency_name %}
+    {% set block_hash = block_details.hash %}
+    {% trans %}
+    %currency_name% Block %block_hash%
+    {% endtrans %}
+{% endblock title %}
+
+{% block page_header %}
+    <h1>
+        <i class="fa fa-cube"></i>
+        {{ coin_symbol|coin_symbol_to_display_name }} Block {{ block_details.height|intcomma }}
+    </h1>
+    <h2 class="tagline wrapit semi">{{ block_details.hash }}</h2>
+{% endblock page_header %}
+
+{% block content %}
+    <div class="container">
+        <nav>
+            <a href="{{ path('bc_app_explorer_block.overview', {'coinSymbol': coin_symbol, 'hashOrHeight': block_details.prev_block}) }}"
+               class="btn btn-default pull-left">
+                <i class="fa fa-angle-double-left"></i>
+                Previous Block
+            </a>
+            {% if block_details.depth > 0 %}
+                <a href="{{ path('bc_app_explorer_block.overview', {'coinSymbol': coin_symbol, 'hashOrHeight': block_details.height|add(1)}) }}"
+                   class="btn btn-default pull-right">
+                    Next Block
+                    <i class="fa fa-angle-double-right"></i>
+                </a>
+            {% else %}
+                {# TODO: something to mark that this is the current block? #}
+            {% endif %}
+            <div class="clearfix"></div>
+        </nav>
+
+        <div class="section">
+            <div class="dash dash-3">
+                <ul>
+                    <li>
+                        <span class="dash-label">Received</span><br>
+                        <i class="fa fa-clock-o"></i>
+                        <time class="timeago" datetime="{{ block_details.received_time|date('Y-m-d\TH:i:s') }}Z">
+                            {{ block_details.received_time|date('Y-m-d H:i') }} GMT
+                        </time>
+                    </li>
+                    <li>
+                        <span class="dash-label">Total Transacted</span><br>
+                        {{ block_details.total|satoshis_to_btc_full|floatformat(0)|intcomma }} {{ coin_symbol|coin_symbol_to_currency_name }}
+                    </li>
+                    <li>
+                        <span class="dash-label">Total Fees</span><br>
+                        {{ block_details.fees|satoshis_to_btc_rounding }} {{ coin_symbol|coin_symbol_to_currency_name }}
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+        <p class="text-center">
+            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target="#advanced-details">
+                Advanced Details
+                <b class="caret"></b>
+            </button>
+        </p>
+
+        <div class="col-md-12 collapse" id="advanced-details">
+            <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <th>Current Depth</th>
+                        <td>
+                            {{ block_details.depth }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Nonce</th>
+                        <td>
+                            {{ block_details.nonce }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Merkle Root</th>
+                        <td>
+                            {{ block_details.mrkl_root }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Bits (difficulty target)</th>
+                        <td>
+                            {{ block_details.bits }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Version</th>
+                        <td>
+                            {{ block_details.ver }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="text-center">
+                            <a href="{{ api_url }}" class="btn btn-default">
+                                <i class="fa fa-code"></i>
+                                API Call
+                            </a>
+                            <a href="http://dev.blockcypher.com/#blocks" class="btn btn-default">
+                                <i class="fa fa-external-link"></i>
+                                API Docs
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <h2>{{ block_details.n_tx|intcomma }} Transactions</h2>
+
+        <div class="section pager">
+            <div class="row">
+                <div class="col-sm-4 text-left">
+                    {% if current_page > 1 %}
+                        <a href="?page={{ current_page|add(-1)|intcomma }}" class="btn btn-default">
+                            <i class="fa fa-angle-double-left"></i>
+                            Previous Page
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="col-sm-4 text-center">
+                    Page                             of
+                </div>
+
+                <div class="col-sm-4 text-right">
+                    {% if current_page < max_pages %}
+                        <a href="?page={{ current_page|add(1)|intcomma }}" class="btn btn-default">
+                            Next Page
+                            <i class="fa fa-angle-double-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+        {% if block_details.txids %}
+
+            {% for transaction in block_details.txids %}
+
+                <div class="well section">
+                    <h4 class="text-center truncate">
+                        <i class="fa fa-exchange"></i>
+                        {% if transaction.hash %}
+                            <a href="{{ path('bc_app_explorer_transaction.overview', {'coinSymbol': coin_symbol, 'hash': transaction.hash}) }}">
+                                {{ transaction.hash }}
+                            </a>
+                        {% endif %}
+                    </h4>
+
+                    {# TODO #}
+                    {# {% include "BlockCypherAppCommonInfrastructureLayoutBundle:partials:tx_hash.html.twig" %} #}
+
+                </div>
+            {% endfor %}
+
+            <div class="section pager">
+                <div class="row">
+                    <div class="col-sm-4 text-left">
+                        {% if current_page > 1 %}
+                            <a href="?page={{ current_page|add(-1)|intcomma }}" class="btn btn-default">
+                                <i class="fa fa-angle-double-left"></i>
+                                Previous Page
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-sm-4 text-center">
+                        Page                             of
+                    </div>
+
+                    <div class="col-sm-4 text-right">
+                        {% if current_page < max_pages %}
+                            <a href="?page={{ current_page|add(1)|intcomma }}" class="btn btn-default">
+                                Next Page
+                                <i class="fa fa-angle-double-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+        {% else %}
+            <p>In rare cases it is possible for a block to be empty. <a href="#">More info</a>.</p>
+        {% endif %}
+
+    </div>
+
+{% endblock content %}
+
+{% block extra_js %}
+
+    {% javascripts 'bundles/blockcypherappcommonlayoutpresentationinfrastructurelayout/js/jquery.timeago.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("time.timeago").timeago();
+
+        })
+
+    </script>
+
+{% endblock extra_js %}

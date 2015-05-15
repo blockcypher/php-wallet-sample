@@ -1,0 +1,196 @@
+{% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
+
+{% block title %}
+    {% set coin_display_name = coin_symbol|coin_symbol_to_display_name %}
+    {% trans %}
+    %coin_display_name% Block Exporer
+    {% endtrans %}
+{% endblock %}
+
+{% block page_header %}
+    <div class="col-lg-1 col-md-2 col-sm-3 col-xs-4 text-center">
+        <div class="{{ coin_symbol }} coin"></div>
+    </div>
+    <div class="col-lg-11 col-md-10 col-sm-9 col-xs-8">
+        <h1>{{ coin_symbol|coin_symbol_to_display_name }} Explorer</h1>
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <div class="section">
+            <h2>Recent Blocks</h2>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <th>Height</th>
+                        <th>Age</th>
+                        <th>Transactions</th>
+                        <th>Total Sent</th>
+                        <th>Total Fees</th>
+                    </tr>
+                    {% for block in recent_blocks %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'block_overview' coin_symbol block.height %}">{{ block.height }}</a>
+                            </td>
+                            <td>{{ block.received_time|naturaltime }}</td>
+                            <td>{{ block.n_tx|intcomma }}</td>
+                            <td>{{ block.total|satoshis_to_btc_full|floatformat:"0"|intcomma }} {{ coin_symbol|coin_symbol_to_currency_name }}</td>
+                            <td>{{ block.fees|satoshis_to_btc_rounding|intcomma }} {{ coin_symbol|coin_symbol_to_currency_name }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+        <div class="section{% if not recent_txs %} hidden{% endif %}">
+            <div id="newtx-section">
+                <h2>Latest Transactions</h2>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr id="latest-txs">
+                            <th>Transaction Hash</th>
+                            <th>{{ coin_symbol|coin_symbol_to_currency_name }}</th>
+                            <th>Time</th>
+                            <th>Miner Preference</th>
+                        </tr>
+                        <tr class="new-tx" style="display;none"></tr>
+                        {% for recent_tx in recent_txs %}
+                            <tr class="new-tx">
+                                <td>
+                                    <a href="{% url 'transaction_overview' coin_symbol recent_tx.hash %}">
+                                        {{ recent_tx.hash|slice:"12" }}
+                                    </a>
+                                    ...
+                                </td>
+                                <td>
+                                    {{ recent_tx.total|satoshis_to_btc_rounding|intcomma }}
+                                    {{ coin_symbol|coin_symbol_to_currency_name }}
+                                </td>
+                                <td>
+                                    <time class="timeago" datetime="{{ recent_tx.received|date:'Y-m-d\TH:i:s' }}Z">
+                                        {{ recent_tx.received|date:'Y-m-d H:i' }} GMT
+                                    </time>
+                                </td>
+                                <td>
+                                    {{ recent_tx.preference }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+
+                <p class="text-center">
+                    Note: BlockCypher is faster than other blockchain APIs, so these transactions may take a bit to
+                    appear on other sites.
+                </p>
+
+            </div>
+        </div>
+
+        <div class="section">
+            <p class="text-center">
+                <a class="btn btn-default" href="{% url 'push_tx' coin_symbol %}">Push Transaction</a>
+                <a class="btn btn-default" href="{% url 'decode_tx' coin_symbol %}">Decode Raw Transaction</a>
+            </p>
+        </div>
+
+
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+
+    <script src="{% static "js/jquery.timeago.js" %}" type="text/javascript"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("time.timeago").timeago();
+
+            var total_ws_received = 0;
+            var MAX_WS_TO_RECEIVE = 1000;
+
+            function create_ws() {
+                console.log('Creating new websocket...');
+                ws = new WebSocket('{{ coin_symbol|coin_symbol_to_wss }}');
+            }
+
+            create_ws();
+
+            function send_ping() {
+                // Send pings at regular interval:
+                if (total_ws_received < MAX_WS_TO_RECEIVE) {
+                    console.log('Sending websocket ping...');
+                    ws.send(JSON.stringify({event: "ping"}));
+                    // Trigger self recursively
+                    setTimeout(send_ping, 20000);
+                } else {
+                    console.log('Not sending ping because MAX_WS_TO_RECEIVE reached');
+                }
+            }
+
+            ws.onmessage = function (evt) {
+
+                // Weak protection against too much activity
+                total_ws_received += 1;
+                if (total_ws_received > MAX_WS_TO_RECEIVE) {
+                    ws.close();
+                }
+
+                var data = JSON.parse(evt.data);
+                // console.log(data);
+
+                if (data.hasOwnProperty('hash') && $('#' + data.hash).length == 0) {
+                    var btc_rounded = satoshis_to_btc_rounding(data.total);
+
+                    to_insert = $('<tr>').attr('class', "new-tx").attr('id', data.hash).append(
+                            $('<td>').append($('<a>').attr('href', '/{{ coin_symbol }}/tx/' + data.hash).text(data.hash.substring(0, 12))).append('...'),
+                            $('<td>').append(btc_rounded + ' {{ coin_symbol|coin_symbol_to_currency_name }}'),
+                            $('<td>').append($('<abbr>').attr('class', "timeago").attr('datetime', data.received)).text($.timeago(data.received)),
+                            $('<td>').text(data.preference)
+                    )
+                    $('.new-tx').first().before(to_insert);
+                    // Update the timing
+                    $("time.timeago").timeago();
+                    // New row effect:
+                    $('.new-tx').first().hide().fadeIn();
+
+                    if ($('.new-tx').length > 10) {
+                        // Trim end of list once long
+                        $('.new-tx').last().fadeOut().remove();
+                    }
+
+                }
+
+            }
+
+            ws.onopen = function () {
+                console.log('Connection established.');
+                ws.send(JSON.stringify({
+                    'event': 'unconfirmed-tx',
+                    'token': '{{ BLOCKCYPHER_PUBLIC_KEY }}',
+                }));
+                send_ping();
+            };
+
+            ws.onclose = function () {
+                console.log('Connection closed');
+                if (total_ws_received < MAX_WS_TO_RECEIVE) {
+                    console.log('Creating new websocket to replace old one...');
+                    create_ws();
+                }
+
+            };
+
+
+        })
+
+    </script>
+{% endblock %}

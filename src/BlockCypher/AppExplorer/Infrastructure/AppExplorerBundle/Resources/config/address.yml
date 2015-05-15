@@ -1,0 +1,26 @@
+parameters:
+
+    # controllers
+
+    bc_app_explorer_address.address_overview_controller.class: BlockCypher\AppExplorer\Infrastructure\AppExplorerBundle\Controller\AddressOverviewController
+
+    # sercice facades
+
+    bc_app_explorer_address.address_service_facade.class: BlockCypher\AppExplorer\Presentation\Facade\Internal\AddressServiceFacadeImpl
+
+services:
+
+    # controllers
+
+    bc_app_explorer_address.address_overview_controller:
+        class: %bc_app_explorer_address.address_overview_controller.class%
+        arguments:
+         - @templating
+         - @bc_app_explorer_address.address_service_facade
+
+    # sercice facades
+
+    bc_app_explorer_address.address_service_facade:
+        class: %bc_app_explorer_address.address_service_facade.class%
+        arguments:
+          - @bc_app_common_blockcypher.address_service

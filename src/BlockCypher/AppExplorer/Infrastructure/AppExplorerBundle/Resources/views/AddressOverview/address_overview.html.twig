@@ -1,0 +1,380 @@
+{% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
+
+{% block title %}
+    {% set coin_display_name = coin_symbol|coin_symbol_to_display_name %}
+    {% trans %}
+    %coin_display_name% Address %address%
+    {% endtrans %}
+{% endblock title %}
+
+{% block page_header %}
+    <h1>
+        <i class="fa fa-qrcode"></i>
+        {{ coin_symbol|coin_symbol_to_display_name }} Address
+    </h1>
+
+    <h2 class="tagline wrapit semi">
+        {{ address }}
+    </h2>
+
+    {% if wallet_name %}<h2 class="tagline wrapit semi">{{ wallet_name }}</h2>{% endif %}
+{% endblock page_header %}
+
+{% block content %}
+    <div class="container">
+        <div class="section">
+            <div class="col-md-4 text-center">
+                <p>
+                    {# TODO: support this for other blockchains #}
+                    <a href="{% if coin_symbol == 'btc' %}bitcoin:{{ address }}{% else %}{{ path('block_cypher_address_presentation_infrastructure_address.address_overview', {'coinSymbol': coin_symbol, 'address': address}) }}{% endif %}">
+                        <img src="//chart.googleapis.com/chart?cht=qr&amp;chl=bitcoin%3A{{ address }}&amp;choe=UTF-8&amp;chs=300x300"
+                             alt="{{ address }}" title="{{ address }}" class="img-responsive img-center">
+                    </a>
+                </p>
+            </div>
+
+            <div class="col-md-8">
+                <div class="dash dash-3">
+                    <ul>
+                        <li>
+                            <span class="dash-label">Received</span><br>
+                            {{ total_received_satoshis|satoshis_to_btc_rounding|intcomma }} {{ coin_symbol|coin_symbol_to_currency_name }}
+                        </li>
+                        <li>
+                            <span class="dash-label">Sent</span><br>
+                            {{ total_sent_satoshis|satoshis_to_btc_rounding|intcomma }} {{ coin_symbol|coin_symbol_to_currency_name }}
+                        </li>
+                        <li>
+                            <span class="dash-label">Balance</span><br>
+                            {{ total_balance_satoshis|satoshis_to_btc_rounding|intcomma }} {{ coin_symbol|coin_symbol_to_currency_name }}
+                            {% if unconfirmed_balance_satoshis %}
+                                <br>
+                                <span class="dash-label">
+                            ({{ unconfirmed_balance_satoshis|satoshis_to_btc_rounding|intcomma }}
+                                    {{ coin_symbol|coin_symbol_to_currency_name }} unconfirmed)
+                          </span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+
+                <br/>
+
+                <p class="text-center">
+                    <a href="{{ path('bc_app_explorer_address.subscribe_address', {'coinSymbol': coin_symbol, 'a': address}) }}"
+                       class="btn btn-lg btn-default">
+                        <i class="fa fa-inbox"></i>
+                        Subscribe
+                    </a>
+
+                    <button type="button" class="btn btn-lg btn-primary" data-toggle="collapse"
+                            data-target="#advanced-details">
+                        Advanced Details
+                        <b class="caret"></b>
+                    </button>
+                </p>
+                <div class="col-md-12 collapse" id="advanced-details">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    <a href="{{ path('bc_app_explorer_address.setup_address_forwarding', {'coinSymbol': coin_symbol, 'a': address}) }}"
+                                       class="btn btn-default">
+                                        <i class="fa fa-mail-forward"></i>
+                                        Get Forwarding Address
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    <a href="{{ path('bc_app_explorer_widget.overview', {'coinSymbol': coin_symbol, 'coinSymbol2': coin_symbol, 'address': address}) }}"
+                                       class="btn btn-default">
+                                        <i class="fa fa-line-chart"></i>
+                                        Get Embeddable Widget
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    <a href="{{ api_url }}?unspentOnly=true" class="btn btn-default">
+                                        <i class="fa fa-code"></i>
+                                        Unspent Outputs
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    <a href="{{ api_url }}" class="btn btn-default">
+                                        <i class="fa fa-code"></i>
+                                        API Call
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-center">
+                                    <a href="http://dev.blockcypher.com/#transactions" class="btn btn-default">
+                                        <i class="fa fa-external-link"></i>
+                                        API Docs
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {% if all_transactions %}
+
+            <div class="col-md-12">
+
+                <h2>
+                    {{ num_all_txns|intcomma }} Transactions
+                    {% if num_unconfirmed_txns %}
+                        ({{ num_unconfirmed_txns|intcomma }} unconfirmed)
+                    {% endif %}
+                </h2>
+
+                {% if max_pages > 1 %}
+                    <div class="section pager">
+                        <div class="row">
+                            <div class="col-sm-4 text-left">
+                                {% if current_page > 1 %}
+                                    <a href="?page={{ current_page|add(-1)|intcomma }}" class="btn btn-default">
+                                        <i class="fa fa-angle-double-left"></i>
+                                        Previous Page
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-sm-4 text-center">
+                                Page                             of
+                            </div>
+
+                            <div class="col-sm-4 text-right">
+                                {% if current_page < max_pages %}
+                                    <a href="?page={{ current_page|add(1)|intcomma }}" class="btn btn-default">
+                                        Next Page
+                                        <i class="fa fa-angle-double-right"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th>Hash</th>
+                            <th>Amount</th>
+                            <th>Confirmations</th>
+                            <th>Time</th>
+                            <th>Block</th>
+                        </tr>
+                        {% for transaction in all_transactions %}
+                            <tr class="tx-row" id="{{ transaction.tx_hash }}">
+                                <td class="truncate">
+                                    {% if transaction.tx_hash %}
+                                        <a href="{{ path('bc_app_explorer_transaction.overview', {'coinSymbol': coin_symbol, 'hash': transaction.tx_hash}) }}"
+                                           class="hidden-xs tx-list small">
+                                            {{ transaction.tx_hash }}
+                                        </a>
+                                        <a href="{{ path('bc_app_explorer_transaction.overview', {'coinSymbol': coin_symbol, 'hash': transaction.tx_hash}) }}"
+                                           class="visible-xs">
+                                            View Transaction
+                                        </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if transaction.tx_input_n >= 0 %}-{% else %}+{% endif %}
+                                    {{ transaction.value|satoshis_to_btc_rounding }} {{ coin_symbol|coin_symbol_to_currency_name }}</td>
+                                <td>
+                                    {% if transaction.confirmations >= 6 %}
+                                        <span class="confirmed">
+              <i class="fa fa-lock"></i> 
+              <span id="num-confs" title="{{ transaction.confirmations|intcomma }} Confirmations">6+</span>
+            </span>
+                                    {% elseif transaction.confirmations > 0 and transaction.confirmations < 6 %}
+                                        <span class="pending">
+              <i class="fa fa-unlock"></i> 
+              <span id="num-confs">{{ transaction.confirmations }}</span>/6
+            </span>
+                                    {% else %}
+                                        <span class="unconfirmed">
+              <i class="fa fa-unlock"></i> 
+              <span id="num-confs">{{ transaction.confirmations }}</span>/6
+            </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if transaction.received %}
+                                        <time class="timeago"
+                                              datetime="{{ transaction.received|date('Y-m-d\TH:i:s') }}Z">
+                                            {{ transaction.received|date('Y-m-d H:i') }} GMT
+                                        </time>
+                                    {% else %}
+                                        <time class="timeago"
+                                              datetime="{{ transaction.confirmed|date('Y-m-d\TH:i:s') }}Z">
+                                            {{ transaction.confirmed|date('Y-m-d H:i') }} GMT
+                                        </time>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if transaction.block_height %}
+                                        <a href="{{ path('bc_app_explorer_block.overview', {'coinSymbol': coin_symbol, 'hashOrHeight': transaction.block_height}) }}">{{ transaction.block_height|intcomma }}</a>
+                                    {% else %}
+                                        <span class="label label-danger">Pending</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </table>
+                </div>
+
+                {% if max_pages > 1 %}
+                    <div class="section pager">
+                        <div class="row">
+                            <div class="col-sm-4 text-left">
+                                {% if current_page > 1 %}
+                                    <a href="?page={{ current_page|add(-1)|intcomma }}" class="btn btn-default">
+                                        <i class="fa fa-angle-double-left"></i>
+                                        Previous Page
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-sm-4 text-center">
+                                Page                             of
+                            </div>
+
+                            <div class="col-sm-4 text-right">
+                                {% if current_page < max_pages %}
+                                    <a href="?page={{ current_page|add(1)|intcomma }}" class="btn btn-default">
+                                        Next Page
+                                        <i class="fa fa-angle-double-right"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+
+        {% else %}
+            <p>No transactions detected.</p>
+        {% endif %}
+
+    </div>
+
+{% endblock content %}
+
+
+{% block extra_js %}
+
+    {% javascripts 'bundles/blockcypherappcommonlayoutpresentationinfrastructurelayout/js/jquery.timeago.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("time.timeago").timeago();
+
+            //init popover
+            $('[data-toggle="popover"]').popover()
+
+            var total_ws_received = 0;
+            var MAX_WS_TO_RECEIVE = 1000;
+
+            function create_ws() {
+                console.log('Creating new websocket...');
+                ws = new WebSocket('{{ coin_symbol|coin_symbol_to_wss }}');
+            }
+
+            create_ws();
+
+            function send_ping() {
+                // Send pings at regular interval:
+                if (total_ws_received < MAX_WS_TO_RECEIVE) {
+                    console.log('Sending websocket ping...');
+                    ws.send(JSON.stringify({event: "ping"}));
+                    // Trigger self recursively
+                    setTimeout(send_ping, 20000);
+                } else {
+                    console.log('Not sending ping because MAX_WS_TO_RECEIVE reached');
+                }
+            }
+
+            ws.onmessage = function (evt) {
+
+                var data = JSON.parse(evt.data);
+                console.log('Websocket Received: ' + evt.data);
+
+                // Weak protection against too much activity
+                total_ws_received += 1;
+                if (total_ws_received > MAX_WS_TO_RECEIVE) {
+                    ws.close();
+                }
+
+                if (data.hasOwnProperty('hash') && $('#' + data.hash).length == 0) {
+
+                    var btc_rounded = satoshis_to_btc_rounding(data.total);
+
+                    if (data.tx_input_n >= 0) {
+                        sign_to_use = '+';
+                    } else {
+                        sign_to_use = '-';
+                    }
+
+                    var seconds_ago = convert_time_to_seconds_ago(data.received)
+                    var time_ago_formatted = format_seconds_ago(seconds_ago);
+
+                    new_tx_row = $('<tr>').attr('class', "tx-row").attr('id', data.hash).append(
+                            $('<td>').append($('<a>').attr('href', '/btc/tx/' + data.hash).text(data.hash)),
+                            $('<td>').text(sign_to_use + ' ' + btc_rounded + ' BTC'),
+                            $('<td>').text('None'),
+                            $('<td>').text('Pending'),
+                            $('<td>').text('Pending')
+                    )
+
+                    $('.tx-row').first().before(new_tx_row);
+                    // New row effect:
+                    $('.tx-row').first().hide().fadeIn();
+
+                }
+
+            }
+
+            ws.onopen = function () {
+                console.log('Connection established.');
+                ws.send(JSON.stringify(
+                        {
+                            'address': "{{ address }}",
+                            'event': 'unconfirmed-tx',
+                            'token': '{{ BLOCKCYPHER_PUBLIC_KEY }}',
+                        }
+                ));
+                send_ping();
+            };
+
+            ws.onclose = function () {
+                console.log('Connection closed');
+                if (total_ws_received < MAX_WS_TO_RECEIVE) {
+                    console.log('Creating new websocket to replace old one...');
+                    create_ws();
+                }
+
+            };
+
+        })
+
+    </script>
+{% endblock extra_js %}

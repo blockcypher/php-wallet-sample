@@ -1,0 +1,43 @@
+{% extends "::base.html.twig" %}
+
+{% block favicons %}
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}"/>
+    {# TODO
+    <link rel="icon" type="image/png" href="{% static "img/favicon-192x192.png" %}" sizes="192x192">
+    <link rel="icon" type="image/png" href="{% static "img/favicon-160x160.png" %}" sizes="160x160">
+    <link rel="icon" type="image/png" href="{% static "img/favicon-96x96.png" %}" sizes="96x96">
+    <link rel="icon" type="image/png" href="{% static "img/favicon-16x16.png" %}" sizes="16x16">
+    <link rel="icon" type="image/png" href="{% static "img/favicon-32x32.png" %}" sizes="32x32">
+    #}
+    <link rel="icon" type="image/png" href="http://dev.blockcypher.com/assets/img/favicon-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="http://dev.blockcypher.com/assets/img/favicon-160x160.png" sizes="160x160">
+    <link rel="icon" type="image/png" href="http://dev.blockcypher.com/assets/img/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="http://dev.blockcypher.com/assets/img/favicon-16x16.png" sizes="16x16">
+    <link rel="icon" type="image/png" href="http://dev.blockcypher.com/assets/img/favicon-32x32.png" sizes="32x32">
+{% endblock %}
+
+{% block stylesheets %}
+
+    {# Webfonts #}
+    <link href='//fonts.googleapis.com/css?family=Raleway:300' rel='stylesheet' type='text/css'>
+
+    {# Bootstrap core CSS #}
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+    {# FontAwesome #}
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+    {% stylesheets 'bundles/blockcypherappcommonlayoutpresentationinfrastructurelayout/css/custom.css' filter='cssrewrite' %}
+    <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+
+{% endblock %}
+
+{% block javascripts %}
+    {% javascripts 'bundles/blockcypherappcommonlayoutpresentationinfrastructurelayout/js/custom.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+
+

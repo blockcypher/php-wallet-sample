@@ -1,0 +1,4 @@
+#https://live.blockcypher.com/show-widgets/ltc/LajyQBeZaBA1NkZDeY8YT5RYYVRkXMvb2T/
+bc_app_explorer_widget.overview:
+    pattern:  /show-widgets/{coinSymbol}/{address}/
+    defaults: { _controller: "block_cypher_address_presentation_infrastructure_address.widgets_overview_controller" }

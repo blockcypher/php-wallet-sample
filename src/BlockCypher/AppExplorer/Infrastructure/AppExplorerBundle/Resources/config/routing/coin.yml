@@ -1,0 +1,4 @@
+# /btc/
+bc_app_explorer_coin.overview:
+    pattern:  /{coinSymbol}/
+    defaults: { _controller: "bc_app_explorer_coin.coin_overview_controller" }

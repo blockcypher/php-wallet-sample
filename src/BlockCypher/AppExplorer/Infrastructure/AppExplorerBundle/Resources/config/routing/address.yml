@@ -1,0 +1,13 @@
+bc_app_explorer_address.overview:
+    pattern:  /{coinSymbol}/address/{address}/
+    defaults: { _controller: "bc_app_explorer_address.address_overview_controller" }
+
+# https://live.blockcypher.com/btc/subscribe/?a=1DEP8i3QJCsomS4BSMY2RpU1upv62aGvhD
+bc_app_explorer_address.subscribe_address:
+    pattern:  /{coinSymbol}/subscribe/
+    defaults: { _controller: "bc_app_explorer_address.subscribe_address_controller" }
+
+#https://live.blockcypher.com/ltc/forwarding/?a=LajyQBeZaBA1NkZDeY8YT5RYYVRkXMvb2T
+bc_app_explorer_address.setup_address_forwarding:
+    pattern:  /{coinSymbol}/forwarding/
+    defaults: { _controller: "bc_app_explorer_address.setup_address_forwarding_controller" }

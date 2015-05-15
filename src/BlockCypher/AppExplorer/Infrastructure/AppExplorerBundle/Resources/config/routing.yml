@@ -1,0 +1,17 @@
+bc_app_explorer_app_explorer_address:
+    resource: "@BlockCypherAppExplorerInfrastructureAppExplorerBundle/Resources/config/routing/address.yml"
+
+bc_app_explorer_app_explorer_block:
+    resource: "@BlockCypherAppExplorerInfrastructureAppExplorerBundle/Resources/config/routing/block.yml"
+
+bc_app_explorer_app_explorer_coin:
+    resource: "@BlockCypherAppExplorerInfrastructureAppExplorerBundle/Resources/config/routing/coin.yml"
+
+bc_app_explorer_app_explorer_homepage:
+    resource: "@BlockCypherAppExplorerInfrastructureAppExplorerBundle/Resources/config/routing/homepage.yml"
+
+bc_app_explorer_app_explorer_transaction:
+    resource: "@BlockCypherAppExplorerInfrastructureAppExplorerBundle/Resources/config/routing/transaction.yml"
+
+bc_app_explorer_app_explorer_widget:
+    resource: "@BlockCypherAppExplorerInfrastructureAppExplorerBundle/Resources/config/routing/widget.yml"

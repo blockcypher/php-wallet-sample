@@ -1,0 +1,7 @@
+bc_app_explorer_homepage.homepage:
+    pattern:  /
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+
+bc_app_explorer_homepage.highlights:
+    path:     /highlights
+    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:highlightsAction" }
