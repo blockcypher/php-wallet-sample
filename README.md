@@ -19,16 +19,17 @@ Pre-requisites
 Running the app
 ---------------
 
-   * Copy the rest-api-sample-app-php folder to your htdocs folder.
+   * It´s a symfony app so you can use official [Symfony documentation](http://symfony.com/doc/current/book/installation.html)    
+   * Copy the php-wallet-sample folder to your htdocs folder.
    * Run 'composer update' from the root directory.
    * Optionally, update *app/config/parameters.yml* with your own API token.
    * You are ready. Bring up http://localhost/php-wallet-sample on your favorite browser.
    
    > **Notice: Only this urls work for the time being:**
    
-    * http://localhost/php-wallet-sample/app_dev.php
-    * http://localhost/php-wallet-sample/app_dev.php/explorer/btc/address/1DEP8i3QJCsomS4BSMY2RpU1upv62aGvhD/
-    * http://localhost/php-wallet-sample/app_dev.php/explorer/btc/302013/
+   * http://localhost/php-wallet-sample/app_dev.php
+   * http://localhost/php-wallet-sample/app_dev.php/explorer/btc/address/1DEP8i3QJCsomS4BSMY2RpU1upv62aGvhD/
+   * http://localhost/php-wallet-sample/app_dev.php/explorer/btc/302013/
 	
 References
 ----------
@@ -41,6 +42,7 @@ TODO
    * Migrate a lot of django templates for the AppExplorer (not a priority)
    * Implement AppWallet. It is the main purpose of this sample.
    * User registration/login
+   * Get API token from parameters.yml
    * Add behat, phpspec, tests, ...
    * ...
 
