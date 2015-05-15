@@ -7,12 +7,12 @@ Overview
 --------
 
 This is a sample that showcases the features of BlockCypher's REST APIs. The application uses the SDKs provided by BlockCypher.
-It is a Bitcoin wallet but also include some Blockchain explorer features.
+It is a Bitcoin wallet but also includes some Blockchain explorer features.
 
 Pre-requisites
 --------------
 
-   * PHP 5.3+
+   * PHP 5.3.3+
    * curl, openssl PHP extensions
    * [Composer](http://getcomposer.org/download/) for installing the Rest API SDK.
 	
