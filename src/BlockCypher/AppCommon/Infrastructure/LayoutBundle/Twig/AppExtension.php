@@ -2,8 +2,8 @@
 
 namespace BlockCypher\AppCommon\Infrastructure\LayoutBundle\Twig;
 
-use BlockCypher\AppCommon\App\Service\Internal\BlockCypherCoinSymbol;
 use BlockCypher\Converter\BtcConverter;
+use BlockCypher\Core\BlockCypherCoinSymbolConstants;
 
 class AppExtension extends \Twig_Extension
 {
@@ -28,12 +28,7 @@ class AppExtension extends \Twig_Extension
      */
     public function coinSymbolToDisplayShortnameFilter($coinSymbol)
     {
-        /*$displayShortname = '';
-        if (isset(BlockCypherApiConstants::$COIN_SYMBOL_MAPPINGS[$coinSymbol]['display_shortname'])) {
-            $displayShortname = BlockCypherApiConstants::$COIN_SYMBOL_MAPPINGS[$coinSymbol]['display_shortname'];
-        }
-        return $displayShortname;*/
-        return BlockCypherCoinSymbol::getDisplayShortname($coinSymbol);
+        return BlockCypherCoinSymbolConstants::getDisplayShortname($coinSymbol);
     }
 
     /**
@@ -42,12 +37,7 @@ class AppExtension extends \Twig_Extension
      */
     public function coinSymbolToDisplayNameFilter($coinSymbol)
     {
-        /*$displayName = '';
-        if (isset(BlockCypherApiConstants::$COIN_SYMBOL_MAPPINGS[$coinSymbol]['display_name'])) {
-            $displayName = BlockCypherApiConstants::$COIN_SYMBOL_MAPPINGS[$coinSymbol]['display_name'];
-        }
-        return $displayName;*/
-        return BlockCypherCoinSymbol::getDisplayName($coinSymbol);
+        return BlockCypherCoinSymbolConstants::getDisplayName($coinSymbol);
     }
 
     /**
@@ -56,12 +46,7 @@ class AppExtension extends \Twig_Extension
      */
     public function coinSymbolToCurrencyNameFilter($coinSymbol)
     {
-        /*$currencyAbbrev = '';
-        if (isset(BlockCypherApiConstants::$COIN_SYMBOL_MAPPINGS[$coinSymbol]['currency_abbrev'])) {
-            $currencyAbbrev = BlockCypherApiConstants::$COIN_SYMBOL_MAPPINGS[$coinSymbol]['currency_abbrev'];
-        }
-        return $currencyAbbrev;*/
-        return BlockCypherCoinSymbol::getCurrencyAbbrev($coinSymbol);
+        return BlockCypherCoinSymbolConstants::getCurrencyAbbrev($coinSymbol);
     }
 
     /**
@@ -70,22 +55,8 @@ class AppExtension extends \Twig_Extension
      */
     public function coinSymbolToWssFilter($coinSymbol)
     {
-        /*$blockcypherCode = '';
-        $blockcypherNetwork  = '';
-        if (isset(BlockCypherApiConstants::$COIN_SYMBOL_MAPPINGS[$coinSymbol]['blockcypher_code'])) {
-            $blockcypherCode = BlockCypherApiConstants::$COIN_SYMBOL_MAPPINGS[$coinSymbol]['blockcypher_code'];
-        }
-        if (isset(BlockCypherApiConstants::$COIN_SYMBOL_MAPPINGS[$coinSymbol]['blockcypher_network'])) {
-            $blockcypherNetwork = BlockCypherApiConstants::$COIN_SYMBOL_MAPPINGS[$coinSymbol]['blockcypher_network'];
-        }
-
-        if (empty($blockcypherCode) || empty($blockcypherNetwork)) {
-            // Invalid $coinSymbol or not present in BlockCypherApiConstants
-            return "";
-        }*/
-
-        $blockcypherCode = BlockCypherCoinSymbol::getBlockCypherCode($coinSymbol);
-        $blockcypherNetwork = BlockCypherCoinSymbol::getBlockCypherNetwork($coinSymbol);
+        $blockcypherCode = BlockCypherCoinSymbolConstants::getBlockCypherCode($coinSymbol);
+        $blockcypherNetwork = BlockCypherCoinSymbolConstants::getBlockCypherNetwork($coinSymbol);
 
         // TODO: move to SDK
         return "wss://socket.blockcypher.com/v1/{$blockcypherCode}/{$blockcypherNetwork}";
