@@ -4,6 +4,7 @@ namespace BlockCypher\AppCommon\Infrastructure\LayoutBundle\Twig;
 
 use BlockCypher\Converter\BtcConverter;
 use BlockCypher\Core\BlockCypherCoinSymbolConstants;
+use BlockCypher\Core\BlockCypherConstants;
 
 class AppExtension extends \Twig_Extension
 {
@@ -57,9 +58,7 @@ class AppExtension extends \Twig_Extension
     {
         $blockcypherCode = BlockCypherCoinSymbolConstants::getBlockCypherCode($coinSymbol);
         $blockcypherNetwork = BlockCypherCoinSymbolConstants::getBlockCypherNetwork($coinSymbol);
-
-        // TODO: move to SDK
-        return "wss://socket.blockcypher.com/v1/{$blockcypherCode}/{$blockcypherNetwork}";
+        return BlockCypherConstants::WEB_SOCKET_LIVE_ENDPOINT . "v1/{$blockcypherCode}/{$blockcypherNetwork}";
     }
 
     /**

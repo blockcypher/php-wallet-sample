@@ -1,0 +1,48 @@
+parameters:
+
+    # controllers
+
+    bc_app_wallet_account.accounts_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AccountsController
+
+    # sercice facades
+
+    bc_app_wallet_account.account_service_facade.class: BlockCypher\AppWallet\Presentation\Facade\Internal\AccountServiceFacadeImpl
+    
+    # services
+    
+    bc_app_wallet_account.account_service.class: BlockCypher\AppWallet\App\Service\Internal\AccountServiceImpl
+
+    # repositories
+
+    bc_app_wallet_account.account_repository.class: BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\FlywheelAccountRepository
+
+services:
+
+    # controllers
+
+    bc_app_wallet_account.accounts_controller:
+        class: %bc_app_wallet_account.accounts_controller.class%
+        arguments:
+         - @templating
+         - @bc_app_wallet_account.account_service_facade
+
+    # sercice facades
+
+    bc_app_wallet_account.account_service_facade:
+        class: %bc_app_wallet_account.account_service_facade.class%
+        arguments:
+          - @bc_app_wallet_account.account_service
+          
+    # services
+    
+    bc_app_wallet_account.account_service:
+        class: %bc_app_wallet_account.account_service.class%
+        arguments:
+          - @bc_app_wallet_account.account_repository
+
+    # repositories
+
+    bc_app_wallet_account.account_repository:
+        class: %bc_app_wallet_account.account_repository.class%
+        arguments:
+          - @block_cypher_app_common_infrastructure_app_common.clock

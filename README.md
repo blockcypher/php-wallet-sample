@@ -30,6 +30,7 @@ Running the app
    * http://localhost/php-wallet-sample/app_dev.php
    * http://localhost/php-wallet-sample/app_dev.php/explorer/btc/address/1DEP8i3QJCsomS4BSMY2RpU1upv62aGvhD/
    * http://localhost/php-wallet-sample/app_dev.php/explorer/btc/302013/
+   * http://localhost/php-wallet-sample/app_dev.php/wallet/accounts
 	
 References
 ----------

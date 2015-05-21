@@ -1,0 +1,2 @@
+bc_app_wallet_account:
+    resource: "@BlockCypherAppWalletInfrastructureAppWalletBundle/Resources/config/routing/account.yml"

@@ -26,6 +26,8 @@
     "sensio/distribution-bundle": "~3.0,>=3.0.12",
     "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
     "incenteev/composer-parameter-handler": "~2.0",
+    "jamesmoss/flywheel": "0.4.*",
+    "rhumsaa/uuid": "~2.0",
     "blockcypher/php-client": "@dev"
   },
   "require-dev": {
