@@ -35,7 +35,7 @@ Running the app
 References
 ----------
 
-   * Github repository for PHP REST API SDK - [https://github.com/blockcypher/php-client](https://github.com/blockcypher/php-client)
+   * GitHub repository for PHP REST API SDK - [https://github.com/blockcypher/php-client](https://github.com/blockcypher/php-client)
    
 TODO
 ----
