@@ -1,0 +1,143 @@
+{% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
+
+{% block title %}Addresses{% endblock title %}
+
+{% block page_header %}
+    <h1>
+        <i class="fa fa-qrcode"></i>
+        Addresses
+    </h1>
+
+    <h2 class="tagline wrapit semi">
+        Your addresses
+    </h2>
+{% endblock page_header %}
+
+{% block content %}
+    <div class="container">
+        <div class="section">
+            <div class="col-md-12">
+                <p class="text-center">
+                    <a href="{{ path('bc_app_wallet_address.new') }}"
+                       class="btn btn-lg btn-default">
+                        <i class="fa fa-plus"></i>
+                        Create New Address
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        {% if addresses %}
+
+            <div class="col-md-12">
+
+                <h2>
+                    {{ num_all_addresses|intcomma }} Addresses
+                </h2>
+
+                {% if max_pages > 1 %}
+                    <div class="section pager">
+                        <div class="row">
+                            <div class="col-sm-4 text-left">
+                                {% if current_page > 1 %}
+                                    <a href="?page={{ current_page|add(-1)|intcomma }}" class="btn btn-default">
+                                        <i class="fa fa-angle-double-left"></i>
+                                        Previous Page
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-sm-4 text-center">
+                                Page of
+                            </div>
+
+                            <div class="col-sm-4 text-right">
+                                {% if current_page < max_pages %}
+                                    <a href="?page={{ current_page|add(1)|intcomma }}" class="btn btn-default">
+                                        Next Page
+                                        <i class="fa fa-angle-double-right"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th>Address</th>
+                            <th>Tag</th>
+                            <th>Creation Time</th>
+                        </tr>
+                        {% for address in addresses %}
+                            <tr class="tx-row" id="{{ address.address }}">
+                                <td class="truncate">
+                                    {% if address.address %}
+                                        <a href="TODO LINK TO ADDRESS"
+                                           class="hidden-xs tx-list small">
+                                            {{ address.address }}
+                                        </a>
+                                        <a href="TODO LINK TO ADDRESS"
+                                           class="visible-xs">
+                                            View Address
+                                        </a>
+                                    {% endif %}
+                                </td>
+                                <td class="">
+                                    {{ address.tag }}
+                                </td>
+                                <td>
+                                    <time class="timeago"
+                                          datetime="{{ address.creationTime|date('Y-m-d\TH:i:s') }}Z">
+                                        {{ address.creationTime|date('Y-m-d H:i') }} GMT
+                                    </time>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                    </table>
+                </div>
+
+                {% if max_pages > 1 %}
+                    <div class="section pager">
+                        <div class="row">
+                            <div class="col-sm-4 text-left">
+                                {% if current_page > 1 %}
+                                    <a href="?page={{ current_page|add(-1)|intcomma }}" class="btn btn-default">
+                                        <i class="fa fa-angle-double-left"></i>
+                                        Previous Page
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-sm-4 text-center">
+                                Page of
+                            </div>
+
+                            <div class="col-sm-4 text-right">
+                                {% if current_page < max_pages %}
+                                    <a href="?page={{ current_page|add(1)|intcomma }}" class="btn btn-default">
+                                        Next Page
+                                        <i class="fa fa-angle-double-right"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+
+        {% else %}
+            <p>No addresses detected.</p>
+        {% endif %}
+
+    </div>
+
+{% endblock content %}
+
+{% block extra_js %}
+{% endblock extra_js %}

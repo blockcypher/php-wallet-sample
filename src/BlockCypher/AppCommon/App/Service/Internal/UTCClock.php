@@ -2,9 +2,9 @@
 
 namespace BlockCypher\AppCommon\App\Service\Internal;
 
-use BlockCypher\AppCommon\App\Service\ClockService;
+use BlockCypher\AppCommon\App\Service\Clock;
 
-class UTCClockService implements ClockService
+class UTCClock implements Clock
 {
     /**
      * @return \DateTime

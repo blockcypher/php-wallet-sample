@@ -11,7 +11,7 @@
     }
   },
   "require": {
-    "php": ">=5.3.3",
+    "php": ">=5.3.9",
     "ext-curl": "*",
     "ext-json": "*",
     "ext-mysql": "*",
@@ -27,12 +27,21 @@
     "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
     "incenteev/composer-parameter-handler": "~2.0",
     "jamesmoss/flywheel": "0.4.*",
-    "rhumsaa/uuid": "~2.0",
-    "blockcypher/php-client": "@dev"
+    "ramsey/uuid": "~2.8",
+    "mathiasverraes/money": "dev-master",
+    "simple-bus/symfony-bridge": "^4.0",
+    "blockcypher/php-client": "@dev",
+    "phpspec/phpspec": "^2.2"
   },
   "require-dev": {
     "sensio/generator-bundle": "~2.3"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/josecelano/money"
+    }
+  ],
   "scripts": {
     "post-root-package-install": [
       "SymfonyStandard\\Composer::hookRootPackageInstall"

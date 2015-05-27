@@ -2,7 +2,7 @@
 
 namespace BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel;
 
-use BlockCypher\AppCommon\App\Service\ClockService;
+use BlockCypher\AppCommon\App\Service\Clock;
 use BlockCypher\AppWallet\Domain\Account\Account;
 use BlockCypher\AppWallet\Domain\Account\AccountId;
 use BlockCypher\AppWallet\Domain\Account\AccountRepository;
@@ -16,38 +16,26 @@ use Rhumsaa\Uuid\Uuid;
 class FlywheelAccountRepository implements AccountRepository
 {
     /**
-     * @var ClockService
+     * @var Clock
      */
-    protected $clockService;
+    private $clock;
 
     /**
      * @var Repository
      */
-    protected $repository;
+    private $repository;
 
     /**
      * Constructor
-     * @param ClockService $clockService
+     * @param Clock $clockService
      */
-    public function __construct(ClockService $clockService)
+    public function __construct(Clock $clockService)
     {
-        $this->clockService = $clockService;
+        $this->clock = $clockService;
         // TODO: move to parameters in config.yml and pass to constructor
         // I think app/data is a good location
         $config = new Config(__DIR__ . DIRECTORY_SEPARATOR . 'data');
         $this->repository = new Repository('accounts', $config);
-    }
-
-    /**
-     * Returns a new instance.
-     *
-     * @param AccountId $accountId
-     * @return Account
-     */
-    public function create(AccountId $accountId)
-    {
-        $account = new Account($accountId, $this->clockService->now());
-        return $account;
     }
 
     /**
@@ -69,8 +57,16 @@ class FlywheelAccountRepository implements AccountRepository
     {
         /** @var Result $result */
         $result = $this->repository->query()
-            ->where('id', '>', $accountId->getValue())
+            ->where('id', '==', $accountId->getValue())
             ->execute();
+
+        if ($result === false) {
+            return null;
+        }
+
+        if ($result->total() == 0) {
+            return null;
+        }
 
         $account = $this->documentToAccount($result->first());
 
@@ -83,20 +79,15 @@ class FlywheelAccountRepository implements AccountRepository
      */
     private function documentToAccount($accountDocument)
     {
-        // Document property are stored as stdClass. Map to array.
-        $id = array(
-            'value' => $accountDocument->id->value
-        );
+        //DEBUG
+        //var_dump($accountDocument);
+        //die();
 
-        $creationTime = new \DateTime(
-            $accountDocument->creationTime->date,
-            new \DateTimeZone($accountDocument->creationTime->timezone)
-        );
+        $account = unserialize($accountDocument->data);
 
-        $account = Account::fromArray(array(
-            'id' => $id,
-            'creationTime' => $creationTime,
-        ));
+        //DEBUG
+        //var_dump($account);
+        //die();
 
         return $account;
     }
@@ -116,16 +107,23 @@ class FlywheelAccountRepository implements AccountRepository
      */
     private function accountToDocument(Account $account)
     {
-        $accountDocument = new Document($account->toArray());
+        $searchFields = array(
+            'id' => $account->getId()->getValue(),
+            'type' => $account->getType(),
+            'creationTime' => $account->getCreationTime(),
+        );
 
-        /* DEBUG
-        var_dump($account);
-        var_dump($account->toArray());
-        var_dump($accountDocument);
-        die();
-        */
+        $docArray = $searchFields;
+        $docArray['data'] = serialize($account);
 
+        $accountDocument = new Document($docArray);
         $accountDocument->setId($account->getId()->getValue());
+
+        // DEBUG
+        //var_dump($account);
+        //var_dump($accountDocument);
+        //die();
+
         return $accountDocument;
     }
 
@@ -195,14 +193,14 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function findAll()
     {
-        /* DEBUG: insert a sample value
-        $id = $this->nextIdentity();
-        $account = new Account(
+        // DEBUG: insert a sample value
+        /*$account = new Account(
             $this->nextIdentity(),
-            $this->clockService->now()
+            AccountType::BTC,
+            $this->clock->now(),
+            'Default'
         );
-        $this->insert($account);
-        */
+        $this->insert($account);*/
 
         /** @var Document[] $result */
         $result = $this->repository->findAll();

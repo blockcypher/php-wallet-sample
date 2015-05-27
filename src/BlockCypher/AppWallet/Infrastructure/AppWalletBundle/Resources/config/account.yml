@@ -2,7 +2,7 @@ parameters:
 
     # controllers
 
-    bc_app_wallet_account.accounts_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AccountsController
+    bc_app_wallet_account.index_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Account\Index
 
     # sercice facades
 
@@ -20,10 +20,11 @@ services:
 
     # controllers
 
-    bc_app_wallet_account.accounts_controller:
-        class: %bc_app_wallet_account.accounts_controller.class%
+    bc_app_wallet_account.index_controller:
+        class: %bc_app_wallet_account.index_controller.class%
         arguments:
          - @templating
+         - @translator
          - @bc_app_wallet_account.account_service_facade
 
     # sercice facades

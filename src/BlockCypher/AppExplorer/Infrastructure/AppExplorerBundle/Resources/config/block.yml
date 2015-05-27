@@ -16,6 +16,7 @@ services:
         class: %bc_app_explorer_block.block_overview_controller.class%
         arguments:
          - @templating
+         - @translator
          - @bc_app_explorer_block.block_service_facade
 
     # sercice facades

@@ -16,6 +16,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+            new SimpleBus\SymfonyBridge\SimpleBusCommandBusBundle(),
             new BlockCypher\AppCommon\Infrastructure\ApiBundle\BlockCypherAppCommonInfrastructureApiBundle(),
             new BlockCypher\AppCommon\Infrastructure\AppCommonBundle\BlockCypherAppCommonInfrastructureAppCommonBundle(),
             new BlockCypher\AppCommon\Infrastructure\LayoutBundle\BlockCypherAppCommonInfrastructureLayoutBundle(),

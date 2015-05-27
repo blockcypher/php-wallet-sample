@@ -16,6 +16,7 @@ services:
         class: %bc_app_explorer_address.address_overview_controller.class%
         arguments:
          - @templating
+         - @translator
          - @bc_app_explorer_address.address_service_facade
 
     # sercice facades

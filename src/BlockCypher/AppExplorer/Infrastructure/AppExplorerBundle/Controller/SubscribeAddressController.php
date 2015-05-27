@@ -5,18 +5,22 @@ namespace BlockCypher\AppExplorer\Infrastructure\AppExplorerBundle\Controller;
 use BlockCypher\AppExplorer\Presentation\Facade\AddressServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class SubscribeAddressController extends AppExplorerController
 {
     /**
      * @param EngineInterface $templating
+     * @param TranslatorInterface $translator
      * @param AddressServiceFacade $addressServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
-        AddressServiceFacade $addressServiceFacade)
+        TranslatorInterface $translator,
+        AddressServiceFacade $addressServiceFacade
+    )
     {
-        parent::__construct($templating);
+        parent::__construct($templating, $translator);
         $this->addressServiceFacade = $addressServiceFacade;
     }
 

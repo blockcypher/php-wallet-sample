@@ -1,12 +1,14 @@
 <?php
 
-namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller;
+namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Account;
 
+use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
 use BlockCypher\AppWallet\Presentation\Facade\AccountServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class AccountsController extends AppWalletController
+class Index extends AppWalletController
 {
     /**
      * @var AccountServiceFacade
@@ -15,13 +17,15 @@ class AccountsController extends AppWalletController
 
     /**
      * @param EngineInterface $templating
+     * @param TranslatorInterface $translator
      * @param AccountServiceFacade $accountServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
+        TranslatorInterface $translator,
         AccountServiceFacade $accountServiceFacade)
     {
-        parent::__construct($templating);
+        parent::__construct($templating, $translator);
         $this->accountServiceFacade = $accountServiceFacade;
     }
 
@@ -31,18 +35,13 @@ class AccountsController extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $BLOCKCYPHER_PUBLIC_KEY = '31c49f33f35c85a8f4d9845a754f7c8e';
-
-        $coinSymbol = $request->get('coinSymbol');
-        $token = $request->get('token');
-        if (!$token) {
-            //$this->createAccessDeniedException();
-            $token = $BLOCKCYPHER_PUBLIC_KEY; // TODO: get from app parameters.yml
-        }
-
         $accounts = $this->accountServiceFacade->listAccounts();
 
-        $template = $this->getBaseTemplatePrefix() . ':Accounts:accounts.html';
+        $template = $this->getBaseTemplatePrefix() . ':Accounts:index.html';
+
+        // DEBUG
+        //var_dump($accounts);
+        //die();
 
         // TODO
         $currentPage = 1;
@@ -56,7 +55,7 @@ class AccountsController extends AppWalletController
                 'user' => array('is_authenticated' => true),
                 'messages' => array(),
                 //
-                'coin_symbol' => $coinSymbol,
+                'coin_symbol' => 'btc',
                 'current_page' => $currentPage,
                 'num_all_accounts' => count($accounts),
                 'max_pages' => $maxPages,

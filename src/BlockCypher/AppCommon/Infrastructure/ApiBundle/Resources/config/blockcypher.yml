@@ -4,6 +4,7 @@ parameters:
     bc_app_common_blockcypher.address_service.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherAddressService
     bc_app_common_blockcypher.block_service.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherBlockService
     bc_app_common_blockcypher.transaction_service.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherTransactionService
+    bc_app_common_blockcypher.wallet_service.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherWalletService
 
 services:
 
@@ -22,5 +23,10 @@ services:
 
     bc_app_common_blockcypher.transaction_service:
         class: %bc_app_common_blockcypher.transaction_service.class%
+        arguments:
+          - @bc_app_common_blockcypher.api_context_factory
+
+    bc_app_common_blockcypher.wallet_service:
+        class: %bc_app_common_blockcypher.wallet_service.class%
         arguments:
           - @bc_app_common_blockcypher.api_context_factory

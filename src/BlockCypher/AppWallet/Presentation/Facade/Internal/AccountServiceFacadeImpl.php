@@ -29,7 +29,12 @@ class AccountServiceFacadeImpl implements AccountServiceFacade
 
         $accountDTOs = array();
         foreach ($accounts as $account) {
-            $accountDTOs[] = $account->toArray();
+            $accountArray = $account->toArray();
+
+            // Extra account info
+            $accountArray['balance'] = (float)(string)$account->balance()->getAmount();
+
+            $accountDTOs[] = $accountArray;
         }
 
         return $accountDTOs;

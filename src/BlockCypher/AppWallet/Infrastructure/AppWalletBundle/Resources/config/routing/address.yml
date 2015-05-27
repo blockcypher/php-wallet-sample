@@ -1,0 +1,13 @@
+bc_app_wallet_address.index:
+    pattern:  /addresses
+    defaults: { _controller: "bc_app_wallet_address.index_controller" }
+    requirements: { _method: get }
+
+bc_app_wallet_address.new:
+    pattern:  /addresses/new
+    defaults: { _controller: "bc_app_wallet_address.show_new_controller" }
+
+bc_app_wallet_address.create:
+    pattern:  /addresses
+    defaults: { _controller: "bc_app_wallet_address.create_controller" }
+    requirements: { _method: post }

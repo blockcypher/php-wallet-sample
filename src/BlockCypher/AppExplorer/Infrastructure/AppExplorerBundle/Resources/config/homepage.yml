@@ -8,3 +8,4 @@ services:
         class: %bc_app_explorer_homepage.homepage_controller.class%
         arguments:
           - @templating
+          - @translator

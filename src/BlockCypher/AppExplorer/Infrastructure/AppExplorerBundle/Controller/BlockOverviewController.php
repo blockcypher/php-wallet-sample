@@ -5,6 +5,7 @@ namespace BlockCypher\AppExplorer\Infrastructure\AppExplorerBundle\Controller;
 use BlockCypher\AppExplorer\Presentation\Facade\BlockServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class BlockOverviewController extends AppExplorerController
 {
@@ -15,13 +16,16 @@ class BlockOverviewController extends AppExplorerController
 
     /**
      * @param EngineInterface $templating
+     * @param TranslatorInterface $translator
      * @param BlockServiceFacade $blockServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
-        BlockServiceFacade $blockServiceFacade)
+        TranslatorInterface $translator,
+        BlockServiceFacade $blockServiceFacade
+    )
     {
-        parent::__construct($templating);
+        parent::__construct($templating, $translator);
         $this->blockServiceFacade = $blockServiceFacade;
     }
 
@@ -34,7 +38,7 @@ class BlockOverviewController extends AppExplorerController
     {
         // Port from: https://github.com/blockcypher/explorer/blob/master/blocks/views.py#L19
 
-        $BLOCKCYPHER_PUBLIC_KEY = '31c49f33f35c85a8f4d9845a754f7c8e';
+        $BLOCKCYPHER_PUBLIC_KEY = 'c0afcccdde5081d6429de37d16166ead';
 
         $token = $request->get('token');
         if (!$token) {

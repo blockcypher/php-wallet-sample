@@ -5,18 +5,22 @@ namespace BlockCypher\AppExplorer\Infrastructure\AppExplorerBundle\Controller;
 use BlockCypher\AppExplorer\Presentation\Facade\AddressServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class AddressOverviewController extends AppExplorerController
 {
     /**
      * @param EngineInterface $templating
+     * @param TranslatorInterface $translator
      * @param AddressServiceFacade $addressServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
-        AddressServiceFacade $addressServiceFacade)
+        TranslatorInterface $translator,
+        AddressServiceFacade $addressServiceFacade
+    )
     {
-        parent::__construct($templating);
+        parent::__construct($templating, $translator);
         $this->addressServiceFacade = $addressServiceFacade;
     }
 
@@ -29,7 +33,7 @@ class AddressOverviewController extends AppExplorerController
     {
         // Port from: https://github.com/blockcypher/explorer/blob/master/addresses/views.py#L43
 
-        $BLOCKCYPHER_PUBLIC_KEY = '31c49f33f35c85a8f4d9845a754f7c8e';
+        $BLOCKCYPHER_PUBLIC_KEY = 'c0afcccdde5081d6429de37d16166ead';
 
         $token = $request->get('token');
         if (!$token) {

@@ -1,0 +1,33 @@
+{% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
+
+{% block title %}Addresses{% endblock title %}
+
+{% block page_header %}
+    <h1>
+        <i class="fa fa-qrcode"></i>
+        Addresses
+    </h1>
+
+    <h2 class="tagline wrapit semi">
+        Your addresses
+    </h2>
+{% endblock page_header %}
+
+{% block content %}
+    <div class="container">
+        <div class="col-md-12">
+            <h2>
+                Create New Address
+            </h2>
+
+            {{ form_start(address_form) }}
+            {{ form_widget(address_form) }}
+            {{ form_end(address_form) }}
+
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block extra_js %}
+{% endblock extra_js %}

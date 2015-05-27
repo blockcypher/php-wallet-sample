@@ -18,7 +18,7 @@
         <div class="section">
             <div class="col-md-12">
                 <p class="text-center">
-                    <a href="new_account"
+                    <a href="TODO LINK TO NEW ACCOUNT"
                        class="btn btn-lg btn-default">
                         <i class="fa fa-plus"></i>
                         New Account
@@ -67,28 +67,30 @@
                 <div class="table-responsive">
                     <table class="table">
                         <tr>
-                            <th>Id</th>
+                            <th>Tag</th>
+                            <th>Balance</th>
                             <th>Creation Time</th>
+                            <th>Id</th>
                         </tr>
                         {% for account in accounts %}
                             <tr class="tx-row" id="{{ account.id.value }}">
-                                <td class="truncate">
-                                    {% if account.id %}
-                                        <a href="TODO LINK TO ACCOUNT"
-                                           class="hidden-xs tx-list small">
-                                            {{ account.id.value }}
-                                        </a>
-                                        <a href="TODO LINK TO ACCOUNT"
-                                           class="visible-xs">
-                                            View Account
-                                        </a>
-                                    {% endif %}
+                                <td class="">
+                                    {{ account.tag }}
+                                </td>
+                                <td class="">
+                                    {{ account.balance|satoshis_to_btc_rounding|intcomma }}
                                 </td>
                                 <td>
                                     <time class="timeago"
                                           datetime="{{ account.creationTime|date('Y-m-d\TH:i:s') }}Z">
                                         {{ account.creationTime|date('Y-m-d H:i') }} GMT
                                     </time>
+                                </td>
+                                <td class="truncate">
+                                    <a href="TODO LINK TO ACCOUNT"
+                                       class="hidden-xs tx-list small">
+                                        {{ account.id.value }}
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}

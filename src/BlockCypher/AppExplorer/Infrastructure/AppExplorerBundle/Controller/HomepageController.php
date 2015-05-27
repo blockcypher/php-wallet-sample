@@ -3,15 +3,20 @@
 namespace BlockCypher\AppExplorer\Infrastructure\AppExplorerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class HomepageController extends AppExplorerController
 {
     /**
      * @param EngineInterface $templating
+     * @param TranslatorInterface $translator
      */
-    public function __construct(EngineInterface $templating)
+    public function __construct(
+        EngineInterface $templating,
+        TranslatorInterface $translator
+    )
     {
-        parent::__construct($templating);
+        parent::__construct($templating, $translator);
     }
 
     public function homeAction()

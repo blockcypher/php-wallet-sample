@@ -141,7 +141,6 @@
                         <a href="{{ path('bc_app_common_todo.user_login') }}">{% trans %}"Sign In"{% endtrans %}</a>
                     </li>
                 {% endif %}
-                </li>
                 {#
                 <li id="profile-menu" class="dropdown navbar-form">
                     {% if tcp__ENABLE_TRANSLATIONS %}
@@ -240,7 +239,8 @@
                 </div>
                 <div class="col-sm-4 text-center">
                     <p class="text-center reset">
-                        <a href="https://github.com/blockcypher/explorer" class="btn btn-default btn-lg btn-gh">
+                        <a href="https://github.com/blockcypher/php-wallet-sample"
+                           class="btn btn-default btn-lg btn-gh">
                             <i class="fa fa-github"></i>
                             Fork me on GitHub
                         </a>
@@ -249,7 +249,7 @@
                 <div class="col-sm-4">
                     <p class="text-right">
                         Powered by <a href="http://www.blockcypher.com/">BlockCypher Web Services</a><br>
-                        © 2014 - BlockCypher
+                        © 2015 - BlockCypher
                     </p>
                 </div>
             </div>
@@ -263,5 +263,6 @@
 
     {% block extra_js %}{% endblock %}
     {% include "BlockCypherAppCommonInfrastructureLayoutBundle:partials:ga.html.twig" %}
+</div>
 </body>
 </html>

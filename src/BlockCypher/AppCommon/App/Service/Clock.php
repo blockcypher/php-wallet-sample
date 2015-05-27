@@ -2,7 +2,7 @@
 
 namespace BlockCypher\AppCommon\App\Service;
 
-interface ClockService
+interface Clock
 {
     /**
      * @return \DateTime

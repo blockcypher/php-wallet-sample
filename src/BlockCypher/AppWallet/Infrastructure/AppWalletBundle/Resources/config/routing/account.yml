@@ -1,3 +1,3 @@
-bc_app_wallet_account.list:
+bc_app_wallet_account.index:
     pattern:  /accounts
-    defaults: { _controller: "bc_app_wallet_account.accounts_controller" }
+    defaults: { _controller: "bc_app_wallet_account.index_controller" }
