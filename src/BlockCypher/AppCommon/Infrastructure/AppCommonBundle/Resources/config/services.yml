@@ -1,0 +1,3 @@
+services:
+    block_cypher_app_common_infrastructure_app_common.clock:
+        class: BlockCypher\AppCommon\App\Service\Internal\UTCClock
