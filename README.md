@@ -12,7 +12,7 @@ It is a Bitcoin wallet but also includes some Blockchain explorer features.
 Pre-requisites
 --------------
 
-   * PHP 5.3.3+
+   * PHP 5.3.9+
    * curl, openssl PHP extensions
    * [Composer](http://getcomposer.org/download/) for installing the Rest API SDK.
 	
