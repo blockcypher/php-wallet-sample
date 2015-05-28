@@ -11,7 +11,7 @@
     }
   },
   "require": {
-    "php": ">=5.3.9",
+    "php": ">=5.4",
     "ext-curl": "*",
     "ext-json": "*",
     "ext-mysql": "*",
@@ -34,6 +34,7 @@
     "phpspec/phpspec": "^2.2"
   },
   "require-dev": {
+    "phpunit/phpunit": "3.7.*",
     "sensio/generator-bundle": "~2.3"
   },
   "repositories": [
