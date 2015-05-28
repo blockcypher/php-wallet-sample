@@ -1,6 +1,8 @@
 BlockCypher REST API PHP Sample
 ===============================
 
+[![Build Status](https://travis-ci.org/josecelano/php-wallet-sample.svg)](https://travis-ci.org/josecelano/php-wallet-sample)
+
 > **WARNING: WORK IN PROGRESS. This project is at the very beginning**
 
 Overview
