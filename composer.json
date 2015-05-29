@@ -1,7 +1,7 @@
 {
-  "name": "blockcypher/rest-api-sample-app-php",
+  "name": "blockcypher/php-wallet-sample",
   "description": "Sample Bitcoin Wallet app using BlockCypher's APIs",
-  "homepage": "https://github.com/blockcypher/rest-api-sample-app-php",
+  "homepage": "https://github.com/blockcypher/php-wallet-sample",
   "license": "Apache License 2.0",
   "type": "project",
   "autoload": {
@@ -44,9 +44,6 @@
     }
   ],
   "scripts": {
-    "post-root-package-install": [
-      "SymfonyStandard\\Composer::hookRootPackageInstall"
-    ],
     "post-install-cmd": [
       "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
