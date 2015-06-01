@@ -14,7 +14,12 @@ parameters:
 
     # repositories
 
+    bc_app_wallet_account.encrypted_account_repository.class: BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\FlywheelEncryptedAccountRepository
     bc_app_wallet_account.account_repository.class: BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\FlywheelAccountRepository
+
+    # fixtures loaders
+
+    bc_app_wallet_account.account_data_loader.class: BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\DataFixtures\LoadAccountData
 
 services:
 
@@ -43,7 +48,22 @@ services:
 
     # repositories
 
+    bc_app_wallet_account.encrypted_account_repository:
+        class: %bc_app_wallet_account.encrypted_account_repository.class%
+        arguments:
+          - @bc_app_common_infrastructure_app_common.clock
+
     bc_app_wallet_account.account_repository:
         class: %bc_app_wallet_account.account_repository.class%
         arguments:
-          - @block_cypher_app_common_infrastructure_app_common.clock
+          - @bc_app_wallet_account.encrypted_account_repository
+          - @bc_app_common_infrastructure_app_common.encryptor
+          - @bc_app_common_infrastructure_app_common.encryptor
+
+    # fixtures loaders
+
+    bc_app_wallet_account.account_data_loader:
+        class: %bc_app_wallet_account.account_data_loader.class%
+        arguments:
+          - @bc_app_common_infrastructure_app_common.clock
+          - @bc_app_wallet_account.account_repository

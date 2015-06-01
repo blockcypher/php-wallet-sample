@@ -2,108 +2,74 @@
 
 namespace BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel;
 
-use BlockCypher\AppCommon\App\Service\Clock;
-use BlockCypher\AppCommon\App\Service\WalletService;
+use BlockCypher\AppCommon\App\Service\Decryptor;
+use BlockCypher\AppCommon\App\Service\Encryptor;
+use BlockCypher\AppWallet\Domain\Account\Account;
 use BlockCypher\AppWallet\Domain\Account\AccountId;
+use BlockCypher\AppWallet\Domain\Wallet\EncryptedWallet;
+use BlockCypher\AppWallet\Domain\Wallet\EncryptedWalletRepository;
 use BlockCypher\AppWallet\Domain\Wallet\Wallet;
 use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 use BlockCypher\AppWallet\Domain\Wallet\WalletSpecification;
-use JamesMoss\Flywheel\Config;
-use JamesMoss\Flywheel\Document;
-use JamesMoss\Flywheel\Repository;
-use JamesMoss\Flywheel\Result;
+use Rhumsaa\Uuid\Uuid;
 
+/**
+ * Class FlywheelWalletRepository
+ * @package BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel
+ */
 class FlywheelWalletRepository implements WalletRepository
 {
     /**
-     * @var Clock
+     * @var EncryptedWalletRepository
      */
-    private $clock;
+    private $encryptedWalletRepository;
 
     /**
-     * @var Repository
+     * @var Encryptor
      */
-    private $repository;
+    private $encryptor;
 
     /**
-     * @var WalletService
+     * @var Decryptor
      */
-    private $walletService;
+    private $decryptor;
 
     /**
      * Constructor
-     * @param Clock $clockService
-     * @param WalletService $walletService
+     * @param EncryptedWalletRepository $encryptedWalletRepository
+     * @param Encryptor $encryptor
+     * @param Decryptor $decryptor
      */
     public function __construct(
-        Clock $clockService,
-        WalletService $walletService
+        EncryptedWalletRepository $encryptedWalletRepository,
+        Encryptor $encryptor,
+        Decryptor $decryptor
     )
     {
-        $this->clock = $clockService;
-        $this->walletService = $walletService;
-
-        // TODO: move to parameters in config.yml and pass to constructor
-        // I think app/data is a good location
-        $config = new Config(__DIR__ . DIRECTORY_SEPARATOR . 'data');
-        $this->repository = new Repository('wallets', $config);
+        $this->encryptedWalletRepository = $encryptedWalletRepository;
+        $this->encryptor = $encryptor;
+        $this->decryptor = $decryptor;
     }
 
     /**
-     * @return WalletId
+     * @return AccountId
      * @throws \Exception
      */
     public function nextIdentity()
     {
-        $id = strtoupper(str_replace('.', '', uniqid('', true)));
-        if (strlen($id) > 25) {
-            throw new \Exception("BlockCypher wallet names can not be longer than 25 characters");
-        }
-
-        return WalletId::create($id);
+        return AccountId::create(
+            strtoupper(Uuid::uuid4())
+        );
     }
 
     /**
      * @param WalletId $walletId
-     * @return Wallet
+     * @return Account
      */
     public function walletOfId(WalletId $walletId)
     {
-        /** @var Result $result */
-        $result = $this->repository->query()
-            ->where('id', '==', $walletId->getValue())
-            ->execute();
-
-        if ($result === false) {
-            return null;
-        }
-
-        if ($result->total() == 0) {
-            return null;
-        }
-
-        $wallet = $this->documentToWallet($result->first());
-
-        return $wallet;
-    }
-
-    /**
-     * @param $walletDocument
-     * @return Wallet
-     */
-    private function documentToWallet($walletDocument)
-    {
-        //DEBUG
-        //var_dump($walletDocument);
-        //die();
-
-        $wallet = unserialize($walletDocument->data);
-
-        //DEBUG
-        //var_dump($wallet);
-        //die();
-
+        $wallet = $this->encryptedWalletRepository->walletOfId($walletId)->decryptUsing($this->decryptor);
         return $wallet;
     }
 
@@ -113,21 +79,7 @@ class FlywheelWalletRepository implements WalletRepository
      */
     public function walletOfAccountId(AccountId $accountId)
     {
-        /** @var Result $result */
-        $result = $this->repository->query()
-            ->where('accountId', '==', $accountId->getValue())
-            ->execute();
-
-        if ($result === false) {
-            return null;
-        }
-
-        if ($result->total() == 0) {
-            return null;
-        }
-
-        $wallet = $this->documentToWallet($result->first());
-
+        $wallet = $this->encryptedWalletRepository->walletOfAccountId($accountId)->decryptUsing($this->decryptor);
         return $wallet;
     }
 
@@ -136,35 +88,7 @@ class FlywheelWalletRepository implements WalletRepository
      */
     public function insert(Wallet $wallet)
     {
-        $walletDocument = $this->walletToDocument($wallet);
-        $this->repository->store($walletDocument);
-    }
-
-    /**
-     * @param Wallet $wallet
-     * @return Document
-     */
-    private function walletToDocument(Wallet $wallet)
-    {
-        $searchFields = array(
-            'id' => $wallet->getId()->getValue(),
-            'accountId' => $wallet->getAccountId()->getValue(),
-            'coin' => $wallet->getCoin(),
-            'creationTime' => clone $wallet->getCreationTime(),
-        );
-
-        $docArray = $searchFields;
-        $docArray['data'] = serialize($wallet);
-
-        $walletDocument = new Document($docArray);
-        $walletDocument->setId($wallet->getId()->getValue());
-
-        // DEBUG
-        //var_dump($wallet);
-        //var_dump($walletDocument);
-        //die();
-
-        return $walletDocument;
+        $this->encryptedWalletRepository->insert($wallet->encryptUsing($this->encryptor));
     }
 
     /**
@@ -173,8 +97,23 @@ class FlywheelWalletRepository implements WalletRepository
      */
     public function insertAll($wallets)
     {
-        // TODO: Implement insertAll() method.
-        throw new \Exception('Not implemented');
+        $this->encryptedWalletRepository->insertAll($this->encryptWalletArray($wallets));
+    }
+
+    /**
+     * @param Wallet[] $wallets
+     * @return array
+     */
+    private function encryptWalletArray($wallets)
+    {
+        if ($wallets === null)
+            return null;
+
+        $encryptedWallets = array();
+        foreach ($wallets as $wallet) {
+            $encryptedWallets[] = $wallet->encryptUsing($this->encryptor);
+        }
+        return $encryptedWallets;
     }
 
     /**
@@ -183,12 +122,7 @@ class FlywheelWalletRepository implements WalletRepository
      */
     public function update(Wallet $wallet)
     {
-        $walletDocument = $this->walletToDocument($wallet);
-        if (!$this->repository->update($walletDocument)) {
-            // TODO: custom exception
-            throw new \Exception("Error updating wallet repository");
-        };
-
+        $this->encryptedWalletRepository->update($wallet->encryptUsing($this->encryptor));
     }
 
     /**
@@ -197,8 +131,7 @@ class FlywheelWalletRepository implements WalletRepository
      */
     public function updateAll($wallets)
     {
-        // TODO: Implement updateAll() method.
-        throw new \Exception('Not implemented');
+        $this->encryptedWalletRepository->updateAll($this->encryptWalletArray($wallets));
     }
 
     /**
@@ -207,8 +140,7 @@ class FlywheelWalletRepository implements WalletRepository
      */
     public function delete(Wallet $wallet)
     {
-        // TODO: Implement delete() method.
-        throw new \Exception('Not implemented');
+        $this->encryptedWalletRepository->delete($wallet->encryptUsing($this->encryptor));
     }
 
     /**
@@ -217,13 +149,12 @@ class FlywheelWalletRepository implements WalletRepository
      */
     public function deleteAll($wallets)
     {
-        // TODO: Implement deleteAll() method.
-        throw new \Exception('Not implemented');
+        $this->encryptedWalletRepository->deleteAll($this->encryptWalletArray($wallets));
     }
 
     /**
      * @param WalletSpecification $specification
-     * @return Wallet[]
+     * @return Account[]
      * @throws \Exception
      */
     public function query($specification)
@@ -233,28 +164,29 @@ class FlywheelWalletRepository implements WalletRepository
     }
 
     /**
-     * @return Wallet[]
+     * @return Account[]
      */
     public function findAll()
     {
-        /** @var Document[] $result */
-        $result = $this->repository->findAll();
+        $encryptedWallets = $this->encryptedWalletRepository->findAll();
 
-        $wallets = $this->documentArrayToWalletArray($result);
+        $wallets = $this->decryptEncryptedWalletArray($encryptedWallets);
 
         return $wallets;
     }
 
     /**
-     * @param Document[] $result
-     * @return Wallet[]
+     * @param EncryptedWallet[] $encryptedWallets
+     * @return Account[]
      */
-    private function documentArrayToWalletArray($result)
+    private function decryptEncryptedWalletArray($encryptedWallets)
     {
+        if ($encryptedWallets === null)
+            return null;
+
         $wallets = array();
-        foreach ($result as $walletDocument) {
-            $wallet = $this->documentToWallet($walletDocument);
-            $wallets[] = $wallet;
+        foreach ($encryptedWallets as $encryptedWallet) {
+            $wallets[] = $encryptedWallet->decryptUsing($this->decryptor);
         }
         return $wallets;
     }

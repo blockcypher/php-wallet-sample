@@ -71,6 +71,7 @@
                             <th>Balance</th>
                             <th>Creation Time</th>
                             <th>Id</th>
+                            <th>Actions</th>
                         </tr>
                         {% for account in accounts %}
                             <tr class="tx-row" id="{{ account.id.value }}">
@@ -87,9 +88,15 @@
                                     </time>
                                 </td>
                                 <td class="truncate">
-                                    <a href="TODO LINK TO ACCOUNT"
+                                    <a href="{{ path('bc_app_wallet_address.index', {'accountId': account.id.value }) }}"
                                        class="hidden-xs tx-list small">
                                         {{ account.id.value }}
+                                    </a>
+                                </td>
+                                <td class="truncate">
+                                    <a href="{{ path('bc_app_wallet_address.index', {'accountId': account.id.value }) }}"
+                                       class="hidden-xs tx-list small">
+                                        List addresses
                                     </a>
                                 </td>
                             </tr>

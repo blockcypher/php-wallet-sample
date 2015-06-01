@@ -1,3 +1,12 @@
+parameters:
+    bc_app_common_infrastructure_app_common.clock.class: BlockCypher\AppCommon\App\Service\Internal\UTCClock
+    bc_app_common_infrastructure_app_common.encryptor.class: BlockCypher\AppCommon\App\Service\Internal\AES256Encryptor
+
 services:
-    block_cypher_app_common_infrastructure_app_common.clock:
-        class: BlockCypher\AppCommon\App\Service\Internal\UTCClock
+    bc_app_common_infrastructure_app_common.clock:
+        class: %bc_app_common_infrastructure_app_common.clock.class%
+
+    bc_app_common_infrastructure_app_common.encryptor:
+        class: %bc_app_common_infrastructure_app_common.encryptor.class%
+        arguments:
+          - %secret%

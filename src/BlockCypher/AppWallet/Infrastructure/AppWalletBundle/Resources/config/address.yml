@@ -14,10 +14,6 @@ parameters:
     
     bc_app_wallet_address.address_service.class: BlockCypher\AppWallet\App\Service\Internal\AddressServiceImpl
 
-    # repositories
-
-    bc_app_wallet_address.address_repository.class: BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\FlywheelAddressRepository
-
     # command handlers
 
     bc_app_wallet_address.create_address_command_handler.class: BlockCypher\AppWallet\App\Command\CreateAddressCommandHandler
@@ -67,20 +63,13 @@ services:
         arguments:
           - @bc_app_wallet_wallet.wallet_repository
 
-    # repositories
-
-    bc_app_wallet_address.address_repository:
-        class: %bc_app_wallet_address.address_repository.class%
-        arguments:
-          - @block_cypher_app_common_infrastructure_app_common.clock
-
     # command handlers
 
     bc_app_wallet_address.create_address_command_handler:
         class: %bc_app_wallet_address.create_address_command_handler.class%
         arguments:
             - @bc_app_wallet_wallet.wallet_repository
-            - @block_cypher_app_common_infrastructure_app_common.clock
+            - @bc_app_common_infrastructure_app_common.clock
         tags:
             - { name: command_handler, handles: bc_app_wallet_address_create_address }
 

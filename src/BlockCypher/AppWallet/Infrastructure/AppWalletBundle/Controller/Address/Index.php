@@ -35,10 +35,10 @@ class Index extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $accountId = $request->get('account_id');
+        $accountId = $request->get('accountId');
         if ($accountId === null) {
             // If not account_id specified then use primary/default account
-            $primaryAccount = "1A311E0C-B6A6-4679-9F7B-21FDB265E135"; // TODO: get from
+            $primaryAccount = "1A311E0C-B6A6-4679-9F7B-21FDB265E135"; // TODO: get from user profile or account field
             $accountId = $primaryAccount;
         }
 
@@ -64,8 +64,9 @@ class Index extends AppWalletController
                 //
                 'coin_symbol' => 'btc',
                 'current_page' => $currentPage,
-                'num_all_addresses' => count($addresses),
                 'max_pages' => $maxPages,
+                'account_id' => $accountId,
+                'num_all_addresses' => count($addresses),
                 'addresses' => $addresses
             )
         );

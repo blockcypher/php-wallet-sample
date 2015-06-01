@@ -2,9 +2,9 @@
   "id": "1A311E0C-B6A6-4679-9F7B-21FDB265E135",
   "type": "btc",
   "creationTime": {
-    "date": "2015-05-26 10:24:00",
+    "date": "2015-06-01 10:24:00",
     "timezone_type": 3,
-    "timezone": "Europe\/London"
+    "timezone": "Europe\/Berlin"
   },
-  "data": "O:44:\"BlockCypher\\AppWallet\\Domain\\Account\\Account\":4:{s:48:\"\u0000BlockCypher\\AppWallet\\Domain\\Account\\Account\u0000id\";O:46:\"BlockCypher\\AppWallet\\Domain\\Account\\AccountId\":1:{s:53:\"\u0000BlockCypher\\AppWallet\\Domain\\Account\\AccountId\u0000value\";s:36:\"1A311E0C-B6A6-4679-9F7B-21FDB265E135\";}s:50:\"\u0000BlockCypher\\AppWallet\\Domain\\Account\\Account\u0000type\";s:3:\"btc\";s:58:\"\u0000BlockCypher\\AppWallet\\Domain\\Account\\Account\u0000creationTime\";O:8:\"DateTime\":3:{s:4:\"date\";s:19:\"2015-05-26 10:24:00\";s:13:\"timezone_type\";i:3;s:8:\"timezone\";s:13:\"Europe\/London\";}s:49:\"\u0000BlockCypher\\AppWallet\\Domain\\Account\\Account\u0000tag\";s:7:\"Default\";}"
+  "data": "O:53:\"BlockCypher\\AppWallet\\Domain\\Account\\EncryptedAccount\":4:{s:57:\"\u0000BlockCypher\\AppWallet\\Domain\\Account\\EncryptedAccount\u0000id\";O:46:\"BlockCypher\\AppWallet\\Domain\\Account\\AccountId\":1:{s:53:\"\u0000BlockCypher\\AppWallet\\Domain\\Account\\AccountId\u0000value\";s:36:\"1A311E0C-B6A6-4679-9F7B-21FDB265E135\";}s:59:\"\u0000BlockCypher\\AppWallet\\Domain\\Account\\EncryptedAccount\u0000type\";s:3:\"btc\";s:67:\"\u0000BlockCypher\\AppWallet\\Domain\\Account\\EncryptedAccount\u0000creationTime\";O:8:\"DateTime\":3:{s:4:\"date\";s:19:\"2015-06-01 10:24:00\";s:13:\"timezone_type\";i:3;s:8:\"timezone\";s:13:\"Europe\/Berlin\";}s:58:\"\u0000BlockCypher\\AppWallet\\Domain\\Account\\EncryptedAccount\u0000tag\";s:7:\"Default\";}"
 }

@@ -29,14 +29,7 @@ class AddressServiceFacadeImpl implements AddressServiceFacade
     public function listAccountAddresses($accountId)
     {
         $addresses = $this->addressService->listAccountAddresses(new AccountId($accountId));
-
-//        $addressDTOs = array();
-//        foreach ($addresses as $address) {
-//            $addressDTOs[] = $address->toArray();
-//        }
-
         $addressDTOs = Address::ObjectArrayToArray($addresses);
-
         return $addressDTOs;
     }
 }

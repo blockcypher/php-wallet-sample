@@ -4,6 +4,7 @@ namespace BlockCypher\AppWallet\Domain\Wallet;
 
 use BlockCypher\Api\Wallet as ExternalWallet;
 use BlockCypher\AppCommon\App\Service\Clock;
+use BlockCypher\AppCommon\App\Service\Encryptor;
 use BlockCypher\AppCommon\App\Service\WalletService;
 use BlockCypher\AppCommon\Domain\Model;
 use BlockCypher\AppWallet\Domain\Account\AccountId;
@@ -48,6 +49,11 @@ class Wallet extends Model
     private $walletService;
 
     /**
+     * @var string WalletService token
+     */
+    private $token;
+
+    /**
      * Constructor
      *
      * @param WalletId $walletId
@@ -72,6 +78,15 @@ class Wallet extends Model
         $this->creationTime = clone $creationTime;
         $this->addresses = $addresses;
         $this->walletService = $walletService;
+
+        // TODO: add to constructor. User could add token when new Wallet is created
+        // or it can be retrieved from user profile. Second option makes more sense as
+        // a user can have more than one wallet with the same token.
+        /** @noinspection SpellCheckingInspection */
+        $BLOCKCYPHER_PUBLIC_KEY = 'c0afcccdde5081d6429de37d16166ead';
+        $this->token = $BLOCKCYPHER_PUBLIC_KEY;
+
+        //$this->syncAddressesFromWalletService();
     }
 
     /**
@@ -114,6 +129,37 @@ class Wallet extends Model
     }
 
     /**
+     * @param Encryptor $encryptor
+     * @return EncryptedWallet
+     */
+    public function encryptUsing(Encryptor $encryptor)
+    {
+        $encryptedWallet = new EncryptedWallet(
+            $this->id,
+            $this->accountId,
+            $this->coin,
+            $this->creationTime,
+            $this->encryptAddressesUsing($encryptor),
+            $this->walletService
+        );
+
+        return $encryptedWallet;
+    }
+
+    /**
+     * @param Encryptor $encryptor
+     * @return array
+     */
+    private function encryptAddressesUsing(Encryptor $encryptor)
+    {
+        $encryptedAddresses = array();
+        foreach ($this->addresses as $address) {
+            $encryptedAddresses[] = $address->encryptUsing($encryptor);
+        }
+        return $encryptedAddresses;
+    }
+
+    /**
      * @param $tag
      * @param $callbackUrl
      * @param Clock $clock
@@ -124,29 +170,14 @@ class Wallet extends Model
         $callbackUrl,
         Clock $clock)
     {
-        // TODO: default token in WalletService constructor
-        // TODO: get coin symbol from wallet currency
-        $BLOCKCYPHER_PUBLIC_KEY = 'c0afcccdde5081d6429de37d16166ead';
-        $token = $BLOCKCYPHER_PUBLIC_KEY;
+        $walletName = $this->getWalletName();
 
-        $walletName = $this->id->getValue();
-
-        $externalWallet = $this->walletService->getWallet($walletName, $this->coin, $token);
-
-        if ($externalWallet === null) {
-            // Wallet has not been created in BlockCypher
-            // TODO: it should be created when Wallet instance is created.
-            // It should have the same life cycle than Wallet
-            $externalWallet = new ExternalWallet();
-            $externalWallet->setName($this->id->getValue());
-            $externalWallet->setAddresses(Address::ObjectArrayToAddressList($this->getAddresses()));
-            $this->walletService->createWallet($externalWallet, $this->coin, $token);
-        }
+        $this->createExternalWalletIfNotExist($walletName, $this->token);
 
         $walletGenerateAddressResponse = $this->walletService->generateAddress(
             $walletName,
             $this->coin,
-            $token
+            $this->token
         );
 
         $address = new Address(
@@ -166,6 +197,34 @@ class Wallet extends Model
     }
 
     /**
+     * @return string
+     */
+    private function getWalletName()
+    {
+        $walletName = $this->id->getValue();
+        return $walletName;
+    }
+
+    /**
+     * @param $walletName
+     * @param $token
+     */
+    private function createExternalWalletIfNotExist($walletName, $token)
+    {
+        $externalWallet = $this->walletService->getWallet($walletName, $this->coin, $token);
+
+        if ($externalWallet === null) {
+            // Wallet has not been created in BlockCypher
+            // TODO: it should be created when Wallet instance is created.
+            // It should have the same life cycle than Wallet
+            $externalWallet = new ExternalWallet();
+            $externalWallet->setName($this->id->getValue());
+            $externalWallet->setAddresses(Address::ObjectArrayToAddressList($this->getAddresses()));
+            $this->walletService->createWallet($externalWallet, $this->coin, $token);
+        }
+    }
+
+    /**
      * @return Address[]
      */
     public function getAddresses()
@@ -176,41 +235,103 @@ class Wallet extends Model
     /**
      * Append Address to the list.
      *
-     * @param string $address
-     * @return $this
+     * @param Address $address
      */
-    public function addAddress($address)
+    public function addAddress(Address $address)
     {
-        if (!$this->getAddresses()) {
-            return $this->setAddresses(array($address));
-        } else {
-            return $this->setAddresses(
-                array_merge($this->getAddresses(), array($address))
-            );
+        if (!$this->containsAddress($address)) {
+            $this->addresses[$address->getAddress()] = $address;
         }
     }
 
     /**
-     * @param \string[] $addresses
-     * @return $this
+     * @param Address|string $address
+     * @return bool
      */
-    private function setAddresses($addresses)
+    private function containsAddress($address)
     {
-        $this->addresses = $addresses;
-        return $this;
+        if (is_string($address)) {
+            return $this->containsAddressString($address);
+        } else {
+            return $this->containsAddressObject($address);
+        }
     }
 
     /**
-     * Remove Address from the list.
-     *
-     * @param string $address
+     * @param Address[] $addresses
      * @return $this
      */
-    public function removeAddress($address)
+//    private function setAddresses($addresses)
+//    {
+//        $this->addresses = $addresses;
+//        return $this;
+//    }
+
+    /**
+     * @param string $address
+     * @return bool
+     */
+    private function containsAddressString($address)
     {
-        return $this->setAddresses(
-            array_diff($this->getAddresses(), array($address))
+        foreach ($this->addresses as $walletAddress) {
+            if ($walletAddress->getAddress() == $address) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param Address $address
+     * @return bool
+     */
+    private function containsAddressObject(Address $address)
+    {
+        foreach ($this->addresses as $walletAddress) {
+            if ($walletAddress->equals($address)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get addresses from external wallet and add them to the current wallet.
+     * @throws \Exception
+     */
+    public function syncAddressesFromWalletService()
+    {
+        $externalWallet = $this->walletService->getWallet(
+            $this->getWalletName(),
+            $this->coin,
+            $this->token
         );
+
+        if ($externalWallet === null) {
+            // TODO: custom domain exception
+            throw new \Exception(sprintf("Wallet not found in external service"));
+        }
+
+        $cont = 0;
+        foreach ($externalWallet->getAddresses() as $externalAddress) {
+            if (!$this->containsAddress($externalAddress)) {
+                $tag = "Imported Address from API #$cont";
+                $address = new Address(
+                    $externalAddress,
+                    $this->id,
+                    $this->creationTime,
+                    $tag,
+                    '',
+                    $externalAddress,
+                    '',
+                    ''
+                );
+
+                $this->addAddress($address);
+            }
+
+            $cont++;
+        }
     }
 
     /**
@@ -247,6 +368,18 @@ class Wallet extends Model
     public function getCreationTime()
     {
         return $this->creationTime;
+    }
+
+    /**
+     * Remove Address from the list.
+     *
+     * @param Address $address
+     */
+    public function removeAddress(Address $address)
+    {
+        if ($this->containsAddress($address)) {
+            unset($this->addresses[$address->getAddress()]);
+        }
     }
 
     /**

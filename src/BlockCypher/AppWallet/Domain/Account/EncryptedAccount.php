@@ -2,17 +2,17 @@
 
 namespace BlockCypher\AppWallet\Domain\Account;
 
-use BlockCypher\AppCommon\App\Service\Encryptor;
+use BlockCypher\AppCommon\App\Service\Decryptor;
 use BlockCypher\AppCommon\Domain\BigMoney;
-use BlockCypher\AppCommon\Domain\Encryptable;
+use BlockCypher\AppCommon\Domain\Decryptable;
 use BlockCypher\AppCommon\Domain\Model;
 use Money\Currency;
 
 /**
- * Class Account
+ * Class EncryptedAccount
  * @package BlockCypher\AppWallet\Domain\Account
  */
-class Account extends Model implements Encryptable
+class EncryptedAccount extends Model implements Decryptable
 {
     /**
      * @var AccountId
@@ -88,19 +88,19 @@ class Account extends Model implements Encryptable
     }
 
     /**
-     * @param Encryptor $encryptor
-     * @return EncryptedAccount
+     * @param Decryptor $decryptor
+     * @return Account
      */
-    public function encryptUsing(Encryptor $encryptor)
+    public function decryptUsing(Decryptor $decryptor)
     {
-        $encryptedAccount = new EncryptedAccount(
+        $account = new Account(
             $this->id,
             $this->type,
             $this->creationTime,
             $this->tag
         );
 
-        return $encryptedAccount;
+        return $account;
     }
 
     /**

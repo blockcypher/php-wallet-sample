@@ -2,8 +2,8 @@
 
 namespace BlockCypher\AppWallet\Domain\Address;
 
-use BlockCypher\AppCommon\App\Service\Encryptor;
-use BlockCypher\AppCommon\Domain\Encryptable;
+use BlockCypher\AppCommon\App\Service\Decryptor;
+use BlockCypher\AppCommon\Domain\Decryptable;
 use BlockCypher\AppCommon\Domain\Model;
 use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 
@@ -11,7 +11,7 @@ use BlockCypher\AppWallet\Domain\Wallet\WalletId;
  * Class Address
  * @package BlockCypher\AppWallet\Domain\Address
  */
-class Address extends Model implements Encryptable
+class EncryptedAddress extends Model implements Decryptable
 {
     /**
      * @var string
@@ -101,21 +101,6 @@ class Address extends Model implements Encryptable
         return $result;
     }
 
-    public function toArray()
-    {
-        $entityAsArray = array();
-        $entityAsArray['address'] = $this->address;
-        $entityAsArray['walletId'] = $this->walletId->toArray();
-        $entityAsArray['creationTime'] = clone $this->creationTime;
-        $entityAsArray['tag'] = $this->tag;
-        $entityAsArray['private'] = $this->private;
-        $entityAsArray['public'] = $this->public;
-        $entityAsArray['wif'] = $this->wif;
-        $entityAsArray['callbackUrl'] = $this->callbackUrl;
-
-        return $entityAsArray;
-    }
-
     /**
      * Return an array with all addresses (only bitcoin address)
      * @param Address[] $addresses
@@ -134,14 +119,6 @@ class Address extends Model implements Encryptable
         }
 
         return $addressesList;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAddress()
-    {
-        return $this->address;
     }
 
     /**
@@ -177,24 +154,47 @@ class Address extends Model implements Encryptable
         return $account;
     }
 
-    /**
-     * @param Encryptor $encryptor
-     * @return EncryptedAddress
-     */
-    public function encryptUsing(Encryptor $encryptor)
+    public function toArray()
     {
-        $encryptedAccount = new EncryptedAddress(
+        $entityAsArray = array();
+        $entityAsArray['address'] = $this->address;
+        $entityAsArray['walletId'] = $this->walletId->toArray();
+        $entityAsArray['creationTime'] = clone $this->creationTime;
+        $entityAsArray['tag'] = $this->tag;
+        $entityAsArray['private'] = $this->private;
+        $entityAsArray['public'] = $this->public;
+        $entityAsArray['wif'] = $this->wif;
+        $entityAsArray['callbackUrl'] = $this->callbackUrl;
+
+        return $entityAsArray;
+    }
+
+    /**
+     * @param Decryptor $decryptor
+     * @return Address
+     */
+    public function decryptUsing(Decryptor $decryptor)
+    {
+        $address = new Address(
             $this->address,
             $this->walletId,
             $this->creationTime,
             $this->tag,
-            $encryptor->encrypt($this->private),
+            $decryptor->decrypt($this->private),
             $this->public,
-            $encryptor->encrypt($this->wif),
+            $decryptor->decrypt($this->wif),
             $this->callbackUrl
         );
 
-        return $encryptedAccount;
+        return $address;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
     }
 
     /**
@@ -253,17 +253,5 @@ class Address extends Model implements Encryptable
     public function getCallbackUrl()
     {
         return $this->callbackUrl;
-    }
-
-    /**
-     * @param Address $address
-     * @return bool
-     */
-    public function equals(Address $address)
-    {
-        if ($this->address === $address->getAddress())
-            return true;
-        else
-            return false;
     }
 }

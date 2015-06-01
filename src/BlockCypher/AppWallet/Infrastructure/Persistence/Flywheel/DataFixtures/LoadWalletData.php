@@ -8,8 +8,8 @@ use BlockCypher\AppWallet\Domain\Account\AccountId;
 use BlockCypher\AppWallet\Domain\Wallet\Wallet;
 use BlockCypher\AppWallet\Domain\Wallet\WalletCoin;
 use BlockCypher\AppWallet\Domain\Wallet\WalletId;
+use BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\FlywheelFixtureInterface;
 use BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\FlywheelWalletRepository;
-use FlywheelFixtureInterface;
 use JamesMoss\Flywheel\Repository;
 
 class LoadWalletData implements FlywheelFixtureInterface
@@ -45,7 +45,7 @@ class LoadWalletData implements FlywheelFixtureInterface
      * Create a sample wallet
      * @param FlywheelWalletRepository $repository
      */
-    public function loadFixtures(FlywheelWalletRepository $repository)
+    public function loadFixtures($repository)
     {
         $addresses = array();
         $walletService = null;

@@ -2,40 +2,48 @@
 
 namespace BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel;
 
-use BlockCypher\AppCommon\App\Service\Clock;
+use BlockCypher\AppCommon\App\Service\Decryptor;
+use BlockCypher\AppCommon\App\Service\Encryptor;
 use BlockCypher\AppWallet\Domain\Account\Account;
 use BlockCypher\AppWallet\Domain\Account\AccountId;
 use BlockCypher\AppWallet\Domain\Account\AccountRepository;
 use BlockCypher\AppWallet\Domain\Account\AccountSpecification;
-use JamesMoss\Flywheel\Config;
-use JamesMoss\Flywheel\Document;
-use JamesMoss\Flywheel\Repository;
-use JamesMoss\Flywheel\Result;
+use BlockCypher\AppWallet\Domain\Account\EncryptedAccount;
+use BlockCypher\AppWallet\Domain\Account\EncryptedAccountRepository;
 use Rhumsaa\Uuid\Uuid;
 
 class FlywheelAccountRepository implements AccountRepository
 {
     /**
-     * @var Clock
+     * @var EncryptedAccountRepository
      */
-    private $clock;
+    private $encryptedAccountRepository;
 
     /**
-     * @var Repository
+     * @var Encryptor
      */
-    private $repository;
+    private $encryptor;
+
+    /**
+     * @var Decryptor
+     */
+    private $decryptor;
 
     /**
      * Constructor
-     * @param Clock $clockService
+     * @param EncryptedAccountRepository $encryptedAccountRepository
+     * @param Encryptor $encryptor
+     * @param Decryptor $decryptor
      */
-    public function __construct(Clock $clockService)
+    public function __construct(
+        EncryptedAccountRepository $encryptedAccountRepository,
+        Encryptor $encryptor,
+        Decryptor $decryptor
+    )
     {
-        $this->clock = $clockService;
-        // TODO: move to parameters in config.yml and pass to constructor
-        // I think app/data is a good location
-        $config = new Config(__DIR__ . DIRECTORY_SEPARATOR . 'data');
-        $this->repository = new Repository('accounts', $config);
+        $this->encryptedAccountRepository = $encryptedAccountRepository;
+        $this->encryptor = $encryptor;
+        $this->decryptor = $decryptor;
     }
 
     /**
@@ -55,40 +63,7 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function accountOfId(AccountId $accountId)
     {
-        /** @var Result $result */
-        $result = $this->repository->query()
-            ->where('id', '==', $accountId->getValue())
-            ->execute();
-
-        if ($result === false) {
-            return null;
-        }
-
-        if ($result->total() == 0) {
-            return null;
-        }
-
-        $account = $this->documentToAccount($result->first());
-
-        return $account;
-    }
-
-    /**
-     * @param $accountDocument
-     * @return Account
-     */
-    private function documentToAccount($accountDocument)
-    {
-        //DEBUG
-        //var_dump($accountDocument);
-        //die();
-
-        $account = unserialize($accountDocument->data);
-
-        //DEBUG
-        //var_dump($account);
-        //die();
-
+        $account = $this->encryptedAccountRepository->accountOfId($accountId)->decryptUsing($this->decryptor);
         return $account;
     }
 
@@ -97,34 +72,7 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function insert(Account $account)
     {
-        $accountDocument = $this->accountToDocument($account);
-        $this->repository->store($accountDocument);
-    }
-
-    /**
-     * @param Account $account
-     * @return Document
-     */
-    private function accountToDocument(Account $account)
-    {
-        $searchFields = array(
-            'id' => $account->getId()->getValue(),
-            'type' => $account->getType(),
-            'creationTime' => $account->getCreationTime(),
-        );
-
-        $docArray = $searchFields;
-        $docArray['data'] = serialize($account);
-
-        $accountDocument = new Document($docArray);
-        $accountDocument->setId($account->getId()->getValue());
-
-        // DEBUG
-        //var_dump($account);
-        //var_dump($accountDocument);
-        //die();
-
-        return $accountDocument;
+        $this->encryptedAccountRepository->insert($account->encryptUsing($this->encryptor));
     }
 
     /**
@@ -133,8 +81,23 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function insertAll($accounts)
     {
-        // TODO: Implement insertAll() method.
-        throw new \Exception('Not implemented');
+        $this->encryptedAccountRepository->insertAll($this->encryptAccountArray($accounts));
+    }
+
+    /**
+     * @param Account[] $accounts
+     * @return array
+     */
+    private function encryptAccountArray($accounts)
+    {
+        if ($accounts === null)
+            return null;
+
+        $encryptedAccounts = array();
+        foreach ($accounts as $account) {
+            $encryptedAccounts[] = $account->encryptUsing($this->encryptor);
+        }
+        return $encryptedAccounts;
     }
 
     /**
@@ -143,8 +106,7 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function update(Account $account)
     {
-        // TODO: Implement update() method.
-        throw new \Exception('Not implemented');
+        $this->encryptedAccountRepository->update($account->encryptUsing($this->encryptor));
     }
 
     /**
@@ -153,8 +115,7 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function updateAll($accounts)
     {
-        // TODO: Implement updateAll() method.
-        throw new \Exception('Not implemented');
+        $this->encryptedAccountRepository->updateAll($this->encryptAccountArray($accounts));
     }
 
     /**
@@ -163,8 +124,7 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function delete(Account $account)
     {
-        // TODO: Implement delete() method.
-        throw new \Exception('Not implemented');
+        $this->encryptedAccountRepository->delete($account->encryptUsing($this->encryptor));
     }
 
     /**
@@ -173,8 +133,7 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function deleteAll($accounts)
     {
-        // TODO: Implement deleteAll() method.
-        throw new \Exception('Not implemented');
+        $this->encryptedAccountRepository->deleteAll($this->encryptAccountArray($accounts));
     }
 
     /**
@@ -193,33 +152,25 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function findAll()
     {
-        // DEBUG: insert a sample value
-        /*$account = new Account(
-            $this->nextIdentity(),
-            AccountType::BTC,
-            $this->clock->now(),
-            'Default'
-        );
-        $this->insert($account);*/
+        $encryptedAccounts = $this->encryptedAccountRepository->findAll();
 
-        /** @var Document[] $result */
-        $result = $this->repository->findAll();
-
-        $accounts = $this->documentArrayToAccountArray($result);
+        $accounts = $this->decryptEncryptedAccountArray($encryptedAccounts);
 
         return $accounts;
     }
 
     /**
-     * @param Document[] $result
+     * @param EncryptedAccount[] $encryptedAccounts
      * @return Account[]
      */
-    private function documentArrayToAccountArray($result)
+    private function decryptEncryptedAccountArray($encryptedAccounts)
     {
+        if ($encryptedAccounts === null)
+            return null;
+
         $accounts = array();
-        foreach ($result as $accountDocument) {
-            $account = $this->documentToAccount($accountDocument);
-            $accounts[] = $account;
+        foreach ($encryptedAccounts as $encryptedAccount) {
+            $accounts[] = $encryptedAccount->decryptUsing($this->decryptor);
         }
         return $accounts;
     }

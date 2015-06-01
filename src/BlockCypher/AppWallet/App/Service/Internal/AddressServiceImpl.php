@@ -38,6 +38,11 @@ class AddressServiceImpl implements AddressService
         // In case we want load wallet from WalletRepository inside an Account method we could use this:
         // http://verraes.net/2011/05/lazy-loading-with-closures/
         $wallet = $this->walletRepository->walletOfAccountId($accountId);
+
+        $wallet->syncAddressesFromWalletService();
+
+        $this->walletRepository->update($wallet);
+
         return $wallet->getAddresses();
     }
 }
