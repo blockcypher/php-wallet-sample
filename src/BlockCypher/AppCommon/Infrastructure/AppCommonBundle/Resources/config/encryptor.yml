@@ -1,0 +1,8 @@
+parameters:
+    bc_app_common_infrastructure_app_common.encryptor.class: BlockCypher\AppCommon\App\Service\Internal\AES256Encryptor
+
+services:
+    bc_app_common_infrastructure_app_common.encryptor:
+        class: %bc_app_common_infrastructure_app_common.encryptor.class%
+        arguments:
+          - %secret%

@@ -3,3 +3,6 @@ bc_app_wallet_account:
 
 bc_app_wallet_address:
     resource: "@BlockCypherAppWalletInfrastructureAppWalletBundle/Resources/config/routing/address.yml"
+
+bc_app_wallet_homepage:
+    resource: "@BlockCypherAppWalletInfrastructureAppWalletBundle/Resources/config/routing/homepage.yml"

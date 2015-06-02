@@ -1,0 +1,3 @@
+bc_app_wallet_homepage.homepage:
+    pattern:  /
+    defaults: { _controller: "bc_app_wallet_homepage.homepage_controller" }

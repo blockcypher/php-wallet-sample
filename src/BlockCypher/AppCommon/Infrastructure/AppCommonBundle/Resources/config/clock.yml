@@ -1,0 +1,6 @@
+parameters:
+    bc_app_common_infrastructure_app_common.clock.class: BlockCypher\AppCommon\App\Service\Internal\UTCClock
+
+services:
+    bc_app_common_infrastructure_app_common.clock:
+        class: %bc_app_common_infrastructure_app_common.clock.class%

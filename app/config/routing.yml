@@ -1,8 +1,16 @@
 # homepage
 
+# redirect homepage to wallet app homepage
+root:
+    path: /
+    defaults:
+        _controller: FrameworkBundle:Redirect:redirect
+        route: bc_app_wallet_homepage.homepage
+        permanent: true
+
 bc_homepage:
     pattern:  /
-    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+    defaults: { _controller: "bc_app_common_homepage.homepage_controller" }
 
 # TODO
 bc_dashboard:

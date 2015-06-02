@@ -1,0 +1,11 @@
+parameters:
+
+    bc_app_wallet_homepage.homepage_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Homepage\Home
+
+services:
+
+    bc_app_wallet_homepage.homepage_controller:
+        class: %bc_app_wallet_homepage.homepage_controller.class%
+        arguments:
+          - @templating
+          - @translator
