@@ -12,7 +12,8 @@
                     {# TODO: something unique for each of these types? #}
                     from<br>
                     <i class="fa fa-qrcode"></i>
-                    <a href="{% url 'address_overview' coin_symbol input.addresses.0 %}">{{ input.addresses.0 }}</a>
+                    {# TODO: link to address overview #}
+                    <a href="{# {% url 'address_overview' coin_symbol input.addresses.0 %} #}">{{ input.addresses.0 }}</a>
                     {% elif input.script_type == 'null-data' %}
                     {# TODO: add explanation #}
                     <a href="https://bitcoin.org/en/developer-guide#term-null-data">Null Data Transaction</a>
