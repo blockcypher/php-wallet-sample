@@ -31,3 +31,4 @@ deploy:
   app: php-wallet-sample
   on:
     repo: blockcypher/php-wallet-sample
+    php: 5.6
