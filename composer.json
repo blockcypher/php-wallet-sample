@@ -61,6 +61,10 @@
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles",
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+    ],
+    "compile": [
+      "rm web/app_dev.php",
+      "app/console assetic:dump"
     ]
   },
   "config": {
