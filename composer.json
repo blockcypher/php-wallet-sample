@@ -64,7 +64,7 @@
     ],
     "compile": [
       "rm web/app_dev.php",
-      "app/console assetic:dump"
+      "php app/console assetic:dump --no-debug"
     ]
   },
   "config": {
