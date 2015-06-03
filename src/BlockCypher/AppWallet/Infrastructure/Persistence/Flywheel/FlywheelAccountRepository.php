@@ -10,6 +10,7 @@ use BlockCypher\AppWallet\Domain\Account\AccountRepository;
 use BlockCypher\AppWallet\Domain\Account\AccountSpecification;
 use BlockCypher\AppWallet\Domain\Account\EncryptedAccount;
 use BlockCypher\AppWallet\Domain\Account\EncryptedAccountRepository;
+use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 use Rhumsaa\Uuid\Uuid;
 
 class FlywheelAccountRepository implements AccountRepository
@@ -18,6 +19,11 @@ class FlywheelAccountRepository implements AccountRepository
      * @var EncryptedAccountRepository
      */
     private $encryptedAccountRepository;
+
+    /**
+     * @var WalletRepository
+     */
+    private $walletRepository;
 
     /**
      * @var Encryptor
@@ -32,16 +38,19 @@ class FlywheelAccountRepository implements AccountRepository
     /**
      * Constructor
      * @param EncryptedAccountRepository $encryptedAccountRepository
+     * @param WalletRepository $walletRepository
      * @param Encryptor $encryptor
      * @param Decryptor $decryptor
      */
     public function __construct(
         EncryptedAccountRepository $encryptedAccountRepository,
+        WalletRepository $walletRepository,
         Encryptor $encryptor,
         Decryptor $decryptor
     )
     {
         $this->encryptedAccountRepository = $encryptedAccountRepository;
+        $this->walletRepository = $walletRepository;
         $this->encryptor = $encryptor;
         $this->decryptor = $decryptor;
     }
@@ -72,7 +81,16 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function insert(Account $account)
     {
-        $this->encryptedAccountRepository->insert($account->encryptUsing($this->encryptor));
+        $this->encryptedAccountRepository->insert($this->encryptAccount($account));
+    }
+
+    /**
+     * @param Account $account
+     * @return EncryptedAccount
+     */
+    private function encryptAccount(Account $account)
+    {
+        return $account->encryptUsing($this->encryptor);
     }
 
     /**
@@ -95,7 +113,7 @@ class FlywheelAccountRepository implements AccountRepository
 
         $encryptedAccounts = array();
         foreach ($accounts as $account) {
-            $encryptedAccounts[] = $account->encryptUsing($this->encryptor);
+            $encryptedAccounts[] = $this->encryptAccount($account);
         }
         return $encryptedAccounts;
     }
@@ -106,7 +124,7 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function update(Account $account)
     {
-        $this->encryptedAccountRepository->update($account->encryptUsing($this->encryptor));
+        $this->encryptedAccountRepository->update($this->encryptAccount($account));
     }
 
     /**
@@ -124,7 +142,7 @@ class FlywheelAccountRepository implements AccountRepository
      */
     public function delete(Account $account)
     {
-        $this->encryptedAccountRepository->delete($account->encryptUsing($this->encryptor));
+        $this->encryptedAccountRepository->delete($this->encryptAccount($account));
     }
 
     /**
@@ -170,8 +188,40 @@ class FlywheelAccountRepository implements AccountRepository
 
         $accounts = array();
         foreach ($encryptedAccounts as $encryptedAccount) {
-            $accounts[] = $encryptedAccount->decryptUsing($this->decryptor);
+            $accounts[] = $this->decryptAccount($encryptedAccount);
         }
         return $accounts;
+    }
+
+    /**
+     * @param EncryptedAccount $encryptedAccount
+     * @return Account
+     */
+    private function decryptAccount(EncryptedAccount $encryptedAccount)
+    {
+        // DEBUG
+        //var_dump($encryptedAccount);
+        //die();
+
+        $account = $encryptedAccount->decryptUsing($this->decryptor);
+
+        $accountId = $account->id();
+        $walletRepository = $this->walletRepository;
+
+        // DEBUG
+        //var_dump($accountId);
+        //die();
+
+        // Lazy Loading with Closures
+        // http://verraes.net/2011/05/lazy-loading-with-closures/
+        /** @noinspection PhpUnusedParameterInspection */
+        $walletReference = function ($account) use ($accountId, $walletRepository) {
+            /** @var WalletRepository $walletRepository */
+            $wallet = $walletRepository->walletOfAccountId($accountId);
+            return $wallet;
+        };
+        $account->setWalletReference($walletReference);
+
+        return $account;
     }
 }

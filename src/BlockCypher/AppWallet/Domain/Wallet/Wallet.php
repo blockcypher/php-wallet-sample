@@ -6,15 +6,20 @@ use BlockCypher\Api\Wallet as ExternalWallet;
 use BlockCypher\AppCommon\App\Service\Clock;
 use BlockCypher\AppCommon\App\Service\Encryptor;
 use BlockCypher\AppCommon\App\Service\WalletService;
+use BlockCypher\AppCommon\Domain\ArrayConversion;
+use BlockCypher\AppCommon\Domain\BigMoney;
+use BlockCypher\AppCommon\Domain\Encryptable;
 use BlockCypher\AppCommon\Domain\Model;
 use BlockCypher\AppWallet\Domain\Account\AccountId;
 use BlockCypher\AppWallet\Domain\Address\Address;
+use Money\Currency;
 
 /**
  * Class Wallet
+ * Cryptocurrency wallet.
  * @package BlockCypher\AppWallet\Domain\Wallet
  */
-class Wallet extends Model
+class Wallet extends Model implements WalletInterface, ArrayConversion, Encryptable
 {
     /**
      * @var WalletId
@@ -54,6 +59,12 @@ class Wallet extends Model
     private $token;
 
     /**
+     * @var string
+     */
+    private $walletName;
+
+
+    /**
      * Constructor
      *
      * @param WalletId $walletId
@@ -85,16 +96,16 @@ class Wallet extends Model
         /** @noinspection SpellCheckingInspection */
         $BLOCKCYPHER_PUBLIC_KEY = 'c0afcccdde5081d6429de37d16166ead';
         $this->token = $BLOCKCYPHER_PUBLIC_KEY;
+        $this->walletName = $this->id->getValue();
 
         //$this->syncAddressesFromWalletService();
     }
 
     /**
      * @param array $entityAsArray
-     * @param $walletService
      * @return Wallet
      */
-    public static function fromArray($entityAsArray, $walletService)
+    public static function fromArray($entityAsArray)
     {
         if (is_array($entityAsArray['addresses'])) {
             $addressesArr = $entityAsArray['addresses'];
@@ -108,7 +119,7 @@ class Wallet extends Model
             $entityAsArray['coin'],
             $entityAsArray['creationTime'],
             Address::ArrayToObjectArray($addressesArr),
-            $walletService
+            $entityAsArray['walletService']
         );
 
         return $wallet;
@@ -124,6 +135,7 @@ class Wallet extends Model
         $entityAsArray['accountId'] = $this->accountId->toArray();
         $entityAsArray['creationTime'] = clone $this->creationTime;
         $entityAsArray['addresses'] = Address::ObjectArrayToArray($this->addresses);
+        $entityAsArray['walletService'] = $this->walletService;
 
         return $entityAsArray;
     }
@@ -170,12 +182,10 @@ class Wallet extends Model
         $callbackUrl,
         Clock $clock)
     {
-        $walletName = $this->getWalletName();
-
-        $this->createExternalWalletIfNotExist($walletName, $this->token);
+        $this->createExternalWalletIfNotExist($this->walletName, $this->token);
 
         $walletGenerateAddressResponse = $this->walletService->generateAddress(
-            $walletName,
+            $this->walletName,
             $this->coin,
             $this->token
         );
@@ -196,22 +206,9 @@ class Wallet extends Model
         return $address;
     }
 
-    /**
-     * @return string
-     */
-    private function getWalletName()
+    private function createExternalWalletIfNotExist()
     {
-        $walletName = $this->id->getValue();
-        return $walletName;
-    }
-
-    /**
-     * @param $walletName
-     * @param $token
-     */
-    private function createExternalWalletIfNotExist($walletName, $token)
-    {
-        $externalWallet = $this->walletService->getWallet($walletName, $this->coin, $token);
+        $externalWallet = $this->walletService->getWallet($this->walletName, $this->coin, $this->token);
 
         if ($externalWallet === null) {
             // Wallet has not been created in BlockCypher
@@ -220,7 +217,7 @@ class Wallet extends Model
             $externalWallet = new ExternalWallet();
             $externalWallet->setName($this->id->getValue());
             $externalWallet->setAddresses(Address::ObjectArrayToAddressList($this->getAddresses()));
-            $this->walletService->createWallet($externalWallet, $this->coin, $token);
+            $this->walletService->createWallet($externalWallet, $this->coin, $this->token);
         }
     }
 
@@ -258,16 +255,6 @@ class Wallet extends Model
     }
 
     /**
-     * @param Address[] $addresses
-     * @return $this
-     */
-//    private function setAddresses($addresses)
-//    {
-//        $this->addresses = $addresses;
-//        return $this;
-//    }
-
-    /**
      * @param string $address
      * @return bool
      */
@@ -280,6 +267,16 @@ class Wallet extends Model
         }
         return false;
     }
+
+    /**
+     * @param Address[] $addresses
+     * @return $this
+     */
+//    private function setAddresses($addresses)
+//    {
+//        $this->addresses = $addresses;
+//        return $this;
+//    }
 
     /**
      * @param Address $address
@@ -332,6 +329,14 @@ class Wallet extends Model
 
             $cont++;
         }
+    }
+
+    /**
+     * @return string
+     */
+    private function getWalletName()
+    {
+        return $this->walletName;
     }
 
     /**
@@ -388,5 +393,67 @@ class Wallet extends Model
     public function getWalletService()
     {
         return $this->walletService;
+    }
+
+    /**
+     * Get id
+     *
+     * @return WalletId
+     */
+    public function id()
+    {
+        // TODO: Implement id() method.
+    }
+
+    /**
+     * Wallet unique name.
+     *
+     * @return string
+     */
+    public function name()
+    {
+        // TODO: Implement name() method.
+    }
+
+    /**
+     * Account which uses this wallet.
+     *
+     * @return AccountId
+     */
+    public function accountId()
+    {
+        // TODO: Implement accountId() method.
+    }
+
+    /**
+     * Wallet creation time.
+     *
+     * @return \DateTime
+     */
+    public function creationTime()
+    {
+        // TODO: Implement creationTime() method.
+    }
+
+    /**
+     * @return BigMoney
+     * @throws \Exception
+     */
+    public function balance()
+    {
+        return $this->walletService->getWalletBalance(
+            $this->walletName,
+            $this->coin,
+            $this->token
+        );
+    }
+
+    /**
+     * @return Currency
+     * @throws \Exception
+     */
+    public function currency()
+    {
+        // TODO: Implement currency() method.
     }
 }

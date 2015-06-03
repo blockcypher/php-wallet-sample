@@ -83,18 +83,19 @@ class AppExtension extends \Twig_Extension
 
     /**
      * @param $number
+     * @param int $decimals
      * @return string
      */
-    public function intCommaFilter($number)
+    public function intCommaFilter($number, $decimals = 4)
     {
-        $decimalPoint = ',';
-        $thousandSep = '.';
+        $decimalPoint = '.';
+        $thousandSep = ',';
         if (is_int($number)) {
             $value = number_format((float)$number, 0, $decimalPoint, $thousandSep);
         } elseif (!$this->is_decimal($number)) {
             $value = number_format((float)$number, 1, $decimalPoint, $thousandSep);
         } else {
-            $value = number_format((float)$number, 4, $decimalPoint, $thousandSep);
+            $value = number_format((float)$number, $decimals, $decimalPoint, $thousandSep);
         }
         return $value;
     }

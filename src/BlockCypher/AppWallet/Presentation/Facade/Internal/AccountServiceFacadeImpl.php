@@ -3,6 +3,7 @@
 namespace BlockCypher\AppWallet\Presentation\Facade\Internal;
 
 use BlockCypher\AppWallet\App\Service\AccountService;
+use BlockCypher\AppWallet\Domain\Account\Account;
 use BlockCypher\AppWallet\Presentation\Facade\AccountServiceFacade;
 
 class AccountServiceFacadeImpl implements AccountServiceFacade
@@ -27,16 +28,8 @@ class AccountServiceFacadeImpl implements AccountServiceFacade
     {
         $accounts = $this->accountService->listAccounts();
 
-        $accountDTOs = array();
-        foreach ($accounts as $account) {
-            $accountArray = $account->toArray();
+        $accountDtos = Account::arrayToDtoArray($accounts);
 
-            // Extra account info
-            $accountArray['balance'] = (float)(string)$account->balance()->getAmount();
-
-            $accountDTOs[] = $accountArray;
-        }
-
-        return $accountDTOs;
+        return $accountDtos;
     }
 }

@@ -42,7 +42,8 @@ class LoadAccountData implements FlywheelFixtureInterface
             new AccountId("1A311E0C-B6A6-4679-9F7B-21FDB265E135"),
             AccountType::BTC,
             $this->clock->now(),
-            'Default'
+            'Default',
+            null
         );
         $repository->insert($account);
     }

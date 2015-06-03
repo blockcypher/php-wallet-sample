@@ -4,6 +4,7 @@ namespace BlockCypher\AppCommon\App\Service;
 
 use BlockCypher\Api\Wallet;
 use BlockCypher\Api\WalletGenerateAddressResponse;
+use BlockCypher\AppCommon\Domain\BigMoney;
 
 interface WalletService
 {
@@ -22,6 +23,15 @@ interface WalletService
      * @throws \Exception
      */
     public function getWallet($walletName, $coinSymbol, $token);
+
+    /**
+     * @param string $walletName
+     * @param string $coinSymbol
+     * @param string $token
+     * @return BigMoney
+     * @throws \Exception
+     */
+    public function getWalletBalance($walletName, $coinSymbol, $token);
 
     /**
      * @param string $walletName

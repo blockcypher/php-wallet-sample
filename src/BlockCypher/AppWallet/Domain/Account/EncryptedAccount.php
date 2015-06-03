@@ -3,16 +3,18 @@
 namespace BlockCypher\AppWallet\Domain\Account;
 
 use BlockCypher\AppCommon\App\Service\Decryptor;
+use BlockCypher\AppCommon\Domain\ArrayConversion;
 use BlockCypher\AppCommon\Domain\BigMoney;
 use BlockCypher\AppCommon\Domain\Decryptable;
 use BlockCypher\AppCommon\Domain\Model;
+use BlockCypher\AppWallet\Domain\Wallet\EncryptedWallet;
 use Money\Currency;
 
 /**
  * Class EncryptedAccount
  * @package BlockCypher\AppWallet\Domain\Account
  */
-class EncryptedAccount extends Model implements Decryptable
+class EncryptedAccount extends Model implements ArrayConversion, Decryptable
 {
     /**
      * @var AccountId
@@ -63,11 +65,17 @@ class EncryptedAccount extends Model implements Decryptable
      */
     public static function fromArray($entityAsArray)
     {
+        //$walletClass = $entityAsArray['walletType'];
+        // Call Wallet static fromArray constructor: Wallet::fromArray or FiatWallet::fromArray
+        /** @var EncryptedWallet $wallet */
+        //$wallet = call_user_func("$walletClass::fromArray", $entityAsArray['wallet']);
+
         $account = new self(
             AccountId::fromArray($entityAsArray['id']),
             $entityAsArray['type'],
             $entityAsArray['creationTime'],
             $entityAsArray['tag']
+        //$wallet
         );
 
         return $account;
@@ -83,6 +91,8 @@ class EncryptedAccount extends Model implements Decryptable
         $entityAsArray['type'] = $this->type;
         $entityAsArray['creationTime'] = clone $this->creationTime;
         $entityAsArray['tag'] = $this->tag;
+        //$entityAsArray['wallet'] = $this->wallet->toArray();
+        //$entityAsArray['walletType'] = get_class($this->wallet);
 
         return $entityAsArray;
     }
@@ -98,6 +108,7 @@ class EncryptedAccount extends Model implements Decryptable
             $this->type,
             $this->creationTime,
             $this->tag
+        //$this->wallet->decryptUsing($decryptor)
         );
 
         return $account;

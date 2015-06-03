@@ -7,8 +7,14 @@ use Money\BigMoney as BaseBigMoney;
 use Money\Currency;
 use Money\InvalidArgumentException;
 
+/**
+ * Class BigMoney
+ * @package BlockCypher\AppCommon\Domain
+ */
 class BigMoney extends BaseBigMoney
 {
+    // TODO: apply these changes to BaseBigMoney
+
     /**
      * @param string $amount
      * @param Currency $currency
@@ -24,4 +30,9 @@ class BigMoney extends BaseBigMoney
 
         return new self($decimalAmount, $currency);
     }
+
+    /**
+     * @return Decimal
+     */
+    //public function getAmount();
 }

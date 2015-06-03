@@ -79,7 +79,9 @@
                                     {{ account.tag }}
                                 </td>
                                 <td class="">
-                                    {{ account.balance|satoshis_to_btc_rounding|intcomma }}
+                                    {# {{ account.balance|satoshis_to_btc_rounding|intcomma }}&nbsp;{{ account.type|coin_symbol_to_currency_name }} #}
+                                    {{ account.balance|satoshis_to_btc_full|intcomma(8) }}
+                                    &nbsp;{{ account.type|coin_symbol_to_currency_name }} {# without rounding #}
                                 </td>
                                 <td>
                                     <time class="timeago"

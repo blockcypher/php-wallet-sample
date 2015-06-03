@@ -4,6 +4,7 @@ namespace BlockCypher\AppWallet\Domain\Wallet;
 
 use BlockCypher\AppCommon\App\Service\Decryptor;
 use BlockCypher\AppCommon\App\Service\WalletService;
+use BlockCypher\AppCommon\Domain\ArrayConversion;
 use BlockCypher\AppCommon\Domain\Model;
 use BlockCypher\AppWallet\Domain\Account\AccountId;
 use BlockCypher\AppWallet\Domain\Address\Address;
@@ -13,7 +14,7 @@ use BlockCypher\AppWallet\Domain\Address\EncryptedAddress;
  * Class EncryptedWallet
  * @package BlockCypher\AppWallet\Domain\Wallet
  */
-class EncryptedWallet extends Model
+class EncryptedWallet extends Model implements ArrayConversion
 {
     /**
      * @var WalletId
@@ -76,10 +77,9 @@ class EncryptedWallet extends Model
 
     /**
      * @param array $entityAsArray
-     * @param $walletService
      * @return EncryptedWallet
      */
-    public static function fromArray($entityAsArray, $walletService)
+    public static function fromArray($entityAsArray)
     {
         if (is_array($entityAsArray['addresses'])) {
             $addressesArr = $entityAsArray['addresses'];
@@ -93,7 +93,7 @@ class EncryptedWallet extends Model
             $entityAsArray['coin'],
             $entityAsArray['creationTime'],
             Address::ArrayToObjectArray($addressesArr),
-            $walletService
+            $entityAsArray['walletService']
         );
 
         return $wallet;
@@ -109,6 +109,7 @@ class EncryptedWallet extends Model
         $entityAsArray['accountId'] = $this->accountId->toArray();
         $entityAsArray['creationTime'] = clone $this->creationTime;
         $entityAsArray['addresses'] = Address::ObjectArrayToArray($this->addresses);
+        $entityAsArray['walletService'] = $this->walletService;
 
         return $entityAsArray;
     }
