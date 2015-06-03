@@ -67,6 +67,7 @@
                 <div class="table-responsive">
                     <table class="table">
                         <tr>
+                            <th>Type</th>
                             <th>Tag</th>
                             <th>Balance</th>
                             <th>Creation Time</th>
@@ -75,6 +76,9 @@
                         </tr>
                         {% for account in accounts %}
                             <tr class="tx-row" id="{{ account.id.value }}">
+                                <td class="">
+                                    {{ account.type }}
+                                </td>
                                 <td class="">
                                     {{ account.tag }}
                                 </td>
