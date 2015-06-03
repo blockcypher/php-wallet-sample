@@ -2,7 +2,12 @@
 
 namespace BlockCypher\AppWallet\Domain\Account;
 
+use BlockCypher\AppCommon\App\Service\Clock;
+use BlockCypher\AppCommon\App\Service\WalletService;
 use BlockCypher\AppCommon\Domain\BigMoney;
+use BlockCypher\AppWallet\Domain\Wallet\FiatWalletRepository;
+use BlockCypher\AppWallet\Domain\Wallet\WalletInterface;
+use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 use Money\Currency;
 
 interface AccountInterface
@@ -33,6 +38,31 @@ interface AccountInterface
      * @return string
      */
     public function tag();
+
+    /**
+     * Account wallet
+     * @return WalletInterface
+     */
+    public function wallet();
+
+    /**
+     * Created the wallet associated to the account
+     * @param WalletRepository $walletRepository
+     * @param WalletService $walletService
+     * @param Clock $clock
+     */
+    public function createCryptoWallet(
+        WalletRepository $walletRepository,
+        WalletService $walletService,
+        Clock $clock
+    );
+
+    /**
+     * Created the wallet associated to the account
+     * @param FiatWalletRepository $fiatWalletRepository
+     * @param Clock $clock
+     */
+    public function createFiatWallet(FiatWalletRepository $fiatWalletRepository, Clock $clock);
 
     /**
      * @return BigMoney

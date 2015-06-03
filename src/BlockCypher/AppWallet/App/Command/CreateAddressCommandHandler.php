@@ -41,6 +41,8 @@ class CreateAddressCommandHandler
         // DEBUG
         //var_dump($command);
 
+        // TODO: command validator. See CreateAddressCommandHandler::handle for possible implementation details
+
         $accountId = $command->getAccountId();
 
         // DEBUG: create a sample wallet

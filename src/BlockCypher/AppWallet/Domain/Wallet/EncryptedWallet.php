@@ -87,7 +87,7 @@ class EncryptedWallet extends Model implements ArrayConversion
             $addressesArr = array();
         }
 
-        $wallet = new self(
+        $encryptedWallet = new self(
             WalletId::fromArray($entityAsArray['id']),
             AccountId::fromArray($entityAsArray['accountId']),
             $entityAsArray['coin'],
@@ -96,7 +96,7 @@ class EncryptedWallet extends Model implements ArrayConversion
             $entityAsArray['walletService']
         );
 
-        return $wallet;
+        return $encryptedWallet;
     }
 
     /**
@@ -235,5 +235,14 @@ class EncryptedWallet extends Model implements ArrayConversion
     public function getWalletService()
     {
         return $this->walletService;
+    }
+
+    /**
+     * Allows re-inject the dependency if needed.
+     * @param WalletService $walletService
+     */
+    public function setWalletService(WalletService $walletService)
+    {
+        $this->walletService = $walletService;
     }
 }

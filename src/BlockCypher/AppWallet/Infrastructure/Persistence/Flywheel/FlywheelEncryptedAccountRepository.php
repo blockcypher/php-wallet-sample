@@ -56,6 +56,7 @@ class FlywheelEncryptedAccountRepository implements EncryptedAccountRepository
     /**
      * @param AccountId $encryptedAccountId
      * @return EncryptedAccount
+     * @throws \Exception
      */
     public function accountOfId(AccountId $encryptedAccountId)
     {
@@ -64,11 +65,14 @@ class FlywheelEncryptedAccountRepository implements EncryptedAccountRepository
             ->where('id', '==', $encryptedAccountId->getValue())
             ->execute();
 
+        // DEBUG
+        //var_dump($result);
+
         if ($result === false) {
             return null;
         }
 
-        if ($result->total() == 0) {
+        if ($result->count() == 0) {
             return null;
         }
 
@@ -147,8 +151,8 @@ class FlywheelEncryptedAccountRepository implements EncryptedAccountRepository
      */
     public function update(EncryptedAccount $encryptedAccount)
     {
-        // TODO: Implement update() method.
-        throw new \Exception('Not implemented');
+        $encryptedAccountDocument = $this->accountToDocument($encryptedAccount);
+        $this->repository->update($encryptedAccountDocument);
     }
 
     /**

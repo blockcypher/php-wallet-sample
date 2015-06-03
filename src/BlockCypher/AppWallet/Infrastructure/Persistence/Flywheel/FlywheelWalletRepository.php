@@ -12,7 +12,6 @@ use BlockCypher\AppWallet\Domain\Wallet\Wallet;
 use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 use BlockCypher\AppWallet\Domain\Wallet\WalletSpecification;
-use Rhumsaa\Uuid\Uuid;
 
 /**
  * Class FlywheelWalletRepository
@@ -53,14 +52,17 @@ class FlywheelWalletRepository implements WalletRepository
     }
 
     /**
-     * @return AccountId
+     * @return WalletId
      * @throws \Exception
      */
     public function nextIdentity()
     {
-        return AccountId::create(
-            strtoupper(Uuid::uuid4())
-        );
+        $id = strtoupper(str_replace('.', '', uniqid('', true)));
+        if (strlen($id) > 25) {
+            throw new \Exception("BlockCypher wallet names can not be longer than 25 characters");
+        }
+
+        return WalletId::create($id);
     }
 
     /**
@@ -79,7 +81,20 @@ class FlywheelWalletRepository implements WalletRepository
      */
     public function walletOfAccountId(AccountId $accountId)
     {
-        $wallet = $this->encryptedWalletRepository->walletOfAccountId($accountId)->decryptUsing($this->decryptor);
+        $encryptedWallet = $this->encryptedWalletRepository->walletOfAccountId($accountId);
+
+        // DEBUG
+        //var_dump($encryptedWallet);
+
+        // TODO: do the same in all methods
+        if ($encryptedWallet === null)
+            return null;
+
+        $wallet = $encryptedWallet->decryptUsing($this->decryptor);
+
+        // DEBUG
+        //var_dump($wallet);
+
         return $wallet;
     }
 

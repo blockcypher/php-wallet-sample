@@ -55,19 +55,19 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
         $this->repository = new Repository('wallets', $config);
     }
 
-    /**
-     * @return WalletId
-     * @throws \Exception
-     */
-    public function nextIdentity()
-    {
-        $id = strtoupper(str_replace('.', '', uniqid('', true)));
-        if (strlen($id) > 25) {
-            throw new \Exception("BlockCypher wallet names can not be longer than 25 characters");
-        }
-
-        return WalletId::create($id);
-    }
+//    /**
+//     * @return WalletId
+//     * @throws \Exception
+//     */
+//    public function nextIdentity()
+//    {
+//        $id = strtoupper(str_replace('.', '', uniqid('', true)));
+//        if (strlen($id) > 25) {
+//            throw new \Exception("BlockCypher wallet names can not be longer than 25 characters");
+//        }
+//
+//        return WalletId::create($id);
+//    }
 
     /**
      * @param WalletId $walletId
@@ -84,7 +84,7 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
             return null;
         }
 
-        if ($result->total() == 0) {
+        if ($result->count() == 0) {
             return null;
         }
 
@@ -103,18 +103,27 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
         //var_dump($walletDocument);
         //die();
 
-        $wallet = unserialize($walletDocument->data);
+        /** @var EncryptedWallet $encryptedWallet */
+        $encryptedWallet = unserialize($walletDocument->data);
+
+        // TODO: Code Review. EncryptedWallet should not contain WalletService
+        // because it is only used to store Wallets safely. WalletService should be only injected
+        // in the Wallet constructor when Wallet is constructed from EncryptedWallet.
+        if ($encryptedWallet->getWalletService() === null) {
+            $encryptedWallet->setWalletService($this->walletService);
+        }
 
         //DEBUG
         //var_dump($wallet);
         //die();
 
-        return $wallet;
+        return $encryptedWallet;
     }
 
     /**
      * @param AccountId $accountId
      * @return Wallet
+     * @throws \Exception
      */
     public function walletOfAccountId(AccountId $accountId)
     {
@@ -123,13 +132,28 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
             ->where('accountId', '==', $accountId->getValue())
             ->execute();
 
+        // DEBUG
+        //var_dump($result);
+
         if ($result === false) {
             return null;
         }
 
-        if ($result->total() == 0) {
+        if ($result->count() == 0) {
             return null;
         }
+
+        // DEBUG
+        //var_dump($result);
+
+        // DEBUG
+        if (!$result->offsetExists(0)) {
+            throw new \Exception(sprintf("Wallet not found from account id %s ", $accountId->getValue()));
+        }
+
+        // DEBUG
+        //var_dump($result->first());
+        //die();
 
         $wallet = $this->documentToWallet($result->first());
 

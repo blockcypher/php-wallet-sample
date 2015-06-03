@@ -24,6 +24,7 @@ abstract class Enum
 
     /**
      * Return the names and values of all the constants in the enum
+     * Constant value as value and constant name as key.
      *
      * @return array
      */
@@ -35,5 +36,16 @@ abstract class Enum
             self::$cache[$class] = $reflected->getConstants();
         }
         return self::$cache[$class];
+    }
+
+    /**
+     * Return the names and values of all the constants in the enum
+     * Constant value as key and constant name as value.
+     *
+     * @return array
+     */
+    public static function flippedValues()
+    {
+        return array_flip(self::values());
     }
 }

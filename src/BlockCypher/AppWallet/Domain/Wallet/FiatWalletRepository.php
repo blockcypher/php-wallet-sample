@@ -5,67 +5,67 @@ namespace BlockCypher\AppWallet\Domain\Wallet;
 use BlockCypher\AppWallet\Domain\Account\AccountId;
 
 /**
- * Interface EncryptedWalletRepository
+ * Interface FiatWalletRepository
  * @package BlockCypher\AppWallet\Domain\Wallet
  */
-interface EncryptedWalletRepository
+interface FiatWalletRepository
 {
     /**
      * @return WalletId
      */
-    //public function nextIdentity();
+    public function nextIdentity();
 
     /**
      * @param WalletId $walletId
-     * @return EncryptedWallet
+     * @return Wallet
      */
     public function walletOfId(WalletId $walletId);
 
     /**
      * @param AccountId $accountId
-     * @return EncryptedWallet
+     * @return Wallet
      */
     public function walletOfAccountId(AccountId $accountId);
 
     /**
-     * @param EncryptedWallet $wallet
+     * @param FiatWallet $fiatWallet
      */
-    public function insert(EncryptedWallet $wallet);
+    public function insert(FiatWallet $fiatWallet);
 
     /**
-     * @param EncryptedWallet[] $wallets
+     * @param Wallet[] $wallets
      */
     public function insertAll($wallets);
 
     /**
-     * @param EncryptedWallet $wallet
+     * @param FiatWallet $fiatWallet
      * @throws \Exception
      */
-    public function update(EncryptedWallet $wallet);
+    public function update(FiatWallet $fiatWallet);
 
     /**
-     * @param EncryptedWallet[] $wallets
+     * @param Wallet[] $wallets
      */
     public function updateAll($wallets);
 
     /**
-     * @param EncryptedWallet $wallet
+     * @param FiatWallet $fiatWallet
      */
-    public function delete(EncryptedWallet $wallet);
+    public function delete(FiatWallet $fiatWallet);
 
     /**
-     * @param EncryptedWallet[] $wallets
+     * @param Wallet[] $wallets
      */
     public function deleteAll($wallets);
 
     /**
-     * @param EncryptedWalletSpecification $specification
-     * @return EncryptedWallet[]
+     * @param WalletSpecification $specification
+     * @return Wallet[]
      */
     public function query($specification);
 
     /**
-     * @return EncryptedWallet[]
+     * @return Wallet[]
      */
     public function findAll();
 }

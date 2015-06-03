@@ -2,12 +2,19 @@
 
 namespace BlockCypher\AppWallet\Domain\Account;
 
+use BlockCypher\AppCommon\App\Service\Clock;
 use BlockCypher\AppCommon\App\Service\Encryptor;
+use BlockCypher\AppCommon\App\Service\WalletService;
 use BlockCypher\AppCommon\Domain\ArrayConversion;
 use BlockCypher\AppCommon\Domain\BigMoney;
 use BlockCypher\AppCommon\Domain\Encryptable;
 use BlockCypher\AppCommon\Domain\Model;
+use BlockCypher\AppWallet\Domain\Wallet\FiatWallet;
+use BlockCypher\AppWallet\Domain\Wallet\FiatWalletRepository;
+use BlockCypher\AppWallet\Domain\Wallet\Wallet;
+use BlockCypher\AppWallet\Domain\Wallet\WalletCoin;
 use BlockCypher\AppWallet\Domain\Wallet\WalletInterface;
+use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 use Closure;
 use Money\Currency;
 
@@ -178,7 +185,18 @@ class Account extends Model implements AccountInterface, ArrayConversion, Encryp
      */
     public function balance()
     {
-        return $this->wallet()->balance();
+        //DEBUG
+        //var_dump($this->wallet());
+
+        $balance = $this->wallet()->balance();
+
+        // TODO: error if external wallet (BlockCypher) has not been created yet.
+        // It should be created when the Account is created.
+        if ($balance === null) {
+            throw new \Exception("Wallet balance can not be obtained");
+        }
+
+        return $balance;
     }
 
     /**
@@ -191,6 +209,10 @@ class Account extends Model implements AccountInterface, ArrayConversion, Encryp
             $reference = $this->walletReference;
             $this->wallet = $reference($this);
         }
+
+        //DEBUG
+        //var_dump($this->wallet);
+
         return $this->wallet;
     }
 
@@ -358,5 +380,51 @@ class Account extends Model implements AccountInterface, ArrayConversion, Encryp
     public function setWalletReference(Closure $walletReference)
     {
         $this->walletReference = $walletReference;
+    }
+
+    /**
+     * Created the wallet associated to the account
+     * @param WalletRepository $walletRepository
+     * @param WalletService $walletService
+     * @param Clock $clock
+     */
+    public function createCryptoWallet(
+        WalletRepository $walletRepository,
+        WalletService $walletService,
+        Clock $clock
+    )
+    {
+        // TODO: validate account type
+        // TODO: check if wallet already exists for this account
+
+        $addresses = array();
+        $wallet = new Wallet(
+            $walletRepository->nextIdentity(),
+            $this->id,
+            WalletCoin::BTC,
+            $clock->now(),
+            $addresses,
+            $walletService
+        );
+        $walletRepository->insert($wallet);
+    }
+
+    /**
+     * Created the wallet associated to the account
+     * @param FiatWalletRepository $fiatWalletRepository
+     * @param Clock $clock
+     */
+    public function createFiatWallet(FiatWalletRepository $fiatWalletRepository, Clock $clock)
+    {
+        // TODO: validate account type
+        // TODO: check if wallet already exists for this account
+
+        $fiatWallet = new FiatWallet(
+            $fiatWalletRepository->nextIdentity(),
+            $this->id,
+            WalletCoin::BTC,
+            $clock->now()
+        );
+        $fiatWalletRepository->insert($fiatWallet);
     }
 }

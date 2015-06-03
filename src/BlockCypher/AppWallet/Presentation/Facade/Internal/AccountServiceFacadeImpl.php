@@ -28,6 +28,10 @@ class AccountServiceFacadeImpl implements AccountServiceFacade
     {
         $accounts = $this->accountService->listAccounts();
 
+        //DEBUG
+        //var_dump($accounts);
+        //die();
+
         $accountDtos = Account::arrayToDtoArray($accounts);
 
         return $accountDtos;

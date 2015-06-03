@@ -3,30 +3,30 @@
 namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Account;
 
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
-use BlockCypher\AppWallet\Presentation\Facade\AccountServiceFacade;
+use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Account\AccountFormFactory;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class Index extends AppWalletController
+class ShowNew extends AppWalletController
 {
     /**
-     * @var AccountServiceFacade
+     * @var AccountFormFactory
      */
-    private $accountServiceFacade;
+    private $accountFormFactory;
 
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
-     * @param AccountServiceFacade $accountServiceFacade
+     * @param AccountFormFactory $accountFormFactory
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
-        AccountServiceFacade $accountServiceFacade)
+        AccountFormFactory $accountFormFactory)
     {
         parent::__construct($templating, $translator);
-        $this->accountServiceFacade = $accountServiceFacade;
+        $this->accountFormFactory = $accountFormFactory;
     }
 
     /**
@@ -35,17 +35,19 @@ class Index extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $accounts = $this->accountServiceFacade->listAccounts();
+        $accountId = $request->get('account_id');
+        if ($accountId === null) {
+            // TODO: get user´s default/primary account
+            $accountId = '1A311E0C-B6A6-4679-9F7B-21FDB265E135';
+        }
 
-        $template = $this->getBaseTemplatePrefix() . ':Account:index.html';
+        $tag = '';
+        $callbackUrl = '';
+        $createAccountCommand = $this->createCreateAccountCommand($accountId, $tag, $callbackUrl);
 
-        // DEBUG
-        //var_dump($accounts);
-        //die();
+        $createAccountForm = $this->accountFormFactory->createCreateForm($createAccountCommand);
 
-        // TODO
-        $currentPage = 1;
-        $maxPages = 0; // get_max_pages(num_items=address_details['final_n_tx'], items_per_page=TXNS_PER_PAGE),
+        $template = $this->getBaseTemplatePrefix() . ':Account:show_new.html';
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
@@ -56,10 +58,7 @@ class Index extends AppWalletController
                 'messages' => array(),
                 //
                 'coin_symbol' => 'btc',
-                'current_page' => $currentPage,
-                'num_all_accounts' => count($accounts),
-                'max_pages' => $maxPages,
-                'accounts' => $accounts
+                'account_form' => $createAccountForm->createView(),
             )
         );
     }

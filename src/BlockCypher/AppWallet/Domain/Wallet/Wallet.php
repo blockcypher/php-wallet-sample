@@ -310,7 +310,12 @@ class Wallet extends Model implements WalletInterface, ArrayConversion, Encrypta
         }
 
         $cont = 0;
-        foreach ($externalWallet->getAddresses() as $externalAddress) {
+        $externalWalletAddresses = array();
+        if (is_array($externalWallet->getAddresses())) {
+            // if external wallet has no addresses getAddresses method will return null
+            $externalWalletAddresses = $externalWallet->getAddresses();
+        }
+        foreach ($externalWalletAddresses as $externalAddress) {
             if (!$this->containsAddress($externalAddress)) {
                 $tag = "Imported Address from API #$cont";
                 $address = new Address(
@@ -441,6 +446,13 @@ class Wallet extends Model implements WalletInterface, ArrayConversion, Encrypta
      */
     public function balance()
     {
+        // TODO: check before all methods or do it only in constructor.
+        // Wallets could be created and waiting for external service to activate them.
+        // For example if there is no connectivity between app server and BlockCypher server
+        // when the user is creating a new account-wallet
+        // This way we delay wallet creation until is really needed.
+        $this->createExternalWalletIfNotExist($this->walletName, $this->token);
+
         return $this->walletService->getWalletBalance(
             $this->walletName,
             $this->coin,

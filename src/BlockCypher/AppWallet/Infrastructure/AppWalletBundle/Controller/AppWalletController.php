@@ -3,6 +3,7 @@
 namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller;
 
 use BlockCypher\AppCommon\Infrastructure\Controller\AppCommonController;
+use BlockCypher\AppWallet\App\Command\CreateAccountCommand;
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
 
 class AppWalletController extends AppCommonController
@@ -22,6 +23,17 @@ class AppWalletController extends AppCommonController
     {
         $createAddressCommand = new CreateAddressCommand($accountId, $tag, $callbackUrl);
         return $createAddressCommand;
+    }
+
+    /**
+     * @param $type
+     * @param $tag
+     * @return CreateAccountCommand
+     */
+    protected function createCreateAccountCommand($type = '', $tag = '')
+    {
+        $createAccountCommand = new CreateAccountCommand($type, $tag);
+        return $createAccountCommand;
     }
 
     /**
