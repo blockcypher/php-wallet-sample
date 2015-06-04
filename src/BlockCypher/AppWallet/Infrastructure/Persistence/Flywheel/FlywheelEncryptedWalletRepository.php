@@ -40,34 +40,19 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
      * Constructor
      * @param Clock $clockService
      * @param WalletService $walletService
+     * @param string $dataDir
      */
     public function __construct(
         Clock $clockService,
-        WalletService $walletService
+        WalletService $walletService,
+        $dataDir
     )
     {
         $this->clock = $clockService;
         $this->walletService = $walletService;
-
-        // TODO: move to parameters in config.yml and pass to constructor
-        // I think app/data is a good location
-        $config = new Config(__DIR__ . DIRECTORY_SEPARATOR . 'data');
+        $config = new Config($dataDir);
         $this->repository = new Repository('wallets', $config);
     }
-
-//    /**
-//     * @return WalletId
-//     * @throws \Exception
-//     */
-//    public function nextIdentity()
-//    {
-//        $id = strtoupper(str_replace('.', '', uniqid('', true)));
-//        if (strlen($id) > 25) {
-//            throw new \Exception("BlockCypher wallet names can not be longer than 25 characters");
-//        }
-//
-//        return WalletId::create($id);
-//    }
 
     /**
      * @param WalletId $walletId

@@ -79,6 +79,7 @@ services:
         class: %bc_app_wallet_account.encrypted_account_repository.class%
         arguments:
           - @bc_app_common_infrastructure_app_common.clock
+          - "%kernel.root_dir%/data"
 
     bc_app_wallet_account.account_repository:
         class: %bc_app_wallet_account.account_repository.class%

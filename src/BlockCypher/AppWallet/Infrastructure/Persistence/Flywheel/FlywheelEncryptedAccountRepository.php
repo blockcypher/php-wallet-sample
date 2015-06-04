@@ -32,13 +32,12 @@ class FlywheelEncryptedAccountRepository implements EncryptedAccountRepository
     /**
      * Constructor
      * @param Clock $clockService
+     * @param string $dataDir
      */
-    public function __construct(Clock $clockService)
+    public function __construct(Clock $clockService, $dataDir)
     {
         $this->clock = $clockService;
-        // TODO: move to parameters in config.yml and pass to constructor
-        // I think app/data is a good location
-        $config = new Config(__DIR__ . DIRECTORY_SEPARATOR . 'data');
+        $config = new Config($dataDir);
         $this->repository = new Repository('accounts', $config);
     }
 

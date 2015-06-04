@@ -18,6 +18,7 @@ services:
         arguments:
           - @bc_app_common_infrastructure_app_common.clock
           - @bc_app_common_blockcypher.wallet_service
+          - "%kernel.root_dir%/data"
 
     bc_app_wallet_wallet.wallet_repository:
         class: %bc_app_wallet_wallet.wallet_repository.class%
