@@ -35,7 +35,7 @@ class ShowNew extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $accountId = $request->get('account_id');
+        $accountId = $request->get('accountId');
         if ($accountId === null) {
             // TODO: get user´s default/primary account
             $accountId = '1A311E0C-B6A6-4679-9F7B-21FDB265E135';

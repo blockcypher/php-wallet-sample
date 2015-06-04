@@ -14,12 +14,44 @@
 
 {% block content %}
     <div class="container">
+
         <div class="col-md-12">
+
             <h2></h2>
 
-            {{ form_start(account_form) }}
+            {#{{ form_start(account_form) }}
             {{ form_widget(account_form) }}
-            {{ form_end(account_form) }}
+            {{ form_end(account_form) }}#}
+
+            <div class="form-well">
+
+                {{ form_start(account_form, {'attr': {'class': 'form-horizontal'}}) }}
+                {{ form_errors(account_form) }}
+                <div class="form-group">
+                    <label for="type" class="col-sm-2 control-label">Type</label>
+
+                    <div class="col-sm-10">
+                        {{ form_widget(account_form.type, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tag" class="col-sm-2 control-label">Account Tag</label>
+
+                    <div class="col-sm-10">
+                        {{ form_widget(account_form.tag, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-default">Create Account</button>
+                    <p class="help-block">
+                        <small>This action uses this BlockCypher API endpoint:<a
+                                    href="http://dev.blockcypher.com/#wallet_api">/v1/{coin}/{chain}/wallets</a> POST
+                        </small>
+                    </p>
+                </div>
+                {{ form_end(account_form) }}
+
+            </div>
 
         </div>
     </div>

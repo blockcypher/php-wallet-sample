@@ -1,6 +1,6 @@
 <?php
 
-namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form;
+namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address;
 
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
 use Symfony\Component\Form\AbstractType;
@@ -8,19 +8,49 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class CreateAddressType
+ * @package BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address
+ */
 class CreateAddressType extends AbstractType
 {
+    /**
+     * @var array choices for account html select
+     */
+    private $accountIdChoices;
+
+    /**
+     * @var string
+     */
+    private $defaultAccountId;
+
+    /**
+     * @param array $accountIdChoices
+     * @param $defaultAccountId
+     */
+    function __construct($accountIdChoices, $defaultAccountId)
+    {
+        $this->accountIdChoices = $accountIdChoices;
+        $this->defaultAccountId = $defaultAccountId;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // TODO: use select for accountId
+        // DEBUG
+        //var_dump($this->defaultAccountId);
+        //die();
 
         $builder
-            ->add('accountId', 'text')
-            ->add('tag', 'text', array('required' => false))
+            ->add('accountId', 'choice', array(
+                'choices' => $this->accountIdChoices,
+                'required' => true,
+                'data' => $this->defaultAccountId
+            ))
+            ->add('tag', 'text', array('required' => true))
             ->add('callbackUrl', 'text', array('required' => false));
     }
 

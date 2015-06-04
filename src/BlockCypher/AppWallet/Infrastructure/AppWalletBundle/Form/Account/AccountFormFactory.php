@@ -57,9 +57,7 @@ class AccountFormFactory
             'csrf_protection' => false, // TODO: activate
         ));
 
-        //$form = $this->formFactory->create(new CreateAccountType());
-
-        $form->add('submit', 'submit');
+        //$form->add('submit', 'submit'); // Using bootstrap
 
         return $form;
     }

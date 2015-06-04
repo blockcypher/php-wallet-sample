@@ -3,7 +3,7 @@
 namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Address;
 
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
-use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\AddressFormFactory;
+use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address\AddressFormFactory;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -35,7 +35,7 @@ class ShowNew extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $accountId = $request->get('account_id');
+        $accountId = $request->get('accountId');
         if ($accountId === null) {
             // TODO: get user´s default/primary account
             $accountId = '1A311E0C-B6A6-4679-9F7B-21FDB265E135';
@@ -45,7 +45,7 @@ class ShowNew extends AppWalletController
         $callbackUrl = '';
         $createAddressCommand = $this->createCreateAddressCommand($accountId, $tag, $callbackUrl);
 
-        $createAddressForm = $this->addressFormFactory->createCreateForm($createAddressCommand);
+        $createAddressForm = $this->addressFormFactory->createCreateForm($createAddressCommand, $accountId);
 
         $template = $this->getBaseTemplatePrefix() . ':Address:show_new.html';
 
@@ -59,6 +59,7 @@ class ShowNew extends AppWalletController
                 //
                 'coin_symbol' => 'btc',
                 'address_form' => $createAddressForm->createView(),
+                'account_id' => $accountId
             )
         );
     }

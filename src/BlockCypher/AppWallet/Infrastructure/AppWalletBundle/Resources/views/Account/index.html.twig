@@ -67,9 +67,9 @@
                 <div class="table-responsive">
                     <table class="table">
                         <tr>
-                            <th>Type</th>
                             <th>Tag</th>
                             <th>Balance</th>
+                            <th>Type</th>
                             <th>Creation Time</th>
                             <th>Id</th>
                             <th>Actions</th>
@@ -77,15 +77,15 @@
                         {% for account in accounts %}
                             <tr class="tx-row" id="{{ account.id.value }}">
                                 <td class="">
-                                    {{ account.type }}
-                                </td>
-                                <td class="">
                                     {{ account.tag }}
                                 </td>
                                 <td class="">
                                     {# {{ account.balance|satoshis_to_btc_rounding|intcomma }}&nbsp;{{ account.type|coin_symbol_to_currency_name }} #}
                                     {{ account.balance|satoshis_to_btc_full|intcomma(8) }}
                                     &nbsp;{{ account.type|coin_symbol_to_currency_name }} {# without rounding #}
+                                </td>
+                                <td class="">
+                                    {{ account.type }}
                                 </td>
                                 <td>
                                     <time class="timeago"

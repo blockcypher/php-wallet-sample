@@ -1,6 +1,6 @@
 {% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
 
-{% block title %}Addresses{% endblock title %}
+{% block title %}Addresses - Account {{ account_id }}{% endblock title %}
 
 {% block page_header %}
     <h1>
@@ -9,19 +9,25 @@
     </h1>
 
     <h2 class="tagline wrapit semi">
-        Your addresses
+        Addresses in account {{ account_id }}
     </h2>
 {% endblock page_header %}
 
 {% block content %}
     <div class="container">
+
         <div class="section">
             <div class="col-md-12">
                 <p class="text-center">
-                    <a href="{{ path('bc_app_wallet_address.new') }}"
+                    <a href="{{ path('bc_app_wallet_address.new', { 'accountId': account_id }) }}"
                        class="btn btn-lg btn-default">
                         <i class="fa fa-plus"></i>
                         Create New Address
+                    </a>
+                    <a href="{{ path('bc_app_wallet_account.index') }}"
+                       class="btn btn-lg btn-default">
+                        <i class="fa fa-reply"></i>
+                        Accounts
                     </a>
                 </p>
             </div>

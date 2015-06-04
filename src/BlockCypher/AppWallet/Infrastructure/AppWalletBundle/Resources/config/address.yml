@@ -20,7 +20,7 @@ parameters:
 
     # form factories
 
-    bc_app_wallet_address.address_form_factory.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\AddressFormFactory
+    bc_app_wallet_address.address_form_factory.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address\AddressFormFactory
 
 services:
 
@@ -79,6 +79,7 @@ services:
         class: "%bc_app_wallet_address.address_form_factory.class%"
         public: false
         arguments:
-            - "@form.factory"
-            - "@router"
-            - "@translator"
+            - @form.factory
+            - @router
+            - @translator
+            - @bc_app_wallet_account.account_repository

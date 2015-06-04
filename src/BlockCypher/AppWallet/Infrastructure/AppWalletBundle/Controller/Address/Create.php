@@ -4,7 +4,7 @@ namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Addres
 
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
-use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\AddressFormFactory;
+use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address\AddressFormFactory;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -94,8 +94,7 @@ class Create extends AppWalletController
 
             $message = $this->trans('address.flash.create_successfully');
 
-            // TODO: add account_id parameter
-            $url = $this->router->generate('bc_app_wallet_address.index');
+            $url = $this->router->generate('bc_app_wallet_address.index', array('accountId' => $createAddressCommand->getAccountId()));
 
             return new RedirectResponse($url);
 

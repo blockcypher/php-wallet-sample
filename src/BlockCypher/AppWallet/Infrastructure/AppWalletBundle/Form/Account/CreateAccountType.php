@@ -24,7 +24,7 @@ class CreateAccountType extends AbstractType
         $builder
             ->add('type', 'choice', array(
                 'choices' => AccountType::flippedValues(),
-                'required' => false,
+                'required' => true,
                 'placeholder' => 'Choose an option'
             ))
             ->add('tag', 'text', array(
