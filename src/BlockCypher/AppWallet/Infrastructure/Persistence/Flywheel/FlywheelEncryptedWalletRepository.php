@@ -147,9 +147,9 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
         //var_dump($result);
 
         // DEBUG
-        if (!$result->offsetExists(0)) {
-            throw new \Exception(sprintf("Wallet not found from account id %s ", $accountId->getValue()));
-        }
+        //if (!$result->offsetExists(0)) {
+        //    throw new \Exception(sprintf("Wallet not found from account id %s ", $accountId->getValue()));
+        //}
 
         // DEBUG
         //var_dump($result->first());

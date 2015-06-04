@@ -26,7 +26,7 @@
     "sensio/distribution-bundle": "~3.0,>=3.0.12",
     "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
     "incenteev/composer-parameter-handler": "~2.0",
-    "jamesmoss/flywheel": "0.4.*",
+    "jamesmoss/flywheel": "@dev",
     "ramsey/uuid": "~2.8",
     "mathiasverraes/money": "dev-master",
     "simple-bus/symfony-bridge": "^4.0",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6cd00f3c9e27d9946593f7756abc6c3a",
+    "hash": "6bab8756083ee26f62580ccef1a15940",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -857,17 +857,16 @@
         },
         {
             "name": "incenteev/composer-parameter-handler",
-            "version": "v2.1.0",
-            "target-dir": "Incenteev/ParameterHandler",
+            "version": "v2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Incenteev/ParameterHandler.git",
-                "reference": "143272a0a09c62616a3c8011fc165a10c6b35241"
+                "reference": "84a205fe80a46101607bafbc423019527893ddd0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Incenteev/ParameterHandler/zipball/143272a0a09c62616a3c8011fc165a10c6b35241",
-                "reference": "143272a0a09c62616a3c8011fc165a10c6b35241",
+                "url": "https://api.github.com/repos/Incenteev/ParameterHandler/zipball/84a205fe80a46101607bafbc423019527893ddd0",
+                "reference": "84a205fe80a46101607bafbc423019527893ddd0",
                 "shasum": ""
             },
             "require": {
@@ -886,8 +885,8 @@
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Incenteev\\ParameterHandler": ""
+                "psr-4": {
+                    "Incenteev\\ParameterHandler\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -905,20 +904,20 @@
             "keywords": [
                 "parameters management"
             ],
-            "time": "2013-12-07 10:10:39"
+            "time": "2015-06-03 08:27:03"
         },
         {
             "name": "jamesmoss/flywheel",
-            "version": "0.4.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jamesmoss/flywheel.git",
-                "reference": "a243c60a5fec8f219d5927713ea4005f1c07066e"
+                "reference": "a2c82f5123a2ef5a1c290c2aa4192af10f206cb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jamesmoss/flywheel/zipball/a243c60a5fec8f219d5927713ea4005f1c07066e",
-                "reference": "a243c60a5fec8f219d5927713ea4005f1c07066e",
+                "url": "https://api.github.com/repos/jamesmoss/flywheel/zipball/a2c82f5123a2ef5a1c290c2aa4192af10f206cb3",
+                "reference": "a2c82f5123a2ef5a1c290c2aa4192af10f206cb3",
                 "shasum": ""
             },
             "require": {
@@ -961,7 +960,7 @@
                 "file",
                 "flat"
             ],
-            "time": "2014-02-07 14:07:00"
+            "time": "2015-05-26 16:53:06"
         },
         {
             "name": "jdorn/sql-formatter",
@@ -3019,6 +3018,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "jamesmoss/flywheel": 20,
         "mathiasverraes/money": 20,
         "blockcypher/php-client": 20
     },
