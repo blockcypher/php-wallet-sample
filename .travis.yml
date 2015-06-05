@@ -24,6 +24,8 @@ notifications:
     recipients:
     - travis@josecelano.email
     on_success: change
+  slack:
+    secure: pPYBA4IPveryk2rpChYDFP9WqN4d9fqaY+JKC4DDpSAwrbgzDBIfzZzu8xJWRP6M5cTn4mFAUSGpbhYxEx3sYAcHPYa6rt+4jreS+3/rdoi+Vl/MCmrxrG89tLsX/4cCEEA0aI+LhUZthtjwpQl2F16l/2g86560TL5zp73zGqqCL/pox3woN3Zk++1IGQU5foh0Ccz9SSCcWh2Q6abdWN09sH7085I2q8ZmRsET66cPF0J4VUAvaYlp/xkym5/9M7KkM0+m0LK7qhzoGX/7fRFKZrLQb5IWp9EnHEeYQOVQd17FLu9d83goesbGvxPrPFRD2CzYzFGRGg/4nvQP03t3c6NR0ridjWWjgcOUTtukqTL8E3YKB2JrbJhzAD1j+WE5sSxzCszG30NVheFPP7qr1uukSu7Un5A+pOJRJ03jqhyWZZBM4J65RJc3zNTCZiaFZ+dbK6B8WmOslsG23bQg9LWipyIsVHUmiktCHa+HE3gwfeiJECFlnjuh/WiyWvY+dueh3SzI2eT1aX+D0g7aMa/Ohrn6t1RBXmyU3CsNTt6dMqGLafx2bjtuTfz2O9SafseRk+NpHPOZ8QFfZQ83s/2nI+el26PpmZb2ehslM/92c6fl/hs16Aet8oBihWVzGoFdlv3vzzXIWblvSX1wMzV1ydoWbwoHhIPbZRA=
 deploy:
   provider: heroku
   api_key:
