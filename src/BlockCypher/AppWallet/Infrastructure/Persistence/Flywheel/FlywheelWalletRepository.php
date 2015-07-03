@@ -4,8 +4,6 @@ namespace BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel;
 
 use BlockCypher\AppCommon\App\Service\Decryptor;
 use BlockCypher\AppCommon\App\Service\Encryptor;
-use BlockCypher\AppWallet\Domain\Account\Account;
-use BlockCypher\AppWallet\Domain\Account\AccountId;
 use BlockCypher\AppWallet\Domain\Wallet\EncryptedWallet;
 use BlockCypher\AppWallet\Domain\Wallet\EncryptedWalletRepository;
 use BlockCypher\AppWallet\Domain\Wallet\Wallet;
@@ -67,34 +65,11 @@ class FlywheelWalletRepository implements WalletRepository
 
     /**
      * @param WalletId $walletId
-     * @return Account
+     * @return Wallet
      */
     public function walletOfId(WalletId $walletId)
     {
         $wallet = $this->encryptedWalletRepository->walletOfId($walletId)->decryptUsing($this->decryptor);
-        return $wallet;
-    }
-
-    /**
-     * @param AccountId $accountId
-     * @return Wallet
-     */
-    public function walletOfAccountId(AccountId $accountId)
-    {
-        $encryptedWallet = $this->encryptedWalletRepository->walletOfAccountId($accountId);
-
-        // DEBUG
-        //var_dump($encryptedWallet);
-
-        // TODO: do the same in all methods
-        if ($encryptedWallet === null)
-            return null;
-
-        $wallet = $encryptedWallet->decryptUsing($this->decryptor);
-
-        // DEBUG
-        //var_dump($wallet);
-
         return $wallet;
     }
 
@@ -169,7 +144,7 @@ class FlywheelWalletRepository implements WalletRepository
 
     /**
      * @param WalletSpecification $specification
-     * @return Account[]
+     * @return Wallet[]
      * @throws \Exception
      */
     public function query($specification)
@@ -179,7 +154,7 @@ class FlywheelWalletRepository implements WalletRepository
     }
 
     /**
-     * @return Account[]
+     * @return Wallet[]
      */
     public function findAll()
     {
@@ -192,7 +167,7 @@ class FlywheelWalletRepository implements WalletRepository
 
     /**
      * @param EncryptedWallet[] $encryptedWallets
-     * @return Account[]
+     * @return Wallet[]
      */
     private function decryptEncryptedWalletArray($encryptedWallets)
     {

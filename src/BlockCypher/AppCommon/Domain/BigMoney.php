@@ -19,6 +19,7 @@ class BigMoney extends BaseBigMoney
      * @param string $amount
      * @param Currency $currency
      * @return Decimal
+     * @throws InvalidArgumentException
      */
     public static function fromString($amount, Currency $currency)
     {
@@ -30,9 +31,4 @@ class BigMoney extends BaseBigMoney
 
         return new self($decimalAmount, $currency);
     }
-
-    /**
-     * @return Decimal
-     */
-    //public function getAmount();
 }

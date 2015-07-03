@@ -1,0 +1,17 @@
+bc_app_wallet_wallet.index:
+    pattern:  /wallets
+    defaults: { _controller: "bc_app_wallet_wallet.index_controller" }
+    requirements: { _method: get }
+
+bc_app_wallet_wallet.new:
+    pattern:  /wallets/new
+    defaults: { _controller: "bc_app_wallet_wallet.show_new_controller" }
+
+bc_app_wallet_wallet.create:
+    pattern:  /wallets
+    defaults: { _controller: "bc_app_wallet_wallet.create_controller" }
+    requirements: { _method: post }
+
+bc_app_wallet_address:
+    resource: "@BlockCypherAppWalletInfrastructureAppWalletBundle/Resources/config/routing/address.yml"
+    prefix:   /wallets

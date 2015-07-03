@@ -6,7 +6,7 @@ parameters:
 
     # sercice facades
 
-    bc_app_explorer_address.address_service_facade.class: BlockCypher\AppExplorer\Presentation\Facade\Internal\AddressServiceFacadeImpl
+    bc_app_explorer_address.address_service_facade.class: BlockCypher\AppExplorer\Presentation\Facade\AddressServiceFacade
 
 services:
 

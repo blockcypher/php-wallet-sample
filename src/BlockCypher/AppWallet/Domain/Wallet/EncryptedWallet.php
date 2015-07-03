@@ -3,10 +3,8 @@
 namespace BlockCypher\AppWallet\Domain\Wallet;
 
 use BlockCypher\AppCommon\App\Service\Decryptor;
-use BlockCypher\AppCommon\App\Service\WalletService;
 use BlockCypher\AppCommon\Domain\ArrayConversion;
 use BlockCypher\AppCommon\Domain\Model;
-use BlockCypher\AppWallet\Domain\Account\AccountId;
 use BlockCypher\AppWallet\Domain\Address\Address;
 use BlockCypher\AppWallet\Domain\Address\EncryptedAddress;
 
@@ -22,14 +20,19 @@ class EncryptedWallet extends Model implements ArrayConversion
     private $id;
 
     /**
-     * @var AccountId
+     * @var string
      */
-    private $accountId;
+    private $name;
 
     /**
-     * @var string WalletCoin enum
+     * @var string WalletCoinSymbol enum
      */
-    private $coin;
+    private $coinSymbol;
+
+    /**
+     * @var string token
+     */
+    private $token;
 
     /**
      * Entity creation time.
@@ -44,40 +47,37 @@ class EncryptedWallet extends Model implements ArrayConversion
     private $addresses = array();
 
     /**
-     * @var WalletService
-     */
-    private $walletService;
-
-    /**
      * Constructor
      *
      * @param WalletId $walletId
-     * @param AccountId $accountId
+     * @param string $name
      * @param string $coin
+     * @param $token
      * @param \DateTime $creationTime
      * @param Address[] $addresses
-     * @param WalletService $walletService
      */
     function __construct(
         WalletId $walletId,
-        AccountId $accountId,
+        $name,
         $coin,
+        $token,
         \DateTime $creationTime,
-        $addresses,
-        WalletService $walletService
+        $addresses
     )
     {
+        WalletCoinSymbol::validate($coin, 'WalletCoinSymbol');
+
         $this->id = $walletId;
-        $this->accountId = $accountId;
-        $this->coin = $coin;
+        $this->name = $name;
+        $this->coinSymbol = $coin;
+        $this->token = $token;
         $this->creationTime = clone $creationTime;
         $this->addresses = $addresses;
-        $this->walletService = $walletService;
     }
 
     /**
      * @param array $entityAsArray
-     * @return EncryptedWallet
+     * @return $this
      */
     public static function fromArray($entityAsArray)
     {
@@ -87,16 +87,16 @@ class EncryptedWallet extends Model implements ArrayConversion
             $addressesArr = array();
         }
 
-        $encryptedWallet = new self(
+        $wallet = new self(
             WalletId::fromArray($entityAsArray['id']),
-            AccountId::fromArray($entityAsArray['accountId']),
-            $entityAsArray['coin'],
+            $entityAsArray['name'],
+            $entityAsArray['coinSymbol'],
+            $entityAsArray['token'],
             $entityAsArray['creationTime'],
-            Address::ArrayToObjectArray($addressesArr),
-            $entityAsArray['walletService']
+            Address::ArrayToObjectArray($addressesArr)
         );
 
-        return $encryptedWallet;
+        return $wallet;
     }
 
     /**
@@ -106,10 +106,11 @@ class EncryptedWallet extends Model implements ArrayConversion
     {
         $entityAsArray = array();
         $entityAsArray['id'] = $this->id->toArray();
-        $entityAsArray['accountId'] = $this->accountId->toArray();
+        $entityAsArray['name'] = $this->name;
+        $entityAsArray['coinSymbol'] = $this->coinSymbol;
+        $entityAsArray['token'] = $this->token;
         $entityAsArray['creationTime'] = clone $this->creationTime;
         $entityAsArray['addresses'] = Address::ObjectArrayToArray($this->addresses);
-        $entityAsArray['walletService'] = $this->walletService;
 
         return $entityAsArray;
     }
@@ -120,16 +121,16 @@ class EncryptedWallet extends Model implements ArrayConversion
      */
     public function decryptUsing(Decryptor $decryptor)
     {
-        $account = new Wallet(
+        $wallet = new Wallet(
             $this->id,
-            $this->accountId,
-            $this->coin,
+            $this->name,
+            $this->coinSymbol,
+            $this->token,
             $this->creationTime,
-            $this->decryptAddressesUsing($decryptor),
-            $this->walletService
+            $this->decryptAddressesUsing($decryptor)
         );
 
-        return $account;
+        return $wallet;
     }
 
     /**
@@ -194,8 +195,6 @@ class EncryptedWallet extends Model implements ArrayConversion
     }
 
     /**
-     * Get id
-     *
      * @return WalletId
      */
     public function getId()
@@ -204,45 +203,34 @@ class EncryptedWallet extends Model implements ArrayConversion
     }
 
     /**
-     * @return AccountId
+     * @return string
      */
-    public function getAccountId()
+    public function getName()
     {
-        return $this->accountId;
+        return $this->name;
     }
 
     /**
      * @return string
      */
-    public function getCoin()
+    public function getCoinSymbol()
     {
-        return $this->coin;
+        return $this->coinSymbol;
     }
 
     /**
-     * Get creationTime
-     *
+     * @return string
+     */
+    public function getToken()
+    {
+        return $this->token;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getCreationTime()
     {
         return $this->creationTime;
-    }
-
-    /**
-     * @return WalletService
-     */
-    public function getWalletService()
-    {
-        return $this->walletService;
-    }
-
-    /**
-     * Allows re-inject the dependency if needed.
-     * @param WalletService $walletService
-     */
-    public function setWalletService(WalletService $walletService)
-    {
-        $this->walletService = $walletService;
     }
 }

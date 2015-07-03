@@ -1,5 +1,20 @@
 parameters:
 
+    # controllers
+
+    bc_app_wallet_wallet.index_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet\Index
+    bc_app_wallet_wallet.show_new_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet\ShowNew
+    bc_app_wallet_wallet.create_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet\Create
+
+
+    # sercice facades
+
+    bc_app_wallet_wallet.wallet_service_facade.class: BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade
+
+    # services
+
+    bc_app_wallet_wallet.wallet_service.class: BlockCypher\AppWallet\App\Service\WalletService
+
     # repositories
 
     bc_app_wallet_wallet.encrypted_wallet_repository.class: BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\FlywheelEncryptedWalletRepository
@@ -9,15 +24,62 @@ parameters:
 
     bc_app_wallet_wallet.wallet_data_loader.class: BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\DataFixtures\LoadWalletData
 
+    # command handlers
+
+    bc_app_wallet_wallet.create_wallet_command_handler.class: BlockCypher\AppWallet\App\Command\CreateWalletCommandHandler
+
+    # form factories
+
+    bc_app_wallet_wallet.wallet_form_factory.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Wallet\WalletFormFactory
+
 services:
+
+    # controllers
+
+    bc_app_wallet_wallet.index_controller:
+        class: %bc_app_wallet_wallet.index_controller.class%
+        arguments:
+         - @templating
+         - @translator
+         - @bc_app_wallet_wallet.wallet_service_facade
+
+    bc_app_wallet_wallet.show_new_controller:
+        class: %bc_app_wallet_wallet.show_new_controller.class%
+        arguments:
+         - @templating
+         - @translator
+         - @bc_app_wallet_wallet.wallet_form_factory
+
+    bc_app_wallet_wallet.create_controller:
+        class: %bc_app_wallet_wallet.create_controller.class%
+        arguments:
+         - @templating
+         - @translator
+         - @router
+         - @bc_app_wallet_wallet.wallet_form_factory
+         - @command_bus
+
+    # sercice facades
+
+    bc_app_wallet_wallet.wallet_service_facade:
+        class: %bc_app_wallet_wallet.wallet_service_facade.class%
+        arguments:
+          - @bc_app_wallet_wallet.wallet_service
+          - @bc_app_common_blockcypher.wallet_service
+
+    # services
+
+    bc_app_wallet_wallet.wallet_service:
+        class: %bc_app_wallet_wallet.wallet_service.class%
+        arguments:
+          - @bc_app_wallet_wallet.wallet_repository
+          - @bc_app_common_blockcypher.wallet_service
 
     # repositories
 
     bc_app_wallet_wallet.encrypted_wallet_repository:
         class: %bc_app_wallet_wallet.encrypted_wallet_repository.class%
         arguments:
-          - @bc_app_common_infrastructure_app_common.clock
-          - @bc_app_common_blockcypher.wallet_service
           - "%kernel.root_dir%/data"
 
     bc_app_wallet_wallet.wallet_repository:
@@ -35,3 +97,24 @@ services:
           - @bc_app_common_infrastructure_app_common.clock
           - @bc_app_wallet_wallet.wallet_repository
           - @bc_app_common_blockcypher.wallet_service
+          
+    # command handlers
+
+    bc_app_wallet_wallet.create_wallet_command_handler:
+        class: %bc_app_wallet_wallet.create_wallet_command_handler.class%
+        arguments:
+            - @bc_app_wallet_wallet.wallet_repository
+            - @bc_app_common_blockcypher.wallet_service
+            - @bc_app_common_infrastructure_app_common.clock
+        tags:
+            - { name: command_handler, handles: bc_app_wallet_wallet_create_wallet }
+
+    # form factory
+
+    bc_app_wallet_wallet.wallet_form_factory:
+        class: "%bc_app_wallet_wallet.wallet_form_factory.class%"
+        public: false
+        arguments:
+            - "@form.factory"
+            - "@router"
+            - "@translator"

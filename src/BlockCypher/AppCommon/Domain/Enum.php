@@ -48,4 +48,16 @@ abstract class Enum
     {
         return array_flip(self::values());
     }
+
+    /**
+     * @param $value
+     * @param $enumClass
+     * @throws \Exception
+     */
+    public static function validate($value, $enumClass)
+    {
+        if (!in_array($value, self::values())) {
+            throw new \Exception("Invalid enum value $value for class $enumClass");
+        }
+    }
 }

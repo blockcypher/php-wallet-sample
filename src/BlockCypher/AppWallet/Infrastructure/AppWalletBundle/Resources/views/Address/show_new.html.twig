@@ -18,15 +18,15 @@
         <div class="section">
             <div class="col-md-12">
                 <p class="text-center">
-                    <a href="{{ path('bc_app_wallet_address.index', { 'accountId': account_id }) }}"
+                    <a href="{{ path('bc_app_wallet_address.index', { 'walletId': wallet_id }) }}"
                        class="btn btn-lg btn-default">
                         <i class="fa fa-reply"></i>
                         Addresses
                     </a>
-                    <a href="{{ path('bc_app_wallet_account.index') }}"
+                    <a href="{{ path('bc_app_wallet_wallet.index') }}"
                        class="btn btn-lg btn-default">
                         <i class="fa fa-reply"></i>
-                        Accounts
+                        Wallets
                     </a>
                 </p>
             </div>
@@ -44,15 +44,15 @@
                 {{ form_start(address_form, {'attr': {'class': 'form-horizontal'}}) }}
                 {{ form_errors(address_form) }}
                 <div class="form-group">
-                    <label for="accountId" class="col-sm-2 control-label">Account</label>
-                    {# <input type="text" class="form-control" id="accountId" placeholder="Select account"> #}
+                    <label for="walletId" class="col-sm-2 control-label">Wallet</label>
+                    {# <input type="text" class="form-control" id="walletId" placeholder="Select wallet"> #}
                     <div class="col-sm-10">
-                        {{ form_widget(address_form.accountId, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_widget(address_form.walletId, {'attr': {'class': 'form-control'}}) }}
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="tag" class="col-sm-2 control-label">Address Tag</label>
-                    {# <input type="text" class="form-control" id="tag" placeholder="Enter an account name"> #}
+                    {# <input type="text" class="form-control" id="tag" placeholder="Enter an wallet name"> #}
                     <div class="col-sm-10">
                         {{ form_widget(address_form.tag, {'attr': {'class': 'form-control'}}) }}
                     </div>
@@ -70,7 +70,7 @@
                     <button type="submit" class="btn btn-default">Create Address</button>
                     <p class="help-block">
                         <small>This action uses this BlockCypher API endpoint:<a
-                                    href="http://dev.blockcypher.com/#wallet_api">/v1/{coin}/{chain}/wallets/{name}/addresses/generate</a>
+                                    href="http://dev.blockcypher.com/#wallet_api">/v1/{coinSymbol}/{chain}/wallets/{name}/addresses/generate</a>
                         </small>
                     </p>
                 </div>

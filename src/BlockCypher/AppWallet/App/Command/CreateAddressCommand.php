@@ -9,7 +9,7 @@ class CreateAddressCommand implements NamedMessage
     /**
      * @var string
      */
-    private $accountId;
+    private $walletId;
 
     /**
      * @var string
@@ -22,13 +22,13 @@ class CreateAddressCommand implements NamedMessage
     private $callbackUrl;
 
     /**
-     * @param $accountId
+     * @param string $walletId
      * @param string $tag
      * @param string $callbackUrl
      */
-    public function __construct($accountId, $tag = '', $callbackUrl = '')
+    public function __construct($walletId, $tag = '', $callbackUrl = '')
     {
-        $this->accountId = $accountId;
+        $this->walletId = $walletId;
         $this->tag = $tag;
         $this->callbackUrl = $callbackUrl;
     }
@@ -46,18 +46,18 @@ class CreateAddressCommand implements NamedMessage
     /**
      * @return string
      */
-    public function getAccountId()
+    public function getWalletId()
     {
-        return $this->accountId;
+        return $this->walletId;
     }
 
     /**
-     * @param string $accountId
+     * @param string $walletId
      * @return $this
      */
-    public function setAccountId($accountId)
+    public function setWalletId($walletId)
     {
-        $this->accountId = $accountId;
+        $this->walletId = $walletId;
         return $this;
     }
 

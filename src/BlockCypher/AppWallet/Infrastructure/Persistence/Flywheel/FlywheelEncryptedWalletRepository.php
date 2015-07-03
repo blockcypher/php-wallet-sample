@@ -2,9 +2,6 @@
 
 namespace BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel;
 
-use BlockCypher\AppCommon\App\Service\Clock;
-use BlockCypher\AppCommon\App\Service\WalletService;
-use BlockCypher\AppWallet\Domain\Account\AccountId;
 use BlockCypher\AppWallet\Domain\Wallet\EncryptedWallet;
 use BlockCypher\AppWallet\Domain\Wallet\EncryptedWalletRepository;
 use BlockCypher\AppWallet\Domain\Wallet\EncryptedWalletSpecification;
@@ -22,34 +19,16 @@ use JamesMoss\Flywheel\Result;
 class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
 {
     /**
-     * @var Clock
-     */
-    private $clock;
-
-    /**
      * @var Repository
      */
     private $repository;
 
     /**
-     * @var WalletService
-     */
-    private $walletService;
-
-    /**
      * Constructor
-     * @param Clock $clockService
-     * @param WalletService $walletService
      * @param string $dataDir
      */
-    public function __construct(
-        Clock $clockService,
-        WalletService $walletService,
-        $dataDir
-    )
+    public function __construct($dataDir)
     {
-        $this->clock = $clockService;
-        $this->walletService = $walletService;
         $config = new Config($dataDir);
         $this->repository = new Repository('wallets', $config);
     }
@@ -91,58 +70,11 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
         /** @var EncryptedWallet $encryptedWallet */
         $encryptedWallet = unserialize($walletDocument->data);
 
-        // TODO: Code Review. EncryptedWallet should not contain WalletService
-        // because it is only used to store Wallets safely. WalletService should be only injected
-        // in the Wallet constructor when Wallet is constructed from EncryptedWallet.
-        if ($encryptedWallet->getWalletService() === null) {
-            $encryptedWallet->setWalletService($this->walletService);
-        }
-
         //DEBUG
         //var_dump($wallet);
         //die();
 
         return $encryptedWallet;
-    }
-
-    /**
-     * @param AccountId $accountId
-     * @return Wallet
-     * @throws \Exception
-     */
-    public function walletOfAccountId(AccountId $accountId)
-    {
-        /** @var Result $result */
-        $result = $this->repository->query()
-            ->where('accountId', '==', $accountId->getValue())
-            ->execute();
-
-        // DEBUG
-        //var_dump($result);
-
-        if ($result === false) {
-            return null;
-        }
-
-        if ($result->count() == 0) {
-            return null;
-        }
-
-        // DEBUG
-        //var_dump($result);
-
-        // DEBUG
-        //if (!$result->offsetExists(0)) {
-        //    throw new \Exception(sprintf("Wallet not found from account id %s ", $accountId->getValue()));
-        //}
-
-        // DEBUG
-        //var_dump($result->first());
-        //die();
-
-        $wallet = $this->documentToWallet($result->first());
-
-        return $wallet;
     }
 
     /**
@@ -155,23 +87,22 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
     }
 
     /**
-     * @param EncryptedWallet $wallet
+     * @param EncryptedWallet $encryptedWallet
      * @return Document
      */
-    private function walletToDocument(EncryptedWallet $wallet)
+    private function walletToDocument(EncryptedWallet $encryptedWallet)
     {
         $searchFields = array(
-            'id' => $wallet->getId()->getValue(),
-            'accountId' => $wallet->getAccountId()->getValue(),
-            'coin' => $wallet->getCoin(),
-            'creationTime' => clone $wallet->getCreationTime(),
+            'id' => $encryptedWallet->getId()->getValue(),
+            'coinSymbol' => $encryptedWallet->getCoinSymbol(),
+            'creationTime' => clone $encryptedWallet->getCreationTime(),
         );
 
         $docArray = $searchFields;
-        $docArray['data'] = serialize($wallet);
+        $docArray['data'] = serialize($encryptedWallet);
 
         $walletDocument = new Document($docArray);
-        $walletDocument->setId($wallet->getId()->getValue());
+        $walletDocument->setId($encryptedWallet->getId()->getValue());
 
         // DEBUG
         //var_dump($wallet);

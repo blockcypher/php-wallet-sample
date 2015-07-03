@@ -12,16 +12,16 @@ class AddressOverviewController extends AppExplorerController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
-     * @param AddressServiceFacade $addressServiceFacade
+     * @param AddressServiceFacade $walletServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
-        AddressServiceFacade $addressServiceFacade
+        AddressServiceFacade $walletServiceFacade
     )
     {
         parent::__construct($templating, $translator);
-        $this->addressServiceFacade = $addressServiceFacade;
+        $this->addressServiceFacade = $walletServiceFacade;
     }
 
     /**
@@ -41,7 +41,7 @@ class AddressOverviewController extends AppExplorerController
             $token = $BLOCKCYPHER_PUBLIC_KEY; // TODO: get from app parameters.yml
         }
 
-        // TODO: if not valid address redirect to coin overview
+        // TODO: if not valid address redirect to coinSymbol overview
 
         $coinSymbol = $request->get('coinSymbol');
 

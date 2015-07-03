@@ -3,9 +3,8 @@
 namespace BlockCypher\AppCommon\App\Service\Internal;
 
 use BlockCypher\Api\Address;
-use BlockCypher\AppCommon\App\Service\AddressService;
 
-class BlockCypherAddressService implements AddressService
+class BlockCypherAddressService
 {
     /**
      * @param BlockCypherApiContextFactory $apiContextFactory
@@ -23,7 +22,7 @@ class BlockCypherAddressService implements AddressService
      */
     public function getAddress($address, $coinSymbol, $token)
     {
-        $apiContext = $this->apiContextFactory->getApiContext($token);
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
 
         $address = Address::get($address, array(), $apiContext);
 

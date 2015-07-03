@@ -1,9 +1,9 @@
 <?php
 
-namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Address;
+namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet;
 
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
-use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address\AddressFormFactory;
+use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Wallet\WalletFormFactory;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -11,22 +11,22 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ShowNew extends AppWalletController
 {
     /**
-     * @var AddressFormFactory
+     * @var WalletFormFactory
      */
-    private $addressFormFactory;
+    private $walletFormFactory;
 
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
-     * @param AddressFormFactory $walletFormFactory
+     * @param WalletFormFactory $walletFormFactory
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
-        AddressFormFactory $walletFormFactory)
+        WalletFormFactory $walletFormFactory)
     {
         parent::__construct($templating, $translator);
-        $this->addressFormFactory = $walletFormFactory;
+        $this->walletFormFactory = $walletFormFactory;
     }
 
     /**
@@ -35,15 +35,11 @@ class ShowNew extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $walletId = $request->get('walletId');
+        $createWalletCommand = $this->createCreateWalletCommand();
 
-        $tag = '';
-        $callbackUrl = '';
-        $createAddressCommand = $this->createCreateAddressCommand($walletId, $tag, $callbackUrl);
+        $createWalletForm = $this->walletFormFactory->createCreateForm($createWalletCommand);
 
-        $createAddressForm = $this->addressFormFactory->createCreateForm($createAddressCommand, $walletId);
-
-        $template = $this->getBaseTemplatePrefix() . ':Address:show_new.html';
+        $template = $this->getBaseTemplatePrefix() . ':Wallet:show_new.html';
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
@@ -54,8 +50,7 @@ class ShowNew extends AppWalletController
                 'messages' => array(),
                 //
                 'coin_symbol' => 'btc',
-                'address_form' => $createAddressForm->createView(),
-                'wallet_id' => $walletId
+                'wallet_form' => $createWalletForm->createView(),
             )
         );
     }

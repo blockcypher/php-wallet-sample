@@ -3,7 +3,7 @@
 namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Address;
 
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
-use BlockCypher\AppWallet\Presentation\Facade\AddressServiceFacade;
+use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -11,22 +11,22 @@ use Symfony\Component\Translation\TranslatorInterface;
 class Index extends AppWalletController
 {
     /**
-     * @var AddressServiceFacade
+     * @var WalletServiceFacade
      */
-    private $addressServiceFacade;
+    private $walletServiceFacade;
 
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
-     * @param AddressServiceFacade $addressServiceFacade
+     * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
-        AddressServiceFacade $addressServiceFacade)
+        WalletServiceFacade $walletServiceFacade)
     {
         parent::__construct($templating, $translator);
-        $this->addressServiceFacade = $addressServiceFacade;
+        $this->walletServiceFacade = $walletServiceFacade;
     }
 
     /**
@@ -35,14 +35,9 @@ class Index extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $accountId = $request->get('accountId');
-        if ($accountId === null) {
-            // If not account_id specified then use primary/default account
-            $primaryAccount = "1A311E0C-B6A6-4679-9F7B-21FDB265E135"; // TODO: get from user profile or account field
-            $accountId = $primaryAccount;
-        }
+        $walletId = $request->get('walletId');
 
-        $addresses = $this->addressServiceFacade->listAccountAddresses($accountId);
+        $addresses = $this->walletServiceFacade->listWalletAddresses($walletId);
 
         // DEBUG
         //var_dump($addresses);
@@ -65,7 +60,7 @@ class Index extends AppWalletController
                 'coin_symbol' => 'btc',
                 'current_page' => $currentPage,
                 'max_pages' => $maxPages,
-                'account_id' => $accountId,
+                'wallet_id' => $walletId,
                 'num_all_addresses' => count($addresses),
                 'addresses' => $addresses
             )

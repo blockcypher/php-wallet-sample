@@ -2,10 +2,9 @@
 
 namespace BlockCypher\AppCommon\App\Service\Internal;
 
-use BlockCypher\Api\Transaction;
-use BlockCypher\AppCommon\App\Service\TransactionService;
+use BlockCypher\Api\TX;
 
-class BlockCypherTransactionService implements TransactionService
+class BlockCypherTransactionService
 {
     /**
      * @param BlockCypherApiContextFactory $apiContextFactory
@@ -20,13 +19,13 @@ class BlockCypherTransactionService implements TransactionService
      * @param array $params
      * @param $coinSymbol
      * @param $token
-     * @return Transaction
+     * @return TX
      */
     public function getTransaction($hash, $params, $coinSymbol, $token)
     {
-        $apiContext = $this->apiContextFactory->getApiContext($token);
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
 
-        $transaction = Transaction::get($hash, $params, $apiContext);
+        $transaction = TX::get($hash, $params, $apiContext);
 
         return $transaction;
     }
@@ -36,13 +35,13 @@ class BlockCypherTransactionService implements TransactionService
      * @param array $params
      * @param $coinSymbol
      * @param $token
-     * @return Transaction[]
+     * @return TX[]
      */
     public function getTransactions($hashArray, $params, $coinSymbol, $token)
     {
-        $apiContext = $this->apiContextFactory->getApiContext($token);
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
 
-        $transaction = Transaction::getMultiple($hashArray, $params, $apiContext);
+        $transaction = TX::getMultiple($hashArray, $params, $apiContext);
 
         return $transaction;
     }

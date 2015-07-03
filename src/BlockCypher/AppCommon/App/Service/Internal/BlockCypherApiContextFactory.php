@@ -3,6 +3,7 @@
 namespace BlockCypher\AppCommon\App\Service\Internal;
 
 use BlockCypher\Auth\SimpleTokenCredential;
+use BlockCypher\Core\BlockCypherCoinSymbolConstants;
 use BlockCypher\Rest\ApiContext;
 
 class BlockCypherApiContextFactory extends ApiContext
@@ -17,19 +18,19 @@ class BlockCypherApiContextFactory extends ApiContext
     }
 
     /**
-     * @param string $token
-     * @param string $chain
-     * @param string $coin
-     * @param string $version
-     * @return ApiContext
+     * @param $coinSymbol
+     * @param $token
+     * @return \BlockCypher\Rest\ApiContext
+     * @throws \BlockCypher\Exception\BlockCypherConfigurationException
      */
-    public function getApiContext($token, $chain = 'main', $coin = 'btc', $version = 'v1')
+    public function getApiContext($coinSymbol, $token)
     {
-        // TODO: validate parameters
+        $coin = BlockCypherCoinSymbolConstants::getBlockCypherCode($coinSymbol);
+        $chain = BlockCypherCoinSymbolConstants::getBlockCypherNetwork($coinSymbol);
 
-        // TODO: apiContext instances cache?
+        $apiContext = $this->getApiContextUsingConfigArray($token, $chain, $coin);
 
-        return $this->getApiContextUsingConfigArray($token, $chain, $coin, $version);
+        return $apiContext;
     }
 
     /**
@@ -64,36 +65,17 @@ class BlockCypherApiContextFactory extends ApiContext
      * Helper method for getting an APIContext for all calls (getting config from ini file)
      * @return \BlockCypher\Rest\ApiContext
      */
-    private function getApiContextUsingConfigIni()
-    {
-        // #### SDK configuration
-        // Register the sdk_config.ini file in current directory
-        // as the configuration source.
-        if (!defined("BC_CONFIG_PATH")) {
-            define("BC_CONFIG_PATH", __DIR__);
-        }
-
-        $apiContext = ApiContext::create('main', 'btc', 'v1');
-
-        return $apiContext;
-    }
-
-    /**
-     * @param string $token
-     * @return bool
-     */
-    private function validateToken($token)
-    {
-        // TODO: this function should be moved to the SDK
-
-        // sample tokens:
-        // c0afcccdde5081d6429de37d16166ead
-        // ddf3g04f-0f31-4060-978b-63b1ff43e185
-
-        if (strlen($token) < 20) return false;
-        if (strlen($token) > 50) return false;
-        if (!preg_match('/[a-z0-9-]+/', $token)) return false;
-
-        return true;
-    }
+//    private function getApiContextUsingConfigIni()
+//    {
+//        // #### SDK configuration
+//        // Register the sdk_config.ini file in current directory
+//        // as the configuration source.
+//        if (!defined("BC_CONFIG_PATH")) {
+//            define("BC_CONFIG_PATH", __DIR__);
+//        }
+//
+//        $apiContext = ApiContext::create('main', 'btc', 'v1');
+//
+//        return $apiContext;
+//    }
 }

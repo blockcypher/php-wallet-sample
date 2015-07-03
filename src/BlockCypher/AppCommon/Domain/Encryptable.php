@@ -3,7 +3,6 @@
 namespace BlockCypher\AppCommon\Domain;
 
 use BlockCypher\AppCommon\App\Service\Encryptor;
-use BlockCypher\AppWallet\Domain\Account\EncryptedAccount;
 
 /**
  * Interface Encryptable
@@ -13,7 +12,7 @@ interface Encryptable
 {
     /**
      * @param Encryptor $encryptor
-     * @return EncryptedAccount
+     * @return mixed
      */
     public function encryptUsing(Encryptor $encryptor);
 }

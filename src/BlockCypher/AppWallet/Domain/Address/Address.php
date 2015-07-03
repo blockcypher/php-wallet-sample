@@ -117,6 +117,33 @@ class Address extends Model implements Encryptable
     }
 
     /**
+     * Address[]->AddressDto[]
+     *
+     * @param Address[] $addressArray
+     * @return array
+     */
+    public static function arrayToDtoArray($addressArray)
+    {
+        $addressDtoArray = array();
+        foreach ($addressArray as $address) {
+            $addressDtoArray[] = $address->toDto();
+        }
+
+        return $addressDtoArray;
+    }
+
+    /**
+     * Address->AddressDto
+     *
+     * @return array
+     */
+    public function toDto()
+    {
+        // Using arrays as DTOs
+        return $this->toArray();
+    }
+
+    /**
      * Return an array with all addresses (only bitcoin address)
      * @param Address[] $addresses
      * @return array
@@ -159,11 +186,11 @@ class Address extends Model implements Encryptable
 
     /**
      * @param array $entityAsArray
-     * @return Address
+     * @return $this
      */
     public static function fromArray($entityAsArray)
     {
-        $account = new self(
+        $address = new self(
             $entityAsArray['address'],
             $entityAsArray['walletId'],
             $entityAsArray['creationTime'],
@@ -174,7 +201,7 @@ class Address extends Model implements Encryptable
             $entityAsArray['callbackUrl']
         );
 
-        return $account;
+        return $address;
     }
 
     /**
@@ -183,7 +210,7 @@ class Address extends Model implements Encryptable
      */
     public function encryptUsing(Encryptor $encryptor)
     {
-        $encryptedAccount = new EncryptedAddress(
+        $encryptedAddress = new EncryptedAddress(
             $this->address,
             $this->walletId,
             $this->creationTime,
@@ -194,7 +221,7 @@ class Address extends Model implements Encryptable
             $this->callbackUrl
         );
 
-        return $encryptedAccount;
+        return $encryptedAddress;
     }
 
     /**

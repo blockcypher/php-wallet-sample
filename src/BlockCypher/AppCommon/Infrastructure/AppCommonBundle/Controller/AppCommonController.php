@@ -11,30 +11,6 @@ class AppCommonController extends BaseController
         return 'BlockCypherAppCommonInfrastructureAppCommonBundle';
     }
 
-//    /**
-//     * @param $accountId
-//     * @param $tag
-//     * @param $callbackUrl
-//     * @return CreateAddressCommand
-//     */
-//    protected function createCreateAddressCommand($accountId, $tag, $callbackUrl)
-//    {
-//        $createAddressCommand = new CreateAddressCommand($accountId, $tag, $callbackUrl);
-//        return $createAddressCommand;
-//    }
-//
-//    /**
-//     * @param $accountId
-//     * @param $tag
-//     * @param $callbackUrl
-//     * @return CreateAccountCommand
-//     */
-//    protected function createCreateAccountCommand($accountId, $tag, $callbackUrl)
-//    {
-//        $createAccountCommand = new CreateAccountCommand($accountId, $tag, $callbackUrl);
-//        return $createAccountCommand;
-//    }
-
     /**
      * Shortcut to trans. Consider to put it in some common parent controller.
      * @param $id

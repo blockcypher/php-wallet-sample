@@ -136,11 +136,11 @@ class EncryptedAddress extends Model implements Decryptable
 
     /**
      * @param array $entityAsArray
-     * @return Address
+     * @return $this
      */
     public static function fromArray($entityAsArray)
     {
-        $account = new self(
+        $encryptedAddress = new self(
             $entityAsArray['address'],
             $entityAsArray['walletId'],
             $entityAsArray['creationTime'],
@@ -151,7 +151,7 @@ class EncryptedAddress extends Model implements Decryptable
             $entityAsArray['callbackUrl']
         );
 
-        return $account;
+        return $encryptedAddress;
     }
 
     public function toArray()

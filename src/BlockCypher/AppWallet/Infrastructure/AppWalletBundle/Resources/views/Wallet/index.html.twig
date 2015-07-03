@@ -1,44 +1,38 @@
 {% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
 
-{% block title %}Addresses - Wallet {{ wallet_id }}{% endblock title %}
+{% block title %}Wallets{% endblock title %}
 
 {% block page_header %}
     <h1>
         <i class="fa fa-qrcode"></i>
-        Addresses
+        Wallets
     </h1>
 
     <h2 class="tagline wrapit semi">
-        Addresses in wallet {{ wallet_id }}
+        Your wallets
     </h2>
 {% endblock page_header %}
 
 {% block content %}
     <div class="container">
-
         <div class="section">
             <div class="col-md-12">
                 <p class="text-center">
-                    <a href="{{ path('bc_app_wallet_address.new', { 'walletId': wallet_id }) }}"
+                    <a href="{{ path('bc_app_wallet_wallet.new') }}"
                        class="btn btn-lg btn-default">
                         <i class="fa fa-plus"></i>
-                        Create New Address
-                    </a>
-                    <a href="{{ path('bc_app_wallet_wallet.index') }}"
-                       class="btn btn-lg btn-default">
-                        <i class="fa fa-reply"></i>
-                        Wallets
+                        New Wallet
                     </a>
                 </p>
             </div>
         </div>
 
-        {% if addresses %}
+        {% if wallets %}
 
             <div class="col-md-12">
 
                 <h2>
-                    {{ num_all_addresses|intcomma }} Addresses
+                    {{ num_all_wallets|intcomma }} Wallets
                 </h2>
 
                 {% if max_pages > 1 %}
@@ -73,32 +67,43 @@
                 <div class="table-responsive">
                     <table class="table">
                         <tr>
-                            <th>Address</th>
-                            <th>Tag</th>
+                            <th>Name</th>
+                            <th>Balance</th>
+                            <th>Coin Symbol</th>
                             <th>Creation Time</th>
+                            <th>Id</th>
+                            <th>Actions</th>
                         </tr>
-                        {% for address in addresses %}
-                            <tr class="tx-row" id="{{ address.address }}">
-                                <td class="truncate">
-                                    {% if address.address %}
-                                        <a href="TODO LINK TO ADDRESS"
-                                           class="hidden-xs tx-list small">
-                                            {{ address.address }}
-                                        </a>
-                                        <a href="TODO LINK TO ADDRESS"
-                                           class="visible-xs">
-                                            View Address
-                                        </a>
-                                    {% endif %}
+                        {% for wallet in wallets %}
+                            <tr class="tx-row" id="{{ wallet.id }}">
+                                <td class="">
+                                    {{ wallet.name }}
                                 </td>
                                 <td class="">
-                                    {{ address.tag }}
+                                    {# {{ wallet.balance|satoshis_to_btc_rounding|intcomma }}&nbsp;{{ wallet.type|coin_symbol_to_currency_name }} #}
+                                    {{ wallet.balance|satoshis_to_btc_full|intcomma(8) }}
+                                    &nbsp;{{ wallet.coinSymbol|coin_symbol_to_currency_name }} {# without rounding #}
+                                </td>
+                                <td class="">
+                                    {{ wallet.coinSymbol }}
                                 </td>
                                 <td>
                                     <time class="timeago"
-                                          datetime="{{ address.creationTime|date('Y-m-d\TH:i:s') }}Z">
-                                        {{ address.creationTime|date('Y-m-d H:i') }} GMT
+                                          datetime="{{ wallet.creationTime|date('Y-m-d\TH:i:s') }}Z">
+                                        {{ wallet.creationTime|date('Y-m-d H:i') }} GMT
                                     </time>
+                                </td>
+                                <td class="truncate">
+                                    <a href="{{ path('bc_app_wallet_address.index', {'walletId': wallet.id }) }}"
+                                       class="hidden-xs tx-list small">
+                                        {{ wallet.id }}
+                                    </a>
+                                </td>
+                                <td class="truncate">
+                                    <a href="{{ path('bc_app_wallet_address.index', {'walletId': wallet.id }) }}"
+                                       class="hidden-xs tx-list small">
+                                        List addresses
+                                    </a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -138,7 +143,7 @@
             </div>
 
         {% else %}
-            <p>No addresses detected.</p>
+            <p>No wallets detected.</p>
         {% endif %}
 
     </div>

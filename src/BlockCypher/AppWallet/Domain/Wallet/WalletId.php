@@ -32,15 +32,15 @@ class WalletId
 
     /**
      * @param array $entityAsArray
-     * @return WalletId
+     * @return $this
      */
     public static function fromArray($entityAsArray)
     {
-        $account = new self(
+        $walletId = new self(
             $entityAsArray['value']
         );
 
-        return $account;
+        return $walletId;
     }
 
     public function toArray()

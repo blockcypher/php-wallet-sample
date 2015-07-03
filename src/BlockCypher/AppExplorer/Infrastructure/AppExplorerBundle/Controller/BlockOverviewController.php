@@ -46,7 +46,7 @@ class BlockOverviewController extends AppExplorerController
             $token = $BLOCKCYPHER_PUBLIC_KEY; // TODO: get from app parameters.yml
         }
 
-        // TODO: if not valid address redirect to coin overview
+        // TODO: if not valid address redirect to coinSymbol overview
 
         $coinSymbol = $request->get('coinSymbol');
 

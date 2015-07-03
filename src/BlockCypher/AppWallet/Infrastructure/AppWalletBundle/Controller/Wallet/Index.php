@@ -1,32 +1,32 @@
 <?php
 
-namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Address;
+namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet;
 
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
-use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address\AddressFormFactory;
+use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ShowNew extends AppWalletController
+class Index extends AppWalletController
 {
     /**
-     * @var AddressFormFactory
+     * @var WalletServiceFacade
      */
-    private $addressFormFactory;
+    private $walletServiceFacade;
 
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
-     * @param AddressFormFactory $walletFormFactory
+     * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
-        AddressFormFactory $walletFormFactory)
+        WalletServiceFacade $walletServiceFacade)
     {
         parent::__construct($templating, $translator);
-        $this->addressFormFactory = $walletFormFactory;
+        $this->walletServiceFacade = $walletServiceFacade;
     }
 
     /**
@@ -35,15 +35,17 @@ class ShowNew extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $walletId = $request->get('walletId');
+        $wallets = $this->walletServiceFacade->listWallets();
 
-        $tag = '';
-        $callbackUrl = '';
-        $createAddressCommand = $this->createCreateAddressCommand($walletId, $tag, $callbackUrl);
+        $template = $this->getBaseTemplatePrefix() . ':Wallet:index.html';
 
-        $createAddressForm = $this->addressFormFactory->createCreateForm($createAddressCommand, $walletId);
+        // DEBUG
+        //var_dump($wallets);
+        //die();
 
-        $template = $this->getBaseTemplatePrefix() . ':Address:show_new.html';
+        // TODO
+        $currentPage = 1;
+        $maxPages = 0; // get_max_pages(num_items=address_details['final_n_tx'], items_per_page=TXNS_PER_PAGE),
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
@@ -54,8 +56,10 @@ class ShowNew extends AppWalletController
                 'messages' => array(),
                 //
                 'coin_symbol' => 'btc',
-                'address_form' => $createAddressForm->createView(),
-                'wallet_id' => $walletId
+                'current_page' => $currentPage,
+                'num_all_wallets' => count($wallets),
+                'max_pages' => $maxPages,
+                'wallets' => $wallets
             )
         );
     }

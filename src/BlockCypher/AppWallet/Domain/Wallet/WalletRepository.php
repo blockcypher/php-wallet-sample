@@ -2,8 +2,6 @@
 
 namespace BlockCypher\AppWallet\Domain\Wallet;
 
-use BlockCypher\AppWallet\Domain\Account\AccountId;
-
 /**
  * Interface WalletRepository
  * @package BlockCypher\AppWallet\Domain\Wallet
@@ -20,12 +18,6 @@ interface WalletRepository
      * @return Wallet
      */
     public function walletOfId(WalletId $walletId);
-
-    /**
-     * @param AccountId $accountId
-     * @return Wallet
-     */
-    public function walletOfAccountId(AccountId $accountId);
 
     /**
      * @param Wallet $wallet

@@ -43,4 +43,7 @@
 # PhpStorm
 /.idea/*
 
+# App data
+#/app/data/*
+
 

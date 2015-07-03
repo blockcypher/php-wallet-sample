@@ -3,7 +3,7 @@
 namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address;
 
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
-use BlockCypher\AppWallet\Domain\Account\AccountRepository;
+use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -31,27 +31,27 @@ class AddressFormFactory
     private $translator;
 
     /**
-     * @var AccountRepository
+     * @var WalletRepository
      */
-    private $accountRepository;
+    private $walletRepository;
 
     /**
      * @param FormFactoryInterface $formFactory
      * @param RouterInterface $router
      * @param TranslatorInterface $translator
-     * @param AccountRepository $accountRepository
+     * @param WalletRepository $walletRepository
      */
     function __construct(
         FormFactoryInterface $formFactory,
         RouterInterface $router,
         TranslatorInterface $translator,
-        AccountRepository $accountRepository
+        WalletRepository $walletRepository
     )
     {
         $this->formFactory = $formFactory;
         $this->router = $router;
         $this->translator = $translator;
-        $this->accountRepository = $accountRepository;
+        $this->walletRepository = $walletRepository;
     }
 
     /**
@@ -60,19 +60,16 @@ class AddressFormFactory
      */
     public function createCreateForm(CreateAddressCommand $createAddressCommand = null)
     {
-        $accountChoices = $this->generateAccountHtmlSelectChoices();
-
-        $defaultSelectedAccountId = $createAddressCommand->getAccountId();
-//        if (!empty($accountId)) {
-//            $defaultSelectedAccountId = $accountId;
-//        }
+        $walletChoices = $this->generateWalletHtmlSelectChoices();
+        $defaultSelectedWalletId = $createAddressCommand->getWalletId();
 
         $form = $this->formFactory->create(
-            new CreateAddressType($accountChoices, $defaultSelectedAccountId),
-            $createAddressCommand, array(
-            'action' => $this->router->generate('bc_app_wallet_address.create'),
-            'method' => 'POST',
-            'csrf_protection' => true,
+            new CreateAddressType($walletChoices, $defaultSelectedWalletId),
+            $createAddressCommand,
+            array(
+                'action' => $this->router->generate('bc_app_wallet_address.generate', array('walletId' => $defaultSelectedWalletId)),
+                'method' => 'POST',
+                'csrf_protection' => true,
         ));
 
         //$form->add('submit', 'submit'); // Using bootstrap button
@@ -81,17 +78,17 @@ class AddressFormFactory
     }
 
     /**
-     * Returns an array of choices for to be used in a form select type listing accounts.
+     * Returns an array of choices for to be used in a form select type listing wallets.
      * @return array
      */
-    private function generateAccountHtmlSelectChoices()
+    private function generateWalletHtmlSelectChoices()
     {
-        $accountChoices = array();
-        $accounts = $this->accountRepository->findAll();
-        foreach ($accounts as $account) {
-            $accountChoices[$account->getId()->getValue()] = $account->getTag();
+        $walletChoices = array();
+        $wallets = $this->walletRepository->findAll();
+        foreach ($wallets as $wallet) {
+            $walletChoices[$wallet->getId()->getValue()] = $wallet->getName();
         }
-        return $accountChoices;
+        return $walletChoices;
     }
 
     /**
@@ -102,8 +99,8 @@ class AddressFormFactory
      * @param null $locale
      * @return string
      */
-    private function trans($id, array $parameters = array(), $domain = 'BlockCypherAppWalletInfrastructureAppWalletBundle', $locale = null)
-    {
-        return $this->translator->trans($id, $parameters, $domain, $locale);
-    }
+//    private function trans($id, array $parameters = array(), $domain = 'BlockCypherAppWalletInfrastructureAppWalletBundle', $locale = null)
+//    {
+//        return $this->translator->trans($id, $parameters, $domain, $locale);
+//    }
 }

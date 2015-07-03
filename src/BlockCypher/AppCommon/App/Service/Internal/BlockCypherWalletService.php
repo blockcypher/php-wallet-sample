@@ -2,16 +2,15 @@
 
 namespace BlockCypher\AppCommon\App\Service\Internal;
 
-use BlockCypher\Api\Address;
-use BlockCypher\Api\Wallet;
+use BlockCypher\Api\Address as BlockCypherAddress;
+use BlockCypher\Api\Wallet as BlockCypherWallet;
 use BlockCypher\Api\WalletGenerateAddressResponse;
-use BlockCypher\AppCommon\App\Service\WalletService;
 use BlockCypher\AppCommon\Domain\BigMoney;
 use BlockCypher\Core\BlockCypherCoinSymbolConstants;
 use BlockCypher\Exception\BlockCypherConnectionException;
 use Money\Currency;
 
-class BlockCypherWalletService implements WalletService
+class BlockCypherWalletService
 {
     const ERROR_WALLET_NOT_FOUND = 404;
 
@@ -24,35 +23,38 @@ class BlockCypherWalletService implements WalletService
     }
 
     /**
-     * @param Wallet $wallet
-     * @param string $coin
-     * @param string $token
+     * @param $walletName
+     * @param $coinSymbol
+     * @param $token
      */
-    public function createWallet(Wallet $wallet, $coin, $token)
+    public function createWallet($walletName, $coinSymbol, $token)
     {
-        // TODO: extract to field?
-        $apiContext = $this->apiContextFactory->getApiContext($token);
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
 
-        $wallet->create(array(), $apiContext);
+        // Create BlockCypher wallet
+        $bcWallet = new BlockCypherWallet();
+        $bcWallet->setToken($token);
+        $bcWallet->setName($walletName);
+
+        $bcWallet->create(array(), $apiContext);
     }
 
     /**
-     * @param string $walletName
-     * @param string $coinSymbol
-     * @param string $token
-     * @return Wallet|null
+     * @param $walletName
+     * @param $coinSymbol
+     * @param $token
+     * @return BlockCypherWallet|null
      * @throws BlockCypherConnectionException
      * @throws \Exception
      */
     public function getWallet($walletName, $coinSymbol, $token)
     {
-        // TODO: extract to field?
-        $apiContext = $this->apiContextFactory->getApiContext($token);
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
 
         $wallet = null;
 
         try {
-            $wallet = Wallet::get($walletName, array(), $apiContext);
+            $wallet = BlockCypherWallet::get($walletName, array(), $apiContext);
         } catch (BlockCypherConnectionException $e) {
             if ($e->getCode() == self::ERROR_WALLET_NOT_FOUND) {
                 // return null
@@ -65,27 +67,23 @@ class BlockCypherWalletService implements WalletService
     }
 
     /**
-     * @param string $walletName
-     * @param string $coinSymbol
-     * @param string $token
-     * @return BigMoney
+     * @param $walletName
+     * @param $coinSymbol
+     * @param $token
+     * @return BigMoney|null
+     * @throws BlockCypherConnectionException
+     * @throws \BlockCypher\Exception\BlockCypherConfigurationException
      * @throws \Exception
      */
     public function getWalletBalance($walletName, $coinSymbol, $token)
     {
-        // TODO: extract to field?
-        $apiContext = $this->apiContextFactory->getApiContext($token);
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
 
         $balance = null;
+        $address = null;
 
         try {
-            // TODO: wallet balance is obtained from this API endpoint /addrs/<wallet_name>/balance
-            // Change to Wallet::getBalance when /wallets/<wallet_name>/balance endpoint is implemented
-
-            $address = Address::get($walletName, array(), $apiContext);
-            $currency = new Currency(BlockCypherCoinSymbolConstants::getCurrencyAbbrev($coinSymbol));
-            $balance = BigMoney::fromInteger($address->getTotalReceived(), $currency);
-
+            $address = BlockCypherAddress::get($walletName, array(), $apiContext);
         } catch (BlockCypherConnectionException $e) {
             if ($e->getCode() == self::ERROR_WALLET_NOT_FOUND) {
                 // return null
@@ -94,23 +92,44 @@ class BlockCypherWalletService implements WalletService
             }
         }
 
+        if ($address !== null) {
+            $currencyAbbrev = BlockCypherCoinSymbolConstants::getCurrencyAbbrev($coinSymbol);
+            $currency = new Currency($currencyAbbrev);
+            $balance = BigMoney::fromInteger($address->getTotalReceived(), $currency);
+        }
+
         return $balance;
     }
 
     /**
-     * @param string $walletName
-     * @param string $coinSymbol
-     * @param string $token
+     * @param $walletName
+     * @param $coinSymbol
+     * @param $token
      * @return WalletGenerateAddressResponse
      */
     public function generateAddress($walletName, $coinSymbol, $token)
     {
-        // TODO: extract to field?
-        $apiContext = $this->apiContextFactory->getApiContext($token);
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
 
-        $wallet = Wallet::get($walletName, array(), $apiContext);
+        $wallet = BlockCypherWallet::get($walletName, array(), $apiContext);
         $walletGenerateAddressResponse = $wallet->generateAddress(array(), $apiContext);
 
         return $walletGenerateAddressResponse;
+    }
+
+    /**
+     * @param $walletName
+     * @param $coinSymbol
+     * @param $token
+     * @return \string[]
+     */
+    public function getWalletAddresses($walletName, $coinSymbol, $token)
+    {
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+
+        $wallet = BlockCypherWallet::get($walletName, array(), $apiContext);
+        $addresses = $wallet->getAddresses();
+
+        return $addresses;
     }
 }

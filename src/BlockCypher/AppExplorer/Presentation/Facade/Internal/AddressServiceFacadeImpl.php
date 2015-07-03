@@ -1,21 +1,20 @@
 <?php
 
-namespace BlockCypher\AppExplorer\Presentation\Facade\Internal;
+namespace BlockCypher\AppExplorer\Presentation\Facade;
 
-use BlockCypher\AppCommon\App\Service\AddressService;
-use BlockCypher\AppExplorer\Presentation\Facade\AddressServiceFacade;
+use BlockCypher\AppCommon\App\Service\Internal\BlockCypherAddressService;
 
-class AddressServiceFacadeImpl implements AddressServiceFacade
+class AddressServiceFacade
 {
     /**
-     * @var AddressService
+     * @var BlockCypherAddressService
      */
     private $addressService;
 
     /**
-     * @param AddressService $addressService
+     * @param BlockCypherAddressService $addressService
      */
-    function __construct(AddressService $addressService)
+    function __construct(BlockCypherAddressService $addressService)
     {
         $this->addressService = $addressService;
     }

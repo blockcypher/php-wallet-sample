@@ -15,23 +15,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CreateAddressType extends AbstractType
 {
     /**
-     * @var array choices for account html select
+     * @var array choices for wallet html select
      */
-    private $accountIdChoices;
+    private $walletIdChoices;
 
     /**
      * @var string
      */
-    private $defaultAccountId;
+    private $defaultWalletId;
 
     /**
-     * @param array $accountIdChoices
-     * @param $defaultAccountId
+     * @param array $walletIdChoices
+     * @param $defaultWalletId
      */
-    function __construct($accountIdChoices, $defaultAccountId)
+    function __construct($walletIdChoices, $defaultWalletId)
     {
-        $this->accountIdChoices = $accountIdChoices;
-        $this->defaultAccountId = $defaultAccountId;
+        $this->walletIdChoices = $walletIdChoices;
+        $this->defaultWalletId = $defaultWalletId;
     }
 
     /**
@@ -41,14 +41,15 @@ class CreateAddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         // DEBUG
-        //var_dump($this->defaultAccountId);
+        //var_dump($this->defaultWalletId);
         //die();
 
+        // TODO: walletId hidden
         $builder
-            ->add('accountId', 'choice', array(
-                'choices' => $this->accountIdChoices,
+            ->add('walletId', 'choice', array(
+                'choices' => $this->walletIdChoices,
                 'required' => true,
-                'data' => $this->defaultAccountId
+                'data' => $this->defaultWalletId
             ))
             ->add('tag', 'text', array('required' => true))
             ->add('callbackUrl', 'text', array('required' => false));
@@ -60,7 +61,7 @@ class CreateAddressType extends AbstractType
             'data_class' => 'BlockCypher\AppWallet\App\Command\CreateAddressCommand',
             'empty_data' => function (FormInterface $form) {
                 $createAddressCommand = new CreateAddressCommand(
-                    $form->get('accountId')->getData(),
+                    $form->get('walletId')->getData(),
                     $form->get('tag')->getData(),
                     $form->get('callbackUrl')->getData()
                 );

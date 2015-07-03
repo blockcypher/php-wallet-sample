@@ -12,16 +12,16 @@ class SubscribeAddressController extends AppExplorerController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
-     * @param AddressServiceFacade $addressServiceFacade
+     * @param AddressServiceFacade $walletServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
-        AddressServiceFacade $addressServiceFacade
+        AddressServiceFacade $walletServiceFacade
     )
     {
         parent::__construct($templating, $translator);
-        $this->addressServiceFacade = $addressServiceFacade;
+        $this->addressServiceFacade = $walletServiceFacade;
     }
 
     /**
