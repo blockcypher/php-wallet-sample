@@ -2,11 +2,14 @@
 
 namespace BlockCypher\AppWallet\Presentation\Facade;
 
+use BlockCypher\AppCommon\App\Service\Internal\BlockCypherAddressService;
 use BlockCypher\AppCommon\App\Service\Internal\BlockCypherWalletService;
 use BlockCypher\AppWallet\App\Service\WalletService;
 use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 use BlockCypher\AppWallet\Presentation\Facade\Dto\AddressListItemDto;
+use BlockCypher\AppWallet\Presentation\Facade\Dto\TransactionListItemDto;
 use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletListItemDto;
+use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletTransactionsDto;
 
 class WalletServiceFacade
 {
@@ -23,14 +26,17 @@ class WalletServiceFacade
     /**
      * @param WalletService $walletService
      * @param BlockCypherWalletService $blockCypherWalletService
+     * @param BlockCypherAddressService $blockCypherAddressService
      */
     function __construct(
         WalletService $walletService,
-        BlockCypherWalletService $blockCypherWalletService
+        BlockCypherWalletService $blockCypherWalletService,
+        BlockCypherAddressService $blockCypherAddressService
     )
     {
         $this->walletService = $walletService;
         $this->blockCypherWalletService = $blockCypherWalletService;
+        $this->blockCypherAddressService = $blockCypherAddressService;
     }
 
     /**
@@ -100,5 +106,60 @@ class WalletServiceFacade
         //die();
 
         return $walletList;
+    }
+
+    /**
+     * @param string $walletId
+     * @return WalletTransactionsDto
+     */
+    public function listWalletTransactions($walletId)
+    {
+        $wallet = $this->walletService->getWallet(new WalletId($walletId));
+
+        $address = $this->blockCypherAddressService->getAddress(
+        //$wallet->getId()->getValue(),
+            "mkVuZV2kVtMzddQabFDanFi6DTwWYtgiCn", //DEBUG
+            $wallet->getCoinSymbol(),
+            $wallet->getToken()
+        );
+
+        $walletTransactionsDto = new WalletTransactionsDto();
+
+        $walletTransactionsDto->setTotalSent($address->getTotalSent());
+        $walletTransactionsDto->setTotalReceived($address->getTotalReceived());
+        $walletTransactionsDto->setUnconfirmedBalance($address->getUnconfirmedBalance());
+        $walletTransactionsDto->setBalance($address->getBalance());
+        $walletTransactionsDto->setFinalBalance($address->getFinalBalance());
+        $walletTransactionsDto->setNTx($address->getNTx());
+        $walletTransactionsDto->setUnconfirmedNTx($address->getUnconfirmedNTx());
+        $walletTransactionsDto->setFinalNTx($address->getFinalNTx());
+
+        $txrefs = $address->getTxrefs();
+
+        $transactionListItemDtos = array();
+
+        if ($txrefs === null) {
+            // No transactions
+            $walletTransactionsDto->setTransactionListItemDtos(array());
+        } else {
+
+            foreach ($txrefs as $txref) {
+
+                $transactionListItemDto = new TransactionListItemDto();
+
+                $transactionListItemDto->setTxHash($txref->getTxHash());
+                $transactionListItemDto->setTxInputN($txref->getTxInputN());
+                $transactionListItemDto->setValue($txref->getValue());
+                $transactionListItemDto->setConfirmations($txref->getConfirmations());
+                $transactionListItemDto->setReceived($txref->getReceived());
+                $transactionListItemDto->setConfirmed($txref->getConfirmed());
+                $transactionListItemDto->setBlockHeight($txref->getBlockHeight());
+
+                $transactionListItemDtos[] = $transactionListItemDto;
+            }
+            $walletTransactionsDto->setTransactionListItemDtos($transactionListItemDtos);
+        }
+
+        return $walletTransactionsDto;
     }
 }

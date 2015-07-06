@@ -38,6 +38,7 @@ assetic:
         - BlockCypherAppCommonInfrastructureApiBundle
         - BlockCypherAppCommonInfrastructureLayoutBundle
         - BlockCypherAppExplorerInfrastructureAppExplorerBundle
+        - BlockCypherAppWalletInfrastructureAppWalletBundle
     #java: /usr/bin/java
     filters:
         cssrewrite: ~

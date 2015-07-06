@@ -135,4 +135,14 @@ class WalletService
         $wallet = $this->walletRepository->walletOfId($walletId);
         return $wallet->getAddresses();
     }
+
+    /**
+     * @param WalletId $walletId
+     * @return Wallet
+     */
+    public function getWallet(WalletId $walletId)
+    {
+        $wallet = $this->walletRepository->walletOfId($walletId);
+        return $wallet;
+    }
 }

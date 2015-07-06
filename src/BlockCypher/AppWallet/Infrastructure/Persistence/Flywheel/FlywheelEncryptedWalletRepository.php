@@ -94,6 +94,7 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
     {
         $searchFields = array(
             'id' => $encryptedWallet->getId()->getValue(),
+            'name' => $encryptedWallet->getName(),
             'coinSymbol' => $encryptedWallet->getCoinSymbol(),
             'creationTime' => clone $encryptedWallet->getCreationTime(),
         );

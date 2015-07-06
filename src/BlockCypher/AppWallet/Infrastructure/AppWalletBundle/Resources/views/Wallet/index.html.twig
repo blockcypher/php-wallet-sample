@@ -94,16 +94,16 @@
                                     </time>
                                 </td>
                                 <td class="truncate">
-                                    <a href="{{ path('bc_app_wallet_address.index', {'walletId': wallet.id }) }}"
+                                    <a href="{{ path('bc_app_wallet_wallet.transactions', {'walletId': wallet.id }) }}"
                                        class="hidden-xs tx-list small">
                                         {{ wallet.id }}
                                     </a>
                                 </td>
                                 <td class="truncate">
                                     <a href="{{ path('bc_app_wallet_address.index', {'walletId': wallet.id }) }}"
-                                       class="hidden-xs tx-list small">
-                                        List addresses
-                                    </a>
+                                       class="hidden-xs tx-list small">Addresses</a>
+                                    <a href="{{ path('bc_app_wallet_wallet.transactions', {'walletId': wallet.id }) }}"
+                                       class="hidden-xs tx-list small">History</a>
                                 </td>
                             </tr>
                         {% endfor %}

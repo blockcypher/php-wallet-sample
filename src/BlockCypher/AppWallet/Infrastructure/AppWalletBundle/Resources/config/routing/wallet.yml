@@ -12,6 +12,11 @@ bc_app_wallet_wallet.create:
     defaults: { _controller: "bc_app_wallet_wallet.create_controller" }
     requirements: { _method: post }
 
+bc_app_wallet_wallet.transactions:
+    pattern:  /wallets/{walletId}
+    defaults: { _controller: "bc_app_wallet_wallet.transactions_controller" }
+    requirements: { _method: get }
+
 bc_app_wallet_address:
     resource: "@BlockCypherAppWalletInfrastructureAppWalletBundle/Resources/config/routing/address.yml"
     prefix:   /wallets

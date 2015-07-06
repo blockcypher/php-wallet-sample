@@ -5,7 +5,7 @@ parameters:
     bc_app_wallet_wallet.index_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet\Index
     bc_app_wallet_wallet.show_new_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet\ShowNew
     bc_app_wallet_wallet.create_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet\Create
-
+    bc_app_wallet_wallet.transactions_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet\Transactions
 
     # sercice facades
 
@@ -59,6 +59,13 @@ services:
          - @bc_app_wallet_wallet.wallet_form_factory
          - @command_bus
 
+    bc_app_wallet_wallet.transactions_controller:
+        class: %bc_app_wallet_wallet.transactions_controller.class%
+        arguments:
+         - @templating
+         - @translator
+         - @bc_app_wallet_wallet.wallet_service_facade
+
     # sercice facades
 
     bc_app_wallet_wallet.wallet_service_facade:
@@ -66,6 +73,7 @@ services:
         arguments:
           - @bc_app_wallet_wallet.wallet_service
           - @bc_app_common_blockcypher.wallet_service
+          - @bc_app_common_blockcypher.address_service
 
     # services
 
