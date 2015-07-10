@@ -1,0 +1,90 @@
+{% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
+
+{% block title %}Payments{% endblock title %}
+
+{% block page_header %}
+    <h1>
+        <i class="fa fa-qrcode"></i>
+        Send Funds
+    </h1>
+
+    <h2 class="tagline wrapit semi">
+    </h2>
+{% endblock page_header %}
+
+{% block content %}
+    <div class="container">
+
+        {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:top_menu.html.twig" %}
+
+        <div class="section">
+            <div class="col-md-12">
+                {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:balance.html.twig" %}
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:notifications.html.twig" %}
+        </div>
+
+        <div class="col-md-12">
+            <div class="form-well">
+
+                {{ form_start(transaction_form, {'attr': {'class': 'form-horizontal'}}) }}
+
+                {% if form_errors(transaction_form) is not empty %}
+                    <div class="alert alert-warning alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        {{ form_errors(transaction_form) }}
+                    </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="walletId" class="col-sm-2 control-label">Wallet</label>
+
+                    <div class="col-sm-10">
+                        {{ form_widget(transaction_form.walletId, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="payToAddress" class="col-sm-2 control-label">Pay to</label>
+
+                    <div class="col-sm-10">
+                        {{ form_widget(transaction_form.payToAddress, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description" class="col-sm-2 control-label">Description</label>
+
+                    <div class="col-sm-10">
+                        {{ form_widget(transaction_form.description, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="amount" class="col-sm-2 control-label">Amount</label>
+
+                    <div class="col-sm-10">
+                        {{ form_widget(transaction_form.amount, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+                <div class="col-sm-offset-2 col-sm-10">
+
+                    <button type="submit" class="btn btn-default">Create Transaction</button>
+                </div>
+                <div class="col-sm-offset-2 col-sm-10">
+                    <p class="help-block">
+                        <small>This action uses this BlockCypher API endpoint:<a
+                                    href="http://dev.blockcypher.com/#transaction_api">/v1/{coinSymbol}/{chain}/txs/new</a>
+                        </small>
+                    </p>
+                </div>
+                {{ form_end(transaction_form) }}
+
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block extra_js %}
+{% endblock extra_js %}

@@ -6,6 +6,7 @@ use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletCon
 use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class Index extends AppWalletController
@@ -18,14 +19,17 @@ class Index extends AppWalletController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
+     * @param Session $session
      * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
-        WalletServiceFacade $walletServiceFacade)
+        Session $session,
+        WalletServiceFacade $walletServiceFacade
+    )
     {
-        parent::__construct($templating, $translator);
+        parent::__construct($templating, $translator, $session);
         $this->walletServiceFacade = $walletServiceFacade;
     }
 
@@ -37,6 +41,7 @@ class Index extends AppWalletController
     {
         $walletId = $request->get('walletId');
 
+        $walletDto = $this->walletServiceFacade->getWallet($walletId);
         $addresses = $this->walletServiceFacade->listWalletAddresses($walletId);
 
         // DEBUG
@@ -62,7 +67,8 @@ class Index extends AppWalletController
                 'max_pages' => $maxPages,
                 'wallet_id' => $walletId,
                 'num_all_addresses' => count($addresses),
-                'addresses' => $addresses
+                'wallet' => $walletDto,
+                'addresses' => $addresses,
             )
         );
     }

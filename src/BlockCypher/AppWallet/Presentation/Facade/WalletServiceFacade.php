@@ -2,15 +2,27 @@
 
 namespace BlockCypher\AppWallet\Presentation\Facade;
 
+use BlockCypher\Api\Address as BlockCypherAddress;
+use BlockCypher\Api\AddressBalance as BlockCypherAddressBalance;
 use BlockCypher\AppCommon\App\Service\Internal\BlockCypherAddressService;
 use BlockCypher\AppCommon\App\Service\Internal\BlockCypherWalletService;
+use BlockCypher\AppWallet\App\Service\ApiRouter;
+use BlockCypher\AppWallet\App\Service\ExplorerRouter;
 use BlockCypher\AppWallet\App\Service\WalletService;
+use BlockCypher\AppWallet\Domain\Wallet\Wallet;
 use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 use BlockCypher\AppWallet\Presentation\Facade\Dto\AddressListItemDto;
-use BlockCypher\AppWallet\Presentation\Facade\Dto\TransactionListItemDto;
+use BlockCypher\AppWallet\Presentation\Facade\Dto\AddressListItemDtoArray;
+use BlockCypher\AppWallet\Presentation\Facade\Dto\TransactionListDto;
+use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletDto;
 use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletListItemDto;
-use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletTransactionsDto;
+use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletListItemDtoArray;
+use Money\BigMoney;
 
+/**
+ * Class WalletServiceFacade
+ * @package BlockCypher\AppWallet\Presentation\Facade
+ */
 class WalletServiceFacade
 {
     /**
@@ -37,129 +49,169 @@ class WalletServiceFacade
         $this->walletService = $walletService;
         $this->blockCypherWalletService = $blockCypherWalletService;
         $this->blockCypherAddressService = $blockCypherAddressService;
+        $this->apiRouter = new ApiRouter();
+        $this->explorerRouter = new ExplorerRouter();
     }
 
     /**
      * @param string $walletId
-     * @return string[]
+     * @return AddressListItemDto[]
      */
     public function listWalletAddresses($walletId)
     {
+        $wallet = $this->walletService->getWallet(new WalletId($walletId));
         $addresses = $this->walletService->listWalletAddresses(new WalletId($walletId));
 
-        $addressList = array();
-        foreach ($addresses as $address) {
-            $addressListItemDto = new AddressListItemDto();
-            $addressListItemDto->setAddress($address->getAddress());
-            $addressListItemDto->setTag($address->getTag());
-            $addressListItemDto->setCreationTime($address->getCreationTime());
+        $blockCypherAddressBalances = $this->getBlockCypherWalletAddressBalances($wallet);
 
-            $addressList[] = $addressListItemDto;
+        if ($addresses === null) {
+            return array();
         }
 
-        return $addressList;
+        $apiRouter = new ApiRouter();
+        $explorerRouter = new ExplorerRouter();
+
+        $addressListItemDtos = AddressListItemDtoArray::From(
+            $wallet,
+            $addresses,
+            $blockCypherAddressBalances,
+            $apiRouter,
+            $explorerRouter
+        );
+
+        return $addressListItemDtos;
     }
 
     /**
-     * @return array
+     * @param Wallet $wallet
+     * @return BlockCypherAddressBalance[]
+     * @throws \Exception
+     */
+    private function getBlockCypherWalletAddressBalances(Wallet $wallet)
+    {
+        $blockCypherWallet = $this->blockCypherWalletService->getWallet(
+            $wallet->getId()->getValue(),
+            $wallet->getCoinSymbol(),
+            $wallet->getToken()
+        );
+
+        $addressList = $blockCypherWallet->getAddresses();
+
+        $blockCypherAddressBalances = $this->blockCypherAddressService->getMultipleAddressBalance(
+            $addressList,
+            $wallet->getCoinSymbol(),
+            $wallet->getToken()
+        );
+
+        $blockCypherAddressBalancesArray = array();
+        foreach ($blockCypherAddressBalances as $blockCypherAddressBalance) {
+            $blockCypherAddressBalancesArray[$blockCypherAddressBalance->getAddress()] = $blockCypherAddressBalance;
+        }
+
+        return $blockCypherAddressBalancesArray;
+    }
+
+    /**
+     * @return WalletListItemDto[]
      */
     public function listWallets()
     {
         $wallets = $this->walletService->listWallets();
 
-        //DEBUG
-        //var_dump($wallets);
-        //die();
+        $walletBalances = $this->getMultipleWalletBalances($wallets);
 
-        $walletList = array();
+        $walletListItemDtos = WalletListItemDtoArray::from($wallets, $walletBalances, $this->apiRouter);
+
+        return $walletListItemDtos;
+    }
+
+    /**
+     * @param Wallet[] $wallets
+     * @return BigMoney[]
+     */
+    private function getMultipleWalletBalances($wallets)
+    {
+        $walletBalances = array();
         foreach ($wallets as $wallet) {
-
-            $walletListItemDto = new WalletListItemDto();
-            $walletListItemDto->setId($wallet->getId()->getValue());
-            $walletListItemDto->setCoinSymbol($wallet->getCoinSymbol());
-            $walletListItemDto->setCreationTime($wallet->getCreationTime());
-            $walletListItemDto->setName($wallet->getName());
-
-            $balance = null;
-            try {
-                $balance = $this->blockCypherWalletService->getWalletBalance(
-                    $wallet->getId()->getValue(),
-                    $wallet->getCoinSymbol(),
-                    $wallet->getToken()
-                );
-            } catch (\Exception $e) {
-                // Unable to get balance from BlockCypher
-                // TODO: wallet could have been deleted without using this app
-            }
-
-            if ($balance !== null) {
-                $walletListItemDto->setBalance((float)(string)$balance->getAmount());
-            } else {
-                $walletListItemDto->setBalance(-1);
-            }
-
-            $walletList[] = $walletListItemDto;
+            $balance = $this->getWalletBalance($wallet);
+            $walletBalances[$wallet->getId()->getValue()] = $balance;
         }
+        return $walletBalances;
+    }
 
-        //DEBUG
-        //var_dump($walletDtos);
-        //die();
-
-        return $walletList;
+    /**
+     * @param Wallet $wallet
+     * @return BigMoney|null
+     */
+    private function getWalletBalance(Wallet $wallet)
+    {
+        $balance = $this->blockCypherWalletService->getWalletFinalBalance(
+            $wallet->getId()->getValue(),
+            $wallet->getCoinSymbol(),
+            $wallet->getToken()
+        );
+        return $balance;
     }
 
     /**
      * @param string $walletId
-     * @return WalletTransactionsDto
+     * @return TransactionListDto
      */
     public function listWalletTransactions($walletId)
     {
         $wallet = $this->walletService->getWallet(new WalletId($walletId));
+        $transactions = $this->walletService->listWalletTransactions(new WalletId($walletId));
 
-        $address = $this->blockCypherAddressService->getAddress(
-        //$wallet->getId()->getValue(),
-            "mkVuZV2kVtMzddQabFDanFi6DTwWYtgiCn", //DEBUG
+        $blockCypherAddress = $this->getBlockCypherAddress($wallet);
+
+        $transactionListDto = TransactionListDto::from(
+            $wallet,
+            $transactions,
+            $blockCypherAddress,
+            $this->apiRouter,
+            $this->explorerRouter
+        );
+
+        return $transactionListDto;
+    }
+
+    /**
+     * @param Wallet $wallet
+     * @return BlockCypherAddress
+     */
+    private function getBlockCypherAddress(Wallet $wallet)
+    {
+        $blockCypherAddress = null;
+
+        $blockCypherAddress = $this->blockCypherAddressService->getAddress(
+            $wallet->getId()->getValue(),
             $wallet->getCoinSymbol(),
             $wallet->getToken()
         );
 
-        $walletTransactionsDto = new WalletTransactionsDto();
+        return $blockCypherAddress;
+    }
 
-        $walletTransactionsDto->setTotalSent($address->getTotalSent());
-        $walletTransactionsDto->setTotalReceived($address->getTotalReceived());
-        $walletTransactionsDto->setUnconfirmedBalance($address->getUnconfirmedBalance());
-        $walletTransactionsDto->setBalance($address->getBalance());
-        $walletTransactionsDto->setFinalBalance($address->getFinalBalance());
-        $walletTransactionsDto->setNTx($address->getNTx());
-        $walletTransactionsDto->setUnconfirmedNTx($address->getUnconfirmedNTx());
-        $walletTransactionsDto->setFinalNTx($address->getFinalNTx());
+    /**
+     * @param string $walletId
+     * @return WalletDto|null
+     */
+    public function getWallet($walletId)
+    {
+        $wallet = $this->walletService->getWallet(new WalletId($walletId));
 
-        $txrefs = $address->getTxrefs();
+        $blockCypherAddress = null;
 
-        $transactionListItemDtos = array();
+        $blockCypherAddress = $this->blockCypherAddressService->getAddress(
+            $wallet->getId()->getValue(),
+            $wallet->getCoinSymbol(),
+            $wallet->getToken()
+        );
 
-        if ($txrefs === null) {
-            // No transactions
-            $walletTransactionsDto->setTransactionListItemDtos(array());
-        } else {
-
-            foreach ($txrefs as $txref) {
-
-                $transactionListItemDto = new TransactionListItemDto();
-
-                $transactionListItemDto->setTxHash($txref->getTxHash());
-                $transactionListItemDto->setTxInputN($txref->getTxInputN());
-                $transactionListItemDto->setValue($txref->getValue());
-                $transactionListItemDto->setConfirmations($txref->getConfirmations());
-                $transactionListItemDto->setReceived($txref->getReceived());
-                $transactionListItemDto->setConfirmed($txref->getConfirmed());
-                $transactionListItemDto->setBlockHeight($txref->getBlockHeight());
-
-                $transactionListItemDtos[] = $transactionListItemDto;
-            }
-            $walletTransactionsDto->setTransactionListItemDtos($transactionListItemDtos);
+        if ($blockCypherAddress === null) {
+            return null;
         }
 
-        return $walletTransactionsDto;
+        return WalletDto::from($blockCypherAddress);
     }
 }

@@ -14,9 +14,9 @@ use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 class EncryptedAddress extends Model implements Decryptable
 {
     /**
-     * @var string
+     * @var AddressId
      */
-    private $address;
+    private $id;
 
     /**
      * @var WalletId
@@ -24,11 +24,9 @@ class EncryptedAddress extends Model implements Decryptable
     private $walletId;
 
     /**
-     * Entity creation time.
-     *
-     * @var \DateTime
+     * @var string
      */
-    private $creationTime;
+    private $address;
 
     /**
      * @var string
@@ -56,80 +54,109 @@ class EncryptedAddress extends Model implements Decryptable
     private $callbackUrl;
 
     /**
+     * Entity creation time.
+     *
+     * @var \DateTime
+     */
+    private $creationTime;
+
+    /**
      * Constructor
      *
-     * @param string $address
+     * @param AddressId $id
      * @param WalletId $walletId
-     * @param \DateTime $creationTime
+     * @param $address
      * @param $tag
      * @param $private
      * @param $public
      * @param $wif
      * @param $callbackUrl
+     * @param \DateTime $creationTime
      */
     function __construct(
-        $address,
+        AddressId $id,
         WalletId $walletId,
-        \DateTime $creationTime,
+        $address,
         $tag,
         $private,
         $public,
         $wif,
-        $callbackUrl
+        $callbackUrl,
+        \DateTime $creationTime
     )
     {
-        $this->address = $address;
+        $this->id = $id;
         $this->walletId = $walletId;
-        $this->creationTime = clone $creationTime;
+        $this->address = $address;
         $this->tag = $tag;
         $this->private = $private;
         $this->public = $public;
         $this->wif = $wif;
         $this->callbackUrl = $callbackUrl;
+        $this->creationTime = clone $creationTime;
     }
 
     /**
-     * @param Address[] $addresses
+     * @param EncryptedAddress[] $encryptedAddresses
      * @return array
      */
-    public static function ObjectArrayToArray($addresses)
+    public static function ObjectArrayToArray($encryptedAddresses)
     {
         $result = array();
-        foreach ($addresses as $address) {
-            $result[] = $address->toArray();
+        foreach ($encryptedAddresses as $encryptedAddress) {
+            $result[] = $encryptedAddress->toArray();
         }
         return $result;
     }
 
+//    /**
+//     * Return an array with all addresses (only bitcoin address)
+//     * @param Address[] $addresses
+//     * @return array
+//     */
+//    public static function ObjectArrayToAddressList($addresses)
+//    {
+//        $addressesList = array();
+//
+//        if (count($addresses) == 0) {
+//            return $addressesList;
+//        }
+//
+//        foreach ($addresses as $address) {
+//            $addressesList[] = $address->getAddress();
+//        }
+//
+//        return $addressesList;
+//    }
+
     /**
-     * Return an array with all addresses (only bitcoin address)
-     * @param Address[] $addresses
      * @return array
      */
-    public static function ObjectArrayToAddressList($addresses)
+    public function toArray()
     {
-        $addressesList = array();
+        $entityAsArray = array();
+        $entityAsArray['id'] = $this->id->toArray();
+        $entityAsArray['walletId'] = $this->walletId->toArray();
+        $entityAsArray['address'] = $this->address;
+        $entityAsArray['tag'] = $this->tag;
+        $entityAsArray['private'] = $this->private;
+        $entityAsArray['public'] = $this->public;
+        $entityAsArray['wif'] = $this->wif;
+        $entityAsArray['callbackUrl'] = $this->callbackUrl;
+        $entityAsArray['creationTime'] = clone $this->creationTime;
 
-        if (count($addresses) == 0) {
-            return $addressesList;
-        }
-
-        foreach ($addresses as $address) {
-            $addressesList[] = $address->getAddress();
-        }
-
-        return $addressesList;
+        return $entityAsArray;
     }
 
     /**
-     * @param array $addresses
-     * @return Address[] $addresses
+     * @param array $encryptedAddresses
+     * @return EncryptedAddress[]
      */
-    public static function ArrayToObjectArray($addresses)
+    public static function ArrayToObjectArray($encryptedAddresses)
     {
         $result = array();
-        foreach ($addresses as $address) {
-            $result[] = Address::FromArray($address);
+        foreach ($encryptedAddresses as $encryptedAddress) {
+            $result[] = self::FromArray($encryptedAddress);
         }
         return $result;
     }
@@ -141,32 +168,18 @@ class EncryptedAddress extends Model implements Decryptable
     public static function fromArray($entityAsArray)
     {
         $encryptedAddress = new self(
-            $entityAsArray['address'],
+            $entityAsArray['id'],
             $entityAsArray['walletId'],
-            $entityAsArray['creationTime'],
+            $entityAsArray['address'],
             $entityAsArray['tag'],
             $entityAsArray['private'],
             $entityAsArray['public'],
             $entityAsArray['wif'],
-            $entityAsArray['callbackUrl']
+            $entityAsArray['callbackUrl'],
+            $entityAsArray['creationTime']
         );
 
         return $encryptedAddress;
-    }
-
-    public function toArray()
-    {
-        $entityAsArray = array();
-        $entityAsArray['address'] = $this->address;
-        $entityAsArray['walletId'] = $this->walletId->toArray();
-        $entityAsArray['creationTime'] = clone $this->creationTime;
-        $entityAsArray['tag'] = $this->tag;
-        $entityAsArray['private'] = $this->private;
-        $entityAsArray['public'] = $this->public;
-        $entityAsArray['wif'] = $this->wif;
-        $entityAsArray['callbackUrl'] = $this->callbackUrl;
-
-        return $entityAsArray;
     }
 
     /**
@@ -176,25 +189,26 @@ class EncryptedAddress extends Model implements Decryptable
     public function decryptUsing(Decryptor $decryptor)
     {
         $address = new Address(
-            $this->address,
+            $this->id,
             $this->walletId,
-            $this->creationTime,
+            $this->address,
             $this->tag,
             $decryptor->decrypt($this->private),
             $this->public,
             $decryptor->decrypt($this->wif),
-            $this->callbackUrl
+            $this->callbackUrl,
+            $this->creationTime
         );
 
         return $address;
     }
 
     /**
-     * @return string
+     * @return AddressId
      */
-    public function getAddress()
+    public function getId()
     {
-        return $this->address;
+        return $this->id;
     }
 
     /**
@@ -206,13 +220,11 @@ class EncryptedAddress extends Model implements Decryptable
     }
 
     /**
-     * Get creationTime
-     *
-     * @return \DateTime
+     * @return string
      */
-    public function getCreationTime()
+    public function getAddress()
     {
-        return $this->creationTime;
+        return $this->address;
     }
 
     /**
@@ -253,5 +265,15 @@ class EncryptedAddress extends Model implements Decryptable
     public function getCallbackUrl()
     {
         return $this->callbackUrl;
+    }
+
+    /**
+     * Get creationTime
+     *
+     * @return \DateTime
+     */
+    public function getCreationTime()
+    {
+        return $this->creationTime;
     }
 }

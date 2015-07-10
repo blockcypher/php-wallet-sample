@@ -1,0 +1,53 @@
+<!-- notifications -->
+<div>
+    <!-- alert -->
+    {% for flashMessage in app.session.flashbag.get("alert") %}
+        <div class="alert alert-danger">
+            {{ flashMessage }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+    <!-- success -->
+    {% for flashMessage in app.session.flashbag.get("success") %}
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    <!-- error -->
+    {% for flashMessage in app.session.flashbag.get("error") %}
+        <div class="alert alert-danger">
+            {{ flashMessage }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+    <!-- warning -->
+    {% for flashMessage in app.session.flashbag.get("warning") %}
+        <div class="alert alert-danger">
+            {{ flashMessage }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+    <!-- notice -->
+    {% for flashMessage in app.session.flashbag.get("notice") %}
+        <div class="alert alert-info">
+            {{ flashMessage }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+    <!-- information -->
+    {% for flashMessage in app.session.flashbag.get("information") %}
+        <div class="alert alert-info">
+            {{ flashMessage }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+    <!-- confirm -->
+    {% for flashMessage in app.session.flashbag.get("confirm") %}
+        <div class="alert alert-info">
+            {{ flashMessage }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+</div>
+<!-- // notifications -->

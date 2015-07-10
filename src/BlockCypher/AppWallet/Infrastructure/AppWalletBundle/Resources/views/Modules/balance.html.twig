@@ -1,0 +1,65 @@
+<!-- balance -->
+<div class="dash dash-4">
+    <ul>
+        <li>
+            <span class="dash-label">Received</span><br>
+            {{ wallet.totalReceived|satoshis_to_btc_rounding|intcomma }} {{ coin_symbol|coin_symbol_to_currency_name }}
+            <br>
+            <span class="dash-label">
+                (<small>{{ wallet.totalReceived }}</small>)
+            </span>
+        </li>
+        <li>
+            <span class="dash-label">Sent</span><br>
+            {{ wallet.totalSent|satoshis_to_btc_rounding|intcomma }} {{ coin_symbol|coin_symbol_to_currency_name }}
+            <br>
+            <span class="dash-label">
+                (<small>{{ wallet.totalSent }}</small>)
+            </span>
+        </li>
+        <li>
+            <span class="dash-label">Unconfirmed</span><br>
+            {{ wallet.unconfirmedBalance|satoshis_to_btc_rounding|intcomma }} {{ coin_symbol|coin_symbol_to_currency_name }}
+            <br>
+            <span class="dash-label">
+                (<small>{{ wallet.unconfirmedBalance }}</small>)
+            </span>
+        </li>
+        <li>
+            <span class="dash-label">Balance</span><br>
+            {{ wallet.finalBalance|satoshis_to_btc_rounding|intcomma }} {{ coin_symbol|coin_symbol_to_currency_name }}
+            <br>
+            <span class="dash-label">
+                (<small>{{ wallet.finalBalance }}</small>)
+            </span>
+        </li>
+    </ul>
+    <div class="clearfix"></div>
+</div>
+
+<br/>
+
+{#<p class="text-center">
+    <button type="button" class="btn btn-lg btn-primary" data-toggle="collapse"
+            data-target="#advanced-details">
+        Advanced Details
+        <b class="caret"></b>
+    </button>
+</p>
+
+<div class="col-md-12 collapse" id="advanced-details">
+    <div class="table-responsive">
+        <table class="table">
+            <tr>
+                <td colspan="2" class="text-center">
+                    <a href="http://dev.blockcypher.com/#address-endpoint" class="btn btn-default">
+                        <i class="fa fa-external-link"></i>
+                        API Docs
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+#}
+<!-- // balance -->

@@ -6,6 +6,7 @@ use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletCon
 use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class Transactions extends AppWalletController
@@ -18,14 +19,16 @@ class Transactions extends AppWalletController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
+     * @param Session $session
      * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
+        Session $session,
         WalletServiceFacade $walletServiceFacade)
     {
-        parent::__construct($templating, $translator);
+        parent::__construct($templating, $translator, $session);
         $this->walletServiceFacade = $walletServiceFacade;
     }
 
@@ -71,34 +74,10 @@ class Transactions extends AppWalletController
                 'total_balance_satoshis' => $walletTransactionsDto->getFinalBalance(),
                 'unconfirmed_balance_satoshis' => $walletTransactionsDto->getUnconfirmedBalance(),
                 'num_all_txns' => $walletTransactionsDto->getNTx(),
-                'num_unconfirmed_txns' => $walletTransactionsDto->getUnconfirmedBalance(),
+                'num_unconfirmed_txns' => $walletTransactionsDto->getUnconfirmedNTx(),
                 'all_transactions' => $transactions,
                 'BLOCKCYPHER_PUBLIC_KEY' => $BLOCKCYPHER_PUBLIC_KEY
             )
         );
     }
 }
-
-//array(
-//    // TODO: move to base controller and merge arrays
-//    'is_home' => false,
-//    'user' => array('is_authenticated' => true),
-//    'messages' => array(),
-//    //
-//    'coin_symbol' => $coinSymbol,
-//    'address' => $address,
-//    'api_url' => $apiUrl,
-//    'wallet_name' => $walletName,
-//    'current_page' => $currentPage,
-//    'max_pages' => $maxPages,
-//    'total_sent_satoshis' => $addressDetailsArray['total_sent'],
-//    'total_received_satoshis' => $addressDetailsArray['total_received'],
-//    'unconfirmed_balance_satoshis' => $addressDetailsArray['unconfirmed_balance'],
-//    'confirmed_balance_satoshis' => $addressDetailsArray['balance'],
-//    'total_balance_satoshis' => $addressDetailsArray['final_balance'],
-//    'all_transactions' => $allTransactions,
-//    'num_confirmed_txns' => $addressDetailsArray['n_tx'],
-//    'num_unconfirmed_txns' => $addressDetailsArray['unconfirmed_n_tx'],
-//    'num_all_txns' => $addressDetailsArray['final_n_tx'],
-//    'BLOCKCYPHER_PUBLIC_KEY' => $BLOCKCYPHER_PUBLIC_KEY,
-//)

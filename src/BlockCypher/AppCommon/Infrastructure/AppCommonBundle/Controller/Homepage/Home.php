@@ -5,6 +5,7 @@ namespace BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Controller\Homepa
 use BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Controller\AppCommonController;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class Home extends AppCommonController
@@ -12,13 +13,15 @@ class Home extends AppCommonController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
+     * @param Session $session
      */
     public function __construct(
         EngineInterface $templating,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        Session $session
     )
     {
-        parent::__construct($templating, $translator);
+        parent::__construct($templating, $translator, $session);
     }
 
     /**

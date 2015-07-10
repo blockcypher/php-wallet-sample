@@ -15,10 +15,7 @@
     "ext-curl": "*",
     "ext-json": "*",
     "ext-mysql": "*",
-    "symfony/symfony": "2.6.*",
-    "doctrine/orm": "~2.2,>=2.2.3,<2.5",
-    "doctrine/dbal": "<2.5",
-    "doctrine/doctrine-bundle": "~1.2",
+    "symfony/symfony": "2.7.*",
     "twig/extensions": "~1.0",
     "symfony/assetic-bundle": "~2.3",
     "symfony/swiftmailer-bundle": "~2.3",
@@ -30,8 +27,9 @@
     "ramsey/uuid": "~2.8",
     "mathiasverraes/money": "dev-master",
     "simple-bus/symfony-bridge": "^4.0",
-    "blockcypher/php-client": "@dev",
-    "phpspec/phpspec": "^2.2"
+    "blockcypher/php-client": "dev-master",
+    "phpspec/phpspec": "^2.2",
+    "beberlei/assert": "^2.3"
   },
   "require-dev": {
     "phpunit/phpunit": "3.7.*",

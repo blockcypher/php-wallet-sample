@@ -4,6 +4,7 @@ namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller;
 
 use BlockCypher\AppCommon\Infrastructure\Controller\AppCommonController;
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
+use BlockCypher\AppWallet\App\Command\CreateTransactionCommand;
 use BlockCypher\AppWallet\App\Command\CreateWalletCommand;
 
 class AppWalletController extends AppCommonController
@@ -23,6 +24,19 @@ class AppWalletController extends AppCommonController
     {
         $createAddressCommand = new CreateAddressCommand($walletId, $tag, $callbackUrl);
         return $createAddressCommand;
+    }
+
+    /**
+     * @param string $walletId
+     * @param $payToAddress
+     * @param $description
+     * @param $amount
+     * @return CreateTransactionCommand
+     */
+    protected function createCreateTransactionCommand($walletId, $payToAddress = '', $description = '', $amount = '')
+    {
+        $createTransactionCommand = new CreateTransactionCommand($walletId, $payToAddress, $description, $amount);
+        return $createTransactionCommand;
     }
 
     /**
@@ -48,7 +62,8 @@ class AppWalletController extends AppCommonController
         $id,
         $parameters = array(),
         $domain = 'BlockCypherAppWalletInfrastructureAppWalletBundle',
-        $locale = null)
+        $locale = null
+    )
     {
         return $this->translator->trans($id, $parameters, $domain, $locale);
     }

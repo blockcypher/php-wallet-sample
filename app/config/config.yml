@@ -5,7 +5,7 @@ imports:
 
 framework:
     #esi:             ~
-    #translator:      { fallbacks: ["%locale%"] }
+    translator:      { fallbacks: ["%locale%"] }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -48,25 +48,26 @@ assetic:
         #    jar: "%kernel.root_dir%/Resources/java/yuicompressor-2.4.7.jar"
 
 # Doctrine Configuration
-doctrine:
-    dbal:
-        driver:   "%database_driver%"
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
-        charset:  UTF8
-        # if using pdo_sqlite as your database driver:
-        #   1. add the path in parameters.yml
-        #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
-        #   2. Uncomment database_path in parameters.yml.dist
-        #   3. Uncomment next line:
-        #     path:     "%database_path%"
-
-    orm:
-        auto_generate_proxy_classes: "%kernel.debug%"
-        auto_mapping: true
+# Uncomment if doctrine is enabled
+#doctrine:
+#    dbal:
+#        driver:   "%database_driver%"
+#        host:     "%database_host%"
+#        port:     "%database_port%"
+#        dbname:   "%database_name%"
+#        user:     "%database_user%"
+#        password: "%database_password%"
+#        charset:  UTF8
+#        # if using pdo_sqlite as your database driver:
+#        #   1. add the path in parameters.yml
+#        #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
+#        #   2. Uncomment database_path in parameters.yml.dist
+#        #   3. Uncomment next line:
+#        #     path:     "%database_path%"
+#
+#    orm:
+#        auto_generate_proxy_classes: "%kernel.debug%"
+#        auto_mapping: true
 
 # Swiftmailer Configuration
 swiftmailer:

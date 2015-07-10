@@ -5,6 +5,7 @@ namespace BlockCypher\AppWallet\App\Command;
 use BlockCypher\AppCommon\App\Service\Clock;
 use BlockCypher\AppCommon\App\Service\Internal\BlockCypherWalletService;
 use BlockCypher\AppWallet\Domain\Address\Address;
+use BlockCypher\AppWallet\Domain\Address\AddressRepository;
 use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 
@@ -14,6 +15,11 @@ class CreateAddressCommandHandler
      * @var WalletRepository
      */
     private $walletRepository;
+
+    /**
+     * @var AddressRepository
+     */
+    private $addressRepository;
 
     /**
      * @var BlockCypherWalletService
@@ -28,16 +34,19 @@ class CreateAddressCommandHandler
     /**
      * Constructor
      * @param WalletRepository $walletRepository
+     * @param AddressRepository $addressRepository
      * @param BlockCypherWalletService $blockCypherWalletService
      * @param Clock $clock
      */
     public function __construct(
         WalletRepository $walletRepository,
+        AddressRepository $addressRepository,
         BlockCypherWalletService $blockCypherWalletService,
         Clock $clock
     )
     {
         $this->walletRepository = $walletRepository;
+        $this->addressRepository = $addressRepository;
         $this->blockCypherWalletService = $blockCypherWalletService;
         $this->clock = $clock;
     }
@@ -51,7 +60,8 @@ class CreateAddressCommandHandler
         // DEBUG
         //var_dump($command);
 
-        // TODO: command validator. See CreateAddressCommandHandler::handle for possible implementation details
+        $commandValidator = new CreateAddressCommandValidator();
+        $commandValidator->validate($command);
 
         $walletId = $command->getWalletId();
         $addressTag = $command->getTag();
@@ -80,18 +90,17 @@ class CreateAddressCommandHandler
 
         // 2.- Create new app Address
         $address = new Address(
+            $this->addressRepository->nextIdentity(),
+            new WalletId($walletId),
             $walletGenerateAddressResponse->getAddress(),
-            $wallet->getId(),
-            $this->clock->now(),
             $addressTag,
             $walletGenerateAddressResponse->getPrivate(),
             $walletGenerateAddressResponse->getPublic(),
             $walletGenerateAddressResponse->getWif(),
-            $addressCallbackUrl
+            $addressCallbackUrl,
+            $this->clock->now()
         );
 
-        $wallet->addAddress($address);
-
-        $this->walletRepository->update($wallet);
+        $this->addressRepository->insert($address);
     }
 }

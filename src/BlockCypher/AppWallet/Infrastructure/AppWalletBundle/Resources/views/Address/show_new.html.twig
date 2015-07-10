@@ -15,24 +15,16 @@
 {% block content %}
     <div class="container">
 
+        {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:top_menu.html.twig" %}
+
         <div class="section">
             <div class="col-md-12">
-                <p class="text-center">
-                    <a href="{{ path('bc_app_wallet_address.index', { 'walletId': wallet_id }) }}"
-                       class="btn btn-lg btn-default">
-                        <i class="fa fa-reply"></i>
-                        Addresses
-                    </a>
-                    <a href="{{ path('bc_app_wallet_wallet.index') }}"
-                       class="btn btn-lg btn-default">
-                        <i class="fa fa-reply"></i>
-                        Wallets
-                    </a>
-                </p>
+                {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:balance.html.twig" %}
             </div>
         </div>
 
-        <div class="section">
+        <div class="col-md-12">
+            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:notifications.html.twig" %}
         </div>
 
         <div class="col-md-12">

@@ -2,6 +2,9 @@
 
 namespace BlockCypher\AppWallet\Presentation\Facade\Dto;
 
+use BlockCypher\AppWallet\Domain\Wallet\Wallet;
+use Money\BigMoney;
+
 /**
  * Class WalletListItemDto
  * @package BlockCypher\AppWallet\Presentation\Facade\Dto
@@ -34,6 +37,37 @@ class WalletListItemDto
      * @var float
      */
     private $balance;
+
+    /**
+     * @var string
+     */
+    private $apiUrl;
+
+    /**
+     * @param Wallet $wallet
+     * @param BigMoney|null $balance
+     * @param $apiUrl
+     * @return WalletListItemDto
+     */
+    public static function from(Wallet $wallet, BigMoney $balance, $apiUrl)
+    {
+        $walletListItemDto = new self();
+        $walletListItemDto->setId($wallet->getId()->getValue());
+        $walletListItemDto->setCoinSymbol($wallet->getCoinSymbol());
+        $walletListItemDto->setCreationTime($wallet->getCreationTime());
+        $walletListItemDto->setName($wallet->getName());
+
+        if ($balance !== null) {
+            $walletListItemDto->setBalance((float)(string)$balance->getAmount());
+        } else {
+            $walletListItemDto->setBalance(-1);
+        }
+
+        $walletListItemDto->setApiUrl($apiUrl);
+
+        return $walletListItemDto;
+    }
+
 
     /**
      * @return string
@@ -122,6 +156,24 @@ class WalletListItemDto
     public function setBalance($balance)
     {
         $this->balance = $balance;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getApiUrl()
+    {
+        return $this->apiUrl;
+    }
+
+    /**
+     * @param string $apiUrl
+     * @return $this
+     */
+    public function setApiUrl($apiUrl)
+    {
+        $this->apiUrl = $apiUrl;
         return $this;
     }
 }

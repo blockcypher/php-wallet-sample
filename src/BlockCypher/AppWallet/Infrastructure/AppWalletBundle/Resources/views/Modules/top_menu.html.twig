@@ -1,0 +1,38 @@
+<!-- top_menu -->
+<div class="section">
+    <div class="col-md-12">
+        <p class="text-center">
+            <a href="{{ path('bc_app_wallet_wallet.index') }}"
+               class="btn btn-lg btn-default">
+                <i class="fa fa-bank"></i>
+                Wallets
+            </a>
+            <a href="{{ path('bc_app_wallet_wallet.new') }}"
+               class="btn btn-lg btn-default">
+                <i class="fa fa-plus"></i>
+                New Wallet
+            </a>
+            <a href="{{ path('bc_app_wallet_address.index', { 'walletId': wallet_id }) }}"
+               class="btn btn-lg btn-default">
+                <i class="fa fa-qrcode"></i>
+                Addresses
+            </a>
+            <a href="{{ path('bc_app_wallet_address.new', { 'walletId': wallet_id }) }}"
+               class="btn btn-lg btn-default">
+                <i class="fa fa-plus"></i>
+                New Address
+            </a>
+            <a href="{{ path('bc_app_wallet_transaction.index', {'walletId': wallet_id }) }}"
+               class="btn btn-lg btn-default">
+                <i class="fa fa-list"></i>
+                History
+            </a>
+            <a href="{{ path('bc_app_wallet_transaction.new', {'walletId': wallet_id }) }}"
+               class="btn btn-lg btn-default">
+                <i class="fa fa-paper-plane"></i>
+                Send Funds
+            </a>
+        </p>
+    </div>
+</div>
+<!-- // top_menu -->

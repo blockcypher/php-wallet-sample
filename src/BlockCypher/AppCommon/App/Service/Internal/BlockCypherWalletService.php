@@ -5,9 +5,9 @@ namespace BlockCypher\AppCommon\App\Service\Internal;
 use BlockCypher\Api\Address as BlockCypherAddress;
 use BlockCypher\Api\Wallet as BlockCypherWallet;
 use BlockCypher\Api\WalletGenerateAddressResponse;
-use BlockCypher\AppCommon\Domain\BigMoney;
 use BlockCypher\Core\BlockCypherCoinSymbolConstants;
 use BlockCypher\Exception\BlockCypherConnectionException;
+use Money\BigMoney;
 use Money\Currency;
 
 class BlockCypherWalletService
@@ -75,7 +75,7 @@ class BlockCypherWalletService
      * @throws \BlockCypher\Exception\BlockCypherConfigurationException
      * @throws \Exception
      */
-    public function getWalletBalance($walletName, $coinSymbol, $token)
+    public function getWalletFinalBalance($walletName, $coinSymbol, $token)
     {
         $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
 
@@ -95,7 +95,7 @@ class BlockCypherWalletService
         if ($address !== null) {
             $currencyAbbrev = BlockCypherCoinSymbolConstants::getCurrencyAbbrev($coinSymbol);
             $currency = new Currency($currencyAbbrev);
-            $balance = BigMoney::fromInteger($address->getTotalReceived(), $currency);
+            $balance = BigMoney::fromInteger($address->getFinalBalance(), $currency);
         }
 
         return $balance;

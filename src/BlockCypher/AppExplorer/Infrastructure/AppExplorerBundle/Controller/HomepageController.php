@@ -3,6 +3,7 @@
 namespace BlockCypher\AppExplorer\Infrastructure\AppExplorerBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class HomepageController extends AppExplorerController
@@ -10,13 +11,15 @@ class HomepageController extends AppExplorerController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
+     * @param Session $session
      */
     public function __construct(
         EngineInterface $templating,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        Session $session
     )
     {
-        parent::__construct($templating, $translator);
+        parent::__construct($templating, $translator, $session);
     }
 
     public function homeAction()

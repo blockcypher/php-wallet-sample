@@ -3,6 +3,7 @@
 namespace BlockCypher\AppCommon\App\Service\Internal;
 
 use BlockCypher\Api\Address;
+use BlockCypher\Api\AddressBalance;
 
 class BlockCypherAddressService
 {
@@ -27,5 +28,20 @@ class BlockCypherAddressService
         $address = Address::get($address, array(), $apiContext);
 
         return $address;
+    }
+
+    /**
+     * @param string[] $addressList
+     * @param $coinSymbol
+     * @param $token
+     * @return AddressBalance[]
+     */
+    public function getMultipleAddressBalance($addressList, $coinSymbol, $token)
+    {
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+
+        $addressBalances = AddressBalance::getMultiple($addressList, array(), $apiContext);
+
+        return $addressBalances;
     }
 }

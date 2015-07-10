@@ -6,6 +6,7 @@ use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletCon
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Wallet\WalletFormFactory;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ShowNew extends AppWalletController
@@ -18,14 +19,16 @@ class ShowNew extends AppWalletController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
+     * @param Session $session
      * @param WalletFormFactory $walletFormFactory
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
+        Session $session,
         WalletFormFactory $walletFormFactory)
     {
-        parent::__construct($templating, $translator);
+        parent::__construct($templating, $translator, $session);
         $this->walletFormFactory = $walletFormFactory;
     }
 

@@ -5,6 +5,7 @@ namespace BlockCypher\AppExplorer\Infrastructure\AppExplorerBundle\Controller;
 use BlockCypher\AppExplorer\Presentation\Facade\BlockServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class BlockOverviewController extends AppExplorerController
@@ -17,15 +18,17 @@ class BlockOverviewController extends AppExplorerController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
+     * @param Session $session
      * @param BlockServiceFacade $blockServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
+        Session $session,
         BlockServiceFacade $blockServiceFacade
     )
     {
-        parent::__construct($templating, $translator);
+        parent::__construct($templating, $translator, $session);
         $this->blockServiceFacade = $blockServiceFacade;
     }
 

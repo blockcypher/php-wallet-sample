@@ -1,14 +1,15 @@
 <?php
 
-namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet;
+namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Transaction;
 
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
 use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class Addresses extends AppWalletController
+class Index extends AppWalletController
 {
     /**
      * @var WalletServiceFacade
@@ -18,14 +19,17 @@ class Addresses extends AppWalletController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
+     * @param Session $session
      * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
-        WalletServiceFacade $walletServiceFacade)
+        Session $session,
+        WalletServiceFacade $walletServiceFacade
+    )
     {
-        parent::__construct($templating, $translator);
+        parent::__construct($templating, $translator, $session);
         $this->walletServiceFacade = $walletServiceFacade;
     }
 
@@ -37,17 +41,21 @@ class Addresses extends AppWalletController
     {
         $walletId = $request->get('walletId');
 
-        $addresses = $this->walletServiceFacade->listWalletAddresses($walletId);
+        $walletDto = $this->walletServiceFacade->getWallet($walletId);
+        $walletTransactionDto = $this->walletServiceFacade->listWalletTransactions($walletId);
+        $transactions = $walletTransactionDto->getTransactionListItemDtos();
+
+        $template = $this->getBaseTemplatePrefix() . ':Transaction:index.html';
 
         // DEBUG
-        //var_dump($addresses);
+        //var_dump($walletTransactionDto);
         //die();
-
-        $template = $this->getBaseTemplatePrefix() . ':Address:index.html';
 
         // TODO
         $currentPage = 1;
         $maxPages = 0; // get_max_pages(num_items=address_details['final_n_tx'], items_per_page=TXNS_PER_PAGE),
+
+        $BLOCKCYPHER_PUBLIC_KEY = "c0afcccdde5081d6429de37d16166ead";
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
@@ -59,10 +67,18 @@ class Addresses extends AppWalletController
                 //
                 'coin_symbol' => 'btc',
                 'current_page' => $currentPage,
+                'num_all_wallets' => count($transactions),
                 'max_pages' => $maxPages,
                 'wallet_id' => $walletId,
-                'num_all_addresses' => count($addresses),
-                'addresses' => $addresses
+//                'total_sent_satoshis' => $walletTransactionDto->getTotalSent(),
+//                'total_received_satoshis' => $walletTransactionDto->getTotalReceived(),
+//                'total_balance_satoshis' => $walletTransactionDto->getFinalBalance(),
+//                'unconfirmed_balance_satoshis' => $walletTransactionDto->getUnconfirmedBalance(),
+                'num_all_txns' => $walletTransactionDto->getNTx(),
+                'num_unconfirmed_txns' => $walletTransactionDto->getUnconfirmedNTx(),
+                'wallet' => $walletDto,
+                'all_transactions' => $transactions,
+                'BLOCKCYPHER_PUBLIC_KEY' => $BLOCKCYPHER_PUBLIC_KEY
             )
         );
     }

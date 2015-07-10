@@ -1,4 +1,5 @@
 imports:
   - { resource: address.yml }
   - { resource: homepage.yml }
+  - { resource: transaction.yml }
   - { resource: wallet.yml }

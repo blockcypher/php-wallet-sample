@@ -16,21 +16,16 @@
 {% block content %}
     <div class="container">
 
+        {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:top_menu.html.twig" %}
+
         <div class="section">
             <div class="col-md-12">
-                <p class="text-center">
-                    <a href="{{ path('bc_app_wallet_address.new', { 'walletId': wallet_id }) }}"
-                       class="btn btn-lg btn-default">
-                        <i class="fa fa-plus"></i>
-                        Create New Address
-                    </a>
-                    <a href="{{ path('bc_app_wallet_wallet.index') }}"
-                       class="btn btn-lg btn-default">
-                        <i class="fa fa-reply"></i>
-                        Wallets
-                    </a>
-                </p>
+                {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:balance.html.twig" %}
             </div>
+        </div>
+
+        <div class="col-md-12">
+            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:notifications.html.twig" %}
         </div>
 
         {% if addresses %}
@@ -73,12 +68,19 @@
                 <div class="table-responsive">
                     <table class="table">
                         <tr>
-                            <th>Address</th>
                             <th>Tag</th>
+                            <th>Final Balance</th>
+                            <th>Txs</th>
+                            <th>Address</th>
                             <th>Creation Time</th>
+                            <th>API</th>
+                            <th>EXP</th>
                         </tr>
                         {% for address in addresses %}
                             <tr class="tx-row" id="{{ address.address }}">
+                                <td class="truncate">{{ address.tag }}</td>
+                                <td class="">{{ address.finalBalance }}</td>
+                                <td class="">{{ address.nTx }}</td>
                                 <td class="truncate">
                                     {% if address.address %}
                                         <a href="TODO LINK TO ADDRESS"
@@ -91,15 +93,16 @@
                                         </a>
                                     {% endif %}
                                 </td>
-                                <td class="">
-                                    {{ address.tag }}
-                                </td>
                                 <td>
                                     <time class="timeago"
                                           datetime="{{ address.creationTime|date('Y-m-d\TH:i:s') }}Z">
                                         {{ address.creationTime|date('Y-m-d H:i') }} GMT
                                     </time>
                                 </td>
+                                <td><a target="_blank" href="{{ address.apiUrl }}"><i
+                                                class="fa fa-external-link"></i></a></td>
+                                <td><a target="_blank" href="{{ address.explorerUrl }}"><i
+                                                class="fa fa-external-link"></i></a></td>
                             </tr>
                         {% endfor %}
 

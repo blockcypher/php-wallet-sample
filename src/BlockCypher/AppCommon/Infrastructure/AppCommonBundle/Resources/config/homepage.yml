@@ -7,3 +7,4 @@ services:
         arguments:
           - @templating
           - @translator
+          - @session

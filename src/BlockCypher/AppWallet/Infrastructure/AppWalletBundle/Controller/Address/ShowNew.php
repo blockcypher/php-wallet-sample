@@ -4,8 +4,10 @@ namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Addres
 
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address\AddressFormFactory;
+use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ShowNew extends AppWalletController
@@ -18,15 +20,21 @@ class ShowNew extends AppWalletController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
+     * @param Session $session
      * @param AddressFormFactory $walletFormFactory
+     * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
-        AddressFormFactory $walletFormFactory)
+        Session $session,
+        AddressFormFactory $walletFormFactory,
+        WalletServiceFacade $walletServiceFacade
+    )
     {
-        parent::__construct($templating, $translator);
+        parent::__construct($templating, $translator, $session);
         $this->addressFormFactory = $walletFormFactory;
+        $this->walletServiceFacade = $walletServiceFacade;
     }
 
     /**
@@ -36,6 +44,8 @@ class ShowNew extends AppWalletController
     public function __invoke(Request $request)
     {
         $walletId = $request->get('walletId');
+
+        $walletDto = $this->walletServiceFacade->getWallet($walletId);
 
         $tag = '';
         $callbackUrl = '';
@@ -55,7 +65,8 @@ class ShowNew extends AppWalletController
                 //
                 'coin_symbol' => 'btc',
                 'address_form' => $createAddressForm->createView(),
-                'wallet_id' => $walletId
+                'wallet_id' => $walletId,
+                'wallet' => $walletDto,
             )
         );
     }

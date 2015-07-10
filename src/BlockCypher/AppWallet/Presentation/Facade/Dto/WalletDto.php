@@ -2,11 +2,13 @@
 
 namespace BlockCypher\AppWallet\Presentation\Facade\Dto;
 
+use BlockCypher\Api\Address as BlockCypherAddress;
+
 /**
- * Class WalletTransactionsDto
+ * Class WalletDto
  * @package BlockCypher\AppWallet\Presentation\Facade\Dto
  */
-class WalletTransactionsDto
+class WalletDto
 {
     /**
      * @var int
@@ -49,26 +51,22 @@ class WalletTransactionsDto
     private $finalNTx;
 
     /**
-     * TransactionListItemDto[]
+     * @param BlockCypherAddress $blockCypherAddress
+     * @return WalletDto
      */
-    private $transactionListItemDtos;
-
-    /**
-     * @return mixed
-     */
-    public function getTransactionListItemDtos()
+    public static function from(BlockCypherAddress $blockCypherAddress)
     {
-        return $this->transactionListItemDtos;
-    }
+        $walletDto = new WalletDto();
+        $walletDto->setTotalSent($blockCypherAddress->getTotalSent());
+        $walletDto->setTotalReceived($blockCypherAddress->getTotalReceived());
+        $walletDto->setUnconfirmedBalance($blockCypherAddress->getUnconfirmedBalance());
+        $walletDto->setBalance($blockCypherAddress->getBalance());
+        $walletDto->setFinalBalance($blockCypherAddress->getFinalBalance());
+        $walletDto->setNTx($blockCypherAddress->getNTx());
+        $walletDto->setUnconfirmedNTx($blockCypherAddress->getUnconfirmedNTx());
+        $walletDto->setFinalNTx($blockCypherAddress->getFinalNTx());
 
-    /**
-     * @param mixed $transactionListItemDtos
-     * @return $this
-     */
-    public function setTransactionListItemDtos($transactionListItemDtos)
-    {
-        $this->transactionListItemDtos = $transactionListItemDtos;
-        return $this;
+        return $walletDto;
     }
 
     /**

@@ -6,7 +6,6 @@ use BlockCypher\AppCommon\App\Service\Encryptor;
 use BlockCypher\AppCommon\Domain\ArrayConversion;
 use BlockCypher\AppCommon\Domain\Encryptable;
 use BlockCypher\AppCommon\Domain\Model;
-use BlockCypher\AppWallet\Domain\Address\Address;
 
 /**
  * Class Wallet
@@ -43,11 +42,6 @@ class Wallet extends Model implements ArrayConversion, Encryptable
     private $creationTime;
 
     /**
-     * @var Address[]
-     */
-    private $addresses = array();
-
-    /**
      * Constructor
      *
      * @param WalletId $walletId
@@ -55,15 +49,13 @@ class Wallet extends Model implements ArrayConversion, Encryptable
      * @param string $coinSymbol
      * @param $token
      * @param \DateTime $creationTime
-     * @param Address[] $addresses
      */
     function __construct(
         WalletId $walletId,
         $name,
         $coinSymbol,
         $token,
-        \DateTime $creationTime,
-        $addresses
+        \DateTime $creationTime
     )
     {
         WalletCoinSymbol::validate($coinSymbol, 'WalletCoinSymbol');
@@ -73,7 +65,6 @@ class Wallet extends Model implements ArrayConversion, Encryptable
         $this->coinSymbol = $coinSymbol;
         $this->token = $token;
         $this->creationTime = clone $creationTime;
-        $this->addresses = $addresses;
     }
 
     /**
@@ -82,19 +73,12 @@ class Wallet extends Model implements ArrayConversion, Encryptable
      */
     public static function fromArray($entityAsArray)
     {
-        if (is_array($entityAsArray['addresses'])) {
-            $addressesArr = $entityAsArray['addresses'];
-        } else {
-            $addressesArr = array();
-        }
-
         $wallet = new self(
             WalletId::fromArray($entityAsArray['id']),
             $entityAsArray['name'],
             $entityAsArray['coinSymbol'],
             $entityAsArray['token'],
-            $entityAsArray['creationTime'],
-            Address::ArrayToObjectArray($addressesArr)
+            $entityAsArray['creationTime']
         );
 
         return $wallet;
@@ -122,7 +106,6 @@ class Wallet extends Model implements ArrayConversion, Encryptable
         $entityAsArray['coinSymbol'] = $this->coinSymbol;
         $entityAsArray['token'] = $this->token;
         $entityAsArray['creationTime'] = clone $this->creationTime;
-        $entityAsArray['addresses'] = Address::ObjectArrayToArray($this->addresses);
 
         return $entityAsArray;
     }
@@ -138,89 +121,10 @@ class Wallet extends Model implements ArrayConversion, Encryptable
             $this->name,
             $this->coinSymbol,
             $this->token,
-            $this->creationTime,
-            $this->encryptAddressesUsing($encryptor)
+            $this->creationTime
         );
 
         return $encryptedWallet;
-    }
-
-    /**
-     * @param Encryptor $encryptor
-     * @return array
-     */
-    private function encryptAddressesUsing(Encryptor $encryptor)
-    {
-        $encryptedAddresses = array();
-        foreach ($this->addresses as $address) {
-            $encryptedAddresses[] = $address->encryptUsing($encryptor);
-        }
-        return $encryptedAddresses;
-    }
-
-    /**
-     * Append Address to the list.
-     *
-     * @param Address $address
-     */
-    public function addAddress(Address $address)
-    {
-        if (!$this->containsAddress($address)) {
-            $this->addresses[$address->getAddress()] = $address;
-        }
-    }
-
-    /**
-     * @param Address|string $address
-     * @return bool
-     */
-    public function containsAddress($address)
-    {
-        if (is_string($address)) {
-            return $this->containsAddressString($address);
-        } else {
-            return $this->containsAddressObject($address);
-        }
-    }
-
-    /**
-     * @param string $address
-     * @return bool
-     */
-    private function containsAddressString($address)
-    {
-        foreach ($this->addresses as $walletAddress) {
-            if ($walletAddress->getAddress() == $address) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param Address $address
-     * @return bool
-     */
-    private function containsAddressObject(Address $address)
-    {
-        foreach ($this->addresses as $walletAddress) {
-            if ($walletAddress->equals($address)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Remove Address from the list.
-     *
-     * @param Address $address
-     */
-    public function removeAddress(Address $address)
-    {
-        if ($this->containsAddress($address)) {
-            unset($this->addresses[$address->getAddress()]);
-        }
     }
 
     /**
@@ -261,13 +165,5 @@ class Wallet extends Model implements ArrayConversion, Encryptable
     public function getCreationTime()
     {
         return $this->creationTime;
-    }
-
-    /**
-     * @return \BlockCypher\AppWallet\Domain\Address\Address[]
-     */
-    public function getAddresses()
-    {
-        return $this->addresses;
     }
 }

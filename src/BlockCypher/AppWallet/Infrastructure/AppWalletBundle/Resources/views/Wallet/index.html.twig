@@ -15,9 +15,15 @@
 
 {% block content %}
     <div class="container">
+
         <div class="section">
             <div class="col-md-12">
                 <p class="text-center">
+                    <a href="{{ path('bc_app_wallet_wallet.index') }}"
+                       class="btn btn-lg btn-default">
+                        <i class="fa fa-bank"></i>
+                        Wallets
+                    </a>
                     <a href="{{ path('bc_app_wallet_wallet.new') }}"
                        class="btn btn-lg btn-default">
                         <i class="fa fa-plus"></i>
@@ -25,6 +31,10 @@
                     </a>
                 </p>
             </div>
+        </div>
+
+        <div class="col-md-12">
+            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:notifications.html.twig" %}
         </div>
 
         {% if wallets %}
@@ -68,11 +78,12 @@
                     <table class="table">
                         <tr>
                             <th>Name</th>
-                            <th>Balance</th>
+                            <th>Final Balance</th>
                             <th>Coin Symbol</th>
                             <th>Creation Time</th>
                             <th>Id</th>
                             <th>Actions</th>
+                            <th>API</th>
                         </tr>
                         {% for wallet in wallets %}
                             <tr class="tx-row" id="{{ wallet.id }}">
@@ -94,17 +105,21 @@
                                     </time>
                                 </td>
                                 <td class="truncate">
-                                    <a href="{{ path('bc_app_wallet_wallet.transactions', {'walletId': wallet.id }) }}"
+                                    <a href="{{ path('bc_app_wallet_transaction.index', {'walletId': wallet.id }) }}"
                                        class="hidden-xs tx-list small">
                                         {{ wallet.id }}
                                     </a>
                                 </td>
                                 <td class="truncate">
                                     <a href="{{ path('bc_app_wallet_address.index', {'walletId': wallet.id }) }}"
-                                       class="hidden-xs tx-list small">Addresses</a>
-                                    <a href="{{ path('bc_app_wallet_wallet.transactions', {'walletId': wallet.id }) }}"
-                                       class="hidden-xs tx-list small">History</a>
+                                       class="hidden-xs tx-list small">[Addresses]</a>
+                                    <a href="{{ path('bc_app_wallet_transaction.index', {'walletId': wallet.id }) }}"
+                                       class="hidden-xs tx-list small">[History]</a>
+                                    <a href="{{ path('bc_app_wallet_transaction.new', {'walletId': wallet.id }) }}"
+                                       class="hidden-xs tx-list small">[Send Funds]</a>
                                 </td>
+                                <td><a target="_blank" href="{{ wallet.apiUrl }}"><i
+                                                class="fa fa-external-link"></i></a></td>
                             </tr>
                         {% endfor %}
 

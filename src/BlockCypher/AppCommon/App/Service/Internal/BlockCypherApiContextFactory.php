@@ -50,7 +50,8 @@ class BlockCypherApiContextFactory extends ApiContext
             'log.LogEnabled' => true,
             'log.FileName' => '../app/logs/BlockCypher.log',
             'log.LogLevel' => 'DEBUG', // PLEASE USE `INFO` LEVEL FOR LOGGING IN LIVE ENVIRONMENTS
-            'validation.level' => 'log',
+            //'validation.level' => 'log',
+            'validation.level' => 'disable',
             // 'http.CURLOPT_CONNECTTIMEOUT' => 30
         );
 

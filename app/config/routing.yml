@@ -1,16 +1,16 @@
 # homepage
 
 # redirect homepage to wallet app homepage
-root:
-    path: /
-    defaults:
-        _controller: FrameworkBundle:Redirect:redirect
-        route: bc_app_wallet_homepage.homepage
-        permanent: true
+#root:
+#    path: /
+#    defaults:
+#        _controller: FrameworkBundle:Redirect:redirect
+#        route: bc_app_wallet_homepage.homepage
+#        permanent: true
 
 bc_homepage:
     pattern:  /
-    defaults: { _controller: "bc_app_common_homepage.homepage_controller" }
+    defaults: { _controller: "bc_app_wallet_homepage.homepage_controller" }
 
 # TODO
 bc_dashboard:
@@ -33,4 +33,4 @@ bc_app_explorer:
 
 bc_app_wallet:
     resource: "@BlockCypherAppWalletInfrastructureAppWalletBundle/Resources/config/routing.yml"
-    prefix:   /wallet
+    prefix:   /

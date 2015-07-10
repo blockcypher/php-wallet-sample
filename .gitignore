@@ -44,6 +44,7 @@
 /.idea/*
 
 # App data
-#/app/data/*
+/app/data/*
+!app/data/.gitkeep
 
 

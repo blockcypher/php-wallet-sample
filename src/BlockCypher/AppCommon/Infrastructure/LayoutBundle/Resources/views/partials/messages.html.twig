@@ -2,21 +2,20 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-12" id="messages">
-
                 {% for message in messages %}
                     <div class="
-        {% if 'nofadeout' in message.tags %}
-          {# Don't dissappear after some number of seconds #}
-          nofadeout
-        {% endif %}
-        {% if 'error' in message.tags %}
-          alert alert-danger
-        {% elseif 'success' in message.tags %}
-          alert alert-success
-        {% else %}
-          alert alert-info
-        {% endif %}
-      ">
+                        {% if 'nofadeout' in message.tags %}
+                          {# Don't dissappear after some number of seconds #}
+                          nofadeout
+                        {% endif %}
+                        {% if 'error' in message.tags %}
+                          alert alert-danger
+                        {% elseif 'success' in message.tags %}
+                          alert alert-success
+                        {% else %}
+                          alert alert-info
+                        {% endif %}
+                    ">
                         {% if 'safe' in message.tags %}
                             {{ message|raw }}
                         {% else %}
@@ -25,7 +24,6 @@
                         <button type="button" class="close" data-dismiss="alert">×</button>
                     </div>
                 {% endfor %}
-
             </div>
         </div>
     </div>

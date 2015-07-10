@@ -4,15 +4,14 @@ namespace BlockCypher\AppWallet\Domain\Wallet;
 
 use BlockCypher\AppCommon\App\Service\Decryptor;
 use BlockCypher\AppCommon\Domain\ArrayConversion;
+use BlockCypher\AppCommon\Domain\Decryptable;
 use BlockCypher\AppCommon\Domain\Model;
-use BlockCypher\AppWallet\Domain\Address\Address;
-use BlockCypher\AppWallet\Domain\Address\EncryptedAddress;
 
 /**
  * Class EncryptedWallet
  * @package BlockCypher\AppWallet\Domain\Wallet
  */
-class EncryptedWallet extends Model implements ArrayConversion
+class EncryptedWallet extends Model implements ArrayConversion, Decryptable
 {
     /**
      * @var WalletId
@@ -42,11 +41,6 @@ class EncryptedWallet extends Model implements ArrayConversion
     private $creationTime;
 
     /**
-     * @var EncryptedAddress[]
-     */
-    private $addresses = array();
-
-    /**
      * Constructor
      *
      * @param WalletId $walletId
@@ -54,15 +48,13 @@ class EncryptedWallet extends Model implements ArrayConversion
      * @param string $coin
      * @param $token
      * @param \DateTime $creationTime
-     * @param Address[] $addresses
      */
     function __construct(
         WalletId $walletId,
         $name,
         $coin,
         $token,
-        \DateTime $creationTime,
-        $addresses
+        \DateTime $creationTime
     )
     {
         WalletCoinSymbol::validate($coin, 'WalletCoinSymbol');
@@ -72,7 +64,6 @@ class EncryptedWallet extends Model implements ArrayConversion
         $this->coinSymbol = $coin;
         $this->token = $token;
         $this->creationTime = clone $creationTime;
-        $this->addresses = $addresses;
     }
 
     /**
@@ -81,19 +72,12 @@ class EncryptedWallet extends Model implements ArrayConversion
      */
     public static function fromArray($entityAsArray)
     {
-        if (is_array($entityAsArray['addresses'])) {
-            $addressesArr = $entityAsArray['addresses'];
-        } else {
-            $addressesArr = array();
-        }
-
         $wallet = new self(
             WalletId::fromArray($entityAsArray['id']),
             $entityAsArray['name'],
             $entityAsArray['coinSymbol'],
             $entityAsArray['token'],
-            $entityAsArray['creationTime'],
-            Address::ArrayToObjectArray($addressesArr)
+            $entityAsArray['creationTime']
         );
 
         return $wallet;
@@ -110,7 +94,6 @@ class EncryptedWallet extends Model implements ArrayConversion
         $entityAsArray['coinSymbol'] = $this->coinSymbol;
         $entityAsArray['token'] = $this->token;
         $entityAsArray['creationTime'] = clone $this->creationTime;
-        $entityAsArray['addresses'] = Address::ObjectArrayToArray($this->addresses);
 
         return $entityAsArray;
     }
@@ -126,72 +109,10 @@ class EncryptedWallet extends Model implements ArrayConversion
             $this->name,
             $this->coinSymbol,
             $this->token,
-            $this->creationTime,
-            $this->decryptAddressesUsing($decryptor)
+            $this->creationTime
         );
 
         return $wallet;
-    }
-
-    /**
-     * @param Decryptor $decryptor
-     * @return array
-     */
-    private function decryptAddressesUsing(Decryptor $decryptor)
-    {
-        $decryptedAddresses = array();
-        foreach ($this->addresses as $encryptedAddress) {
-            $decryptedAddresses[] = $encryptedAddress->decryptUsing($decryptor);
-        }
-        return $decryptedAddresses;
-    }
-
-    /**
-     * Append Address to the list.
-     *
-     * @param string $address
-     * @return $this
-     */
-    public function addAddress($address)
-    {
-        if (!$this->getAddresses()) {
-            return $this->setAddresses(array($address));
-        } else {
-            return $this->setAddresses(
-                array_merge($this->getAddresses(), array($address))
-            );
-        }
-    }
-
-    /**
-     * @return Address[]
-     */
-    public function getAddresses()
-    {
-        return $this->addresses;
-    }
-
-    /**
-     * @param \string[] $addresses
-     * @return $this
-     */
-    private function setAddresses($addresses)
-    {
-        $this->addresses = $addresses;
-        return $this;
-    }
-
-    /**
-     * Remove Address from the list.
-     *
-     * @param string $address
-     * @return $this
-     */
-    public function removeAddress($address)
-    {
-        return $this->setAddresses(
-            array_diff($this->getAddresses(), array($address))
-        );
     }
 
     /**

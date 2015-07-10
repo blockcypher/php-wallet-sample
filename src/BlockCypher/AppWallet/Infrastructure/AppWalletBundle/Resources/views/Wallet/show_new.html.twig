@@ -15,6 +15,22 @@
 {% block content %}
     <div class="container">
 
+        <div class="section">
+            <div class="col-md-12">
+                <p class="text-center">
+                    <a href="{{ path('bc_app_wallet_wallet.new') }}"
+                       class="btn btn-lg btn-default">
+                        <i class="fa fa-plus"></i>
+                        New Wallet
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:notifications.html.twig" %}
+        </div>
+
         <div class="col-md-12">
 
             <h2></h2>

@@ -9,6 +9,7 @@ use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -32,6 +33,7 @@ class Generate extends AppWalletController
     /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
+     * @param Session $session
      * @param RouterInterface $router
      * @param AddressFormFactory $addressFormFactory
      * @param MessageBus $commandBus
@@ -39,11 +41,12 @@ class Generate extends AppWalletController
     public function __construct(
         EngineInterface $templating,
         TranslatorInterface $translator,
+        Session $session,
         RouterInterface $router,
         AddressFormFactory $addressFormFactory,
         MessageBus $commandBus)
     {
-        parent::__construct($templating, $translator);
+        parent::__construct($templating, $translator, $session);
         $this->router = $router;
         $this->addressFormFactory = $addressFormFactory;
         $this->commandBus = $commandBus;

@@ -14,9 +14,11 @@ use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 class Address extends Model implements Encryptable
 {
     /**
-     * @var string
+     * Needed because an address could be added to two different wallets.
+     *
+     * @var AddressId
      */
-    private $address;
+    private $id;
 
     /**
      * @var WalletId
@@ -24,11 +26,9 @@ class Address extends Model implements Encryptable
     private $walletId;
 
     /**
-     * Entity creation time.
-     *
-     * @var \DateTime
+     * @var string
      */
-    private $creationTime;
+    private $address;
 
     /**
      * @var string
@@ -56,36 +56,46 @@ class Address extends Model implements Encryptable
     private $callbackUrl;
 
     /**
+     * Entity creation time.
+     *
+     * @var \DateTime
+     */
+    private $creationTime;
+
+    /**
      * Constructor
      *
-     * @param string $address
+     * @param AddressId $id
      * @param WalletId $walletId
-     * @param \DateTime $creationTime
+     * @param string $address
      * @param $tag
      * @param $private
      * @param $public
      * @param $wif
      * @param $callbackUrl
+     * @param \DateTime $creationTime
      */
     function __construct(
-        $address,
+        AddressId $id,
         WalletId $walletId,
-        \DateTime $creationTime,
+        $address,
         $tag,
         $private,
         $public,
         $wif,
-        $callbackUrl
+        $callbackUrl,
+        \DateTime $creationTime
     )
     {
-        $this->address = $address;
+        $this->id = $id;
         $this->walletId = $walletId;
-        $this->creationTime = clone $creationTime;
+        $this->address = $address;
         $this->tag = $tag;
         $this->private = $private;
         $this->public = $public;
         $this->wif = $wif;
         $this->callbackUrl = $callbackUrl;
+        $this->creationTime = clone $creationTime;
     }
 
     /**
@@ -104,14 +114,15 @@ class Address extends Model implements Encryptable
     public function toArray()
     {
         $entityAsArray = array();
-        $entityAsArray['address'] = $this->address;
+        $entityAsArray['id'] = $this->id->toArray();
         $entityAsArray['walletId'] = $this->walletId->toArray();
-        $entityAsArray['creationTime'] = clone $this->creationTime;
+        $entityAsArray['address'] = $this->address;
         $entityAsArray['tag'] = $this->tag;
         $entityAsArray['private'] = $this->private;
         $entityAsArray['public'] = $this->public;
         $entityAsArray['wif'] = $this->wif;
         $entityAsArray['callbackUrl'] = $this->callbackUrl;
+        $entityAsArray['creationTime'] = clone $this->creationTime;
 
         return $entityAsArray;
     }
@@ -191,14 +202,15 @@ class Address extends Model implements Encryptable
     public static function fromArray($entityAsArray)
     {
         $address = new self(
-            $entityAsArray['address'],
+            $entityAsArray['id'],
             $entityAsArray['walletId'],
-            $entityAsArray['creationTime'],
+            $entityAsArray['address'],
             $entityAsArray['tag'],
             $entityAsArray['private'],
             $entityAsArray['public'],
             $entityAsArray['wif'],
-            $entityAsArray['callbackUrl']
+            $entityAsArray['callbackUrl'],
+            $entityAsArray['creationTime']
         );
 
         return $address;
@@ -211,14 +223,15 @@ class Address extends Model implements Encryptable
     public function encryptUsing(Encryptor $encryptor)
     {
         $encryptedAddress = new EncryptedAddress(
-            $this->address,
+            $this->id,
             $this->walletId,
-            $this->creationTime,
+            $this->address,
             $this->tag,
             $encryptor->encrypt($this->private),
             $this->public,
             $encryptor->encrypt($this->wif),
-            $this->callbackUrl
+            $this->callbackUrl,
+            $this->creationTime
         );
 
         return $encryptedAddress;
@@ -230,16 +243,6 @@ class Address extends Model implements Encryptable
     public function getWalletId()
     {
         return $this->walletId;
-    }
-
-    /**
-     * Get creationTime
-     *
-     * @return \DateTime
-     */
-    public function getCreationTime()
-    {
-        return $this->creationTime;
     }
 
     /**
@@ -283,14 +286,32 @@ class Address extends Model implements Encryptable
     }
 
     /**
+     * Get creationTime
+     *
+     * @return \DateTime
+     */
+    public function getCreationTime()
+    {
+        return $this->creationTime;
+    }
+
+    /**
      * @param Address $address
      * @return bool
      */
     public function equals(Address $address)
     {
-        if ($this->address === $address->getAddress())
+        if ($this->id->equals($address->getId()))
             return true;
         else
             return false;
+    }
+
+    /**
+     * @return AddressId
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }

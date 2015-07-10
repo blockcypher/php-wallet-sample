@@ -17,6 +17,7 @@ services:
         arguments:
          - @templating
          - @translator
+         - @session
          - @bc_app_explorer_address.address_service_facade
 
     # sercice facades
