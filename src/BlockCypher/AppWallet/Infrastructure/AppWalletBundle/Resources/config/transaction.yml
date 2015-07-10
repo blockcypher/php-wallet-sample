@@ -64,7 +64,7 @@ services:
     bc_app_wallet_transaction.encrypted_transaction_repository:
         class: %bc_app_wallet_transaction.encrypted_transaction_repository.class%
         arguments:
-          - "%kernel.root_dir%/data"
+          - "%kernel.logs_dir%/../data"
 
     bc_app_wallet_transaction.transaction_repository:
         class: %bc_app_wallet_transaction.transaction_repository.class%

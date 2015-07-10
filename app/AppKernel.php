@@ -39,4 +39,24 @@ class AppKernel extends Kernel
     {
         $loader->load($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
     }
+
+    public function getCacheDir()
+    {
+        // Using releases in prod
+        if ($this->environment == 'prod') {
+            return $this->rootDir.'/../../../shared/app/cache/'.$this->environment;
+        } else {
+            return $this->rootDir.'/cache/'.$this->environment;
+        }
+    }
+
+    public function getLogDir()
+    {
+        // Using releases in prod
+        if ($this->environment == 'prod') {
+            return $this->rootDir . '/../../../shared/app/logs';
+        } else {
+            return $this->rootDir.'/logs';
+        }
+    }
 }
