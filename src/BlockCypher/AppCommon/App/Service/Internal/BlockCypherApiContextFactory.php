@@ -9,12 +9,17 @@ use BlockCypher\Rest\ApiContext;
 class BlockCypherApiContextFactory extends ApiContext
 {
     /**
-     *
+     * @var string
      */
-    function __construct()
+    private $logDir;
+
+    /**
+     * Constructor
+     * @param string $logDir
+     */
+    public function __construct($logDir)
     {
-        // TODO: add parameters: maybe sdk_config path or settings from parameters.yml
-        // All settings are hardcoded for the time being
+        $this->logDir = $logDir;
     }
 
     /**
@@ -48,7 +53,7 @@ class BlockCypherApiContextFactory extends ApiContext
         $config = array(
             'mode' => 'sandbox',
             'log.LogEnabled' => true,
-            'log.FileName' => '../app/logs/BlockCypher.log',
+            'log.FileName' => $this->logDir.DIRECTORY_SEPARATOR .'BlockCypher.log',
             'log.LogLevel' => 'DEBUG', // PLEASE USE `INFO` LEVEL FOR LOGGING IN LIVE ENVIRONMENTS
             //'validation.level' => 'log',
             'validation.level' => 'disable',

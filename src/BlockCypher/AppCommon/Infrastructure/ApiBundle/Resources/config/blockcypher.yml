@@ -10,6 +10,8 @@ services:
 
     bc_app_common_blockcypher.api_context_factory:
         class: %bc_app_common_blockcypher.api_context_factory.class%
+        arguments:
+          - "%kernel.logs_dir%"
 
     bc_app_common_blockcypher.address_service:
         class: %bc_app_common_blockcypher.address_service.class%
