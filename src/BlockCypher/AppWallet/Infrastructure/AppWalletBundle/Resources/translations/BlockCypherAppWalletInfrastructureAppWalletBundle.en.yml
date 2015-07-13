@@ -1,0 +1,4 @@
+# Transaction
+transaction:
+    flash:
+        create_successfully: Transaction created successfully.
