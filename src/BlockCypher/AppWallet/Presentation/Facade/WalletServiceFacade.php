@@ -62,11 +62,11 @@ class WalletServiceFacade
         $wallet = $this->walletService->getWallet(new WalletId($walletId));
         $addresses = $this->walletService->listWalletAddresses(new WalletId($walletId));
 
-        $blockCypherAddressBalances = $this->getBlockCypherWalletAddressBalances($wallet);
-
-        if ($addresses === null) {
+        if (!$addresses) {
             return array();
         }
+
+        $blockCypherAddressBalances = $this->getBlockCypherWalletAddressBalances($wallet);
 
         $apiRouter = new ApiRouter();
         $explorerRouter = new ExplorerRouter();

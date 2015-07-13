@@ -118,7 +118,6 @@ class FlywheelEncryptedAddressRepository implements EncryptedAddressRepository
         // with spend permissions.
         // Or two users sharing a wallet but each of them with his own token.
 
-        /** @var Result $result */
         $result = $this->repository->query()
             ->where('address-walletId', '==', $address . '-' . $walletId->getValue())
             ->execute();
@@ -138,16 +137,26 @@ class FlywheelEncryptedAddressRepository implements EncryptedAddressRepository
 
     /**
      * @param WalletId $walletId
-     * @return EncryptedAddress
+     * @return EncryptedAddress[]
      */
     public function addressesOfWalletId(WalletId $walletId)
     {
-        /** @var EncryptedAddressDocument[] $result */
         $result = $this->repository->query()
             ->where('walletId', '==', $walletId->getValue())
             ->execute();
 
-        $encryptedAddresses = $this->documentArrayToObjectArray($result);
+        if ($result === false) {
+            return array();
+        }
+
+        if ($result->count() == 0) {
+            return array();
+        }
+
+        /** @var EncryptedAddressDocument[] $encryptedAddressDocuments */
+        $encryptedAddressDocuments = $result;
+
+        $encryptedAddresses = $this->documentArrayToObjectArray($encryptedAddressDocuments);
 
         return $encryptedAddresses;
     }
@@ -281,7 +290,6 @@ class FlywheelEncryptedAddressRepository implements EncryptedAddressRepository
      */
     public function findAll()
     {
-        /** @var EncryptedAddressDocument[] $result */
         $result = $this->repository->findAll();
 
         $encryptedAddresses = $this->documentArrayToObjectArray($result);
