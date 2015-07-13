@@ -6,8 +6,9 @@ bc_app_wallet_transaction.index:
 bc_app_wallet_transaction.new:
     pattern:  /txs/new
     defaults: { _controller: "bc_app_wallet_transaction.show_new_controller" }
+    requirements: { _method: get }
 
 bc_app_wallet_transaction.create:
-    pattern:  /txs/create
+    pattern:  /txs/new
     defaults: { _controller: "bc_app_wallet_transaction.create_controller" }
     requirements: { _method: post }

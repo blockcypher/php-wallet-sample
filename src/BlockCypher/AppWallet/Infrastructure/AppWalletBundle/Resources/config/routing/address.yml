@@ -6,6 +6,7 @@ bc_app_wallet_address.index:
 bc_app_wallet_address.new:
     pattern:  /addrs/new
     defaults: { _controller: "bc_app_wallet_address.show_new_controller" }
+    requirements: { _method: get }
 
 bc_app_wallet_address.generate:
     pattern:  /addrs/generate
