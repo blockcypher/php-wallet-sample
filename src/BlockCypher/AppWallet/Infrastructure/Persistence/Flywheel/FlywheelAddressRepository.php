@@ -95,6 +95,10 @@ class FlywheelAddressRepository implements AddressRepository
 
         $address = $encryptedAddress->decryptUsing($this->decryptor);
 
+        // DEBUG
+        //var_dump($address);
+        //die();
+
         return $address;
     }
 

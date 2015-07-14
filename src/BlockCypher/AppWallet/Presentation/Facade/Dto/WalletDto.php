@@ -11,6 +11,11 @@ use BlockCypher\Api\Address as BlockCypherAddress;
 class WalletDto
 {
     /**
+     * @var string
+     */
+    private $id;
+
+    /**
      * @var int
      */
     private $totalSent;
@@ -57,6 +62,7 @@ class WalletDto
     public static function from(BlockCypherAddress $blockCypherAddress)
     {
         $walletDto = new WalletDto();
+        $walletDto->setId($blockCypherAddress->getWallet()->getName());
         $walletDto->setTotalSent($blockCypherAddress->getTotalSent());
         $walletDto->setTotalReceived($blockCypherAddress->getTotalReceived());
         $walletDto->setUnconfirmedBalance($blockCypherAddress->getUnconfirmedBalance());
@@ -67,6 +73,24 @@ class WalletDto
         $walletDto->setFinalNTx($blockCypherAddress->getFinalNTx());
 
         return $walletDto;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string $id
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
     }
 
     /**

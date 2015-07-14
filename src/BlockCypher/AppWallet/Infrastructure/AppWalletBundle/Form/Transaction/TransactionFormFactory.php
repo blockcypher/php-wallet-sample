@@ -90,17 +90,4 @@ class TransactionFormFactory
         }
         return $walletChoices;
     }
-
-    /**
-     * Shortcut to trans. Consider to put it in some common parent controller.
-     * @param $id
-     * @param array $parameters
-     * @param string $domain
-     * @param null $locale
-     * @return string
-     */
-//    private function trans($id, array $parameters = array(), $domain = 'BlockCypherAppWalletInfrastructureAppWalletBundle', $locale = null)
-//    {
-//        return $this->translator->trans($id, $parameters, $domain, $locale);
-//    }
 }

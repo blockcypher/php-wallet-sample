@@ -101,7 +101,7 @@ class Generate extends AppWalletController
 
             $this->commandBus->handle($createAddressCommand);
 
-            $message = $this->trans('address.flash.create_successfully');
+            $this->addFlash('success', $this->trans('address.flash.create_successfully'));
 
             $url = $this->router->generate('bc_app_wallet_address.index', array('walletId' => $createAddressCommand->getWalletId()));
 

@@ -3,13 +3,13 @@ BlockCypher REST API PHP Sample
 
 [![Build Status](https://travis-ci.org/blockcypher/php-wallet-sample.svg)](https://travis-ci.org/blockcypher/php-wallet-sample)
 
-> **WARNING: WORK IN PROGRESS. This project is at the very beginning**
+> **WARNING: WORK IN PROGRESS**
 
 Overview
 --------
 
 This is a sample that showcases the features of BlockCypher's REST APIs. The application uses the SDKs provided by BlockCypher.
-It is a Bitcoin wallet but also includes some Blockchain explorer features.
+It is a Bitcoin wallet.
 
 Pre-requisites
 --------------
@@ -17,25 +17,15 @@ Pre-requisites
    * PHP 5.4+
    * curl, openssl PHP extensions
    * [Composer](http://getcomposer.org/download/) for installing the Rest API SDK.
-	
+
 Running the app
 ---------------
 
    * It´s a symfony app so you can use official [Symfony documentation](http://symfony.com/doc/current/book/installation.html)    
    * Copy the php-wallet-sample folder to your htdocs folder.
-   * Run 'composer update' from the root directory.
-   * Optionally, update *app/config/parameters.yml* with your own API token.
+   * Run 'composer install' from the root directory.
    * You are ready. Bring up http://localhost/php-wallet-sample on your favorite browser.
-   
-   > **Notice: Only these urls work for the time being:**
-   
-   * http://localhost/php-wallet-sample/app_dev.php
-   * http://localhost/php-wallet-sample/app_dev.php/explorer/btc/address/1DEP8i3QJCsomS4BSMY2RpU1upv62aGvhD/
-   * http://localhost/php-wallet-sample/app_dev.php/explorer/btc/302013/
-   * http://localhost/php-wallet-sample/app_dev.php/wallet/accounts
-   * http://localhost/php-wallet-sample/app_dev.php/wallet/addresses
-   * http://localhost/php-wallet-sample/app_dev.php/wallet/addresses/new
-	
+
 References
 ----------
 
@@ -44,10 +34,12 @@ References
 TODO
 ----
 
-   * Migrate a lot of django templates for the AppExplorer (not a priority)
-   * Implement AppWallet. It is the main purpose of this sample.
-   * User registration/login
-   * Get API token from parameters.yml
+   * Login using BlockCypher API token.
+   * Validate address in "Send Funds".
+   * Add edit pages for wallets, address, txs.
+   * Client-side signing.
+   * Support for multisign addresses.
+   * Console commands for basic app commands: create wallet, address and transaction.
    * Add behat, phpspec, tests, ...
    * ...
 

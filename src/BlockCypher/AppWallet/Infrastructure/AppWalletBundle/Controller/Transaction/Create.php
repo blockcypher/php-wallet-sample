@@ -5,9 +5,11 @@ namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Transa
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Transaction\TransactionFormFactory;
+use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletDto;
 use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -75,71 +77,67 @@ class Create extends AppWalletController
     {
         $walletId = $request->get('walletId');
 
-        $walletDto = $this->walletServiceFacade->getWallet($walletId);
-
         $createTransactionCommand = $this->createCreateTransactionCommand($walletId);
 
         $createTransactionForm = $this->transactionFormFactory->createCreateForm($createTransactionCommand);
 
         $createTransactionForm->handleRequest($request);
 
-        $messages = array();
-
         if (!$createTransactionForm->isValid()) {
 
-            $message = $this->trans('address_form.invalid_fields');
-            $messages[] = $message;
+            $validationMsg = $this->getAllFormErrorMessagesAsString($createTransactionForm);
+            $this->addFlash('error', $this->trans('create_transaction_form.flash.invalid_form') . ' ' . $validationMsg);
 
-            $template = $this->getBaseTemplatePrefix() . ':Address:show_new.html';
+        } else {
 
-            // TODO: extract method. Same response when form is invalid and if there is a problem creating the tx
-            return $this->templating->renderResponse(
-                $template . '.' . $this->getEngine(),
-                array(
-                    // TODO: move to base controller and merge arrays
-                    'is_home' => false,
-                    'user' => array('is_authenticated' => true),
-                    'messages' => array(),
-                    //
-                    'coin_symbol' => 'btc',
-                    'transaction_form' => $createTransactionForm->createView(),
-                    'wallet_id' => $walletId,
-                    'wallet' => $walletDto,
-                )
-            );
+            /** @var CreateAddressCommand $createTransactionCommand */
+            $createTransactionCommand = $createTransactionForm->getData();
+
+            try {
+
+                $this->commandBus->handle($createTransactionCommand);
+
+                $this->addFlash('success', $this->trans('transaction.flash.create_successfully'));
+
+                $url = $this->router->generate('bc_app_wallet_transaction.index', array('walletId' => $createTransactionCommand->getWalletId()));
+
+                return new RedirectResponse($url);
+
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
         }
 
-        /** @var CreateAddressCommand $createTransactionCommand */
-        $createTransactionCommand = $createTransactionForm->getData();
+        $walletDto = $this->walletServiceFacade->getWallet($walletId);
 
-        try {
+        return $this->renderTransactionShowNew(
+            $request,
+            $createTransactionForm->createView(),
+            $walletDto
+        );
+    }
 
-            $this->commandBus->handle($createTransactionCommand);
-
-            $this->addFlash('success', $this->trans('transaction.flash.create_successfully'));
-
-            $url = $this->router->generate('bc_app_wallet_transaction.index', array('walletId' => $createTransactionCommand->getWalletId()));
-
-            return new RedirectResponse($url);
-
-        } catch (\Exception $e) {
-            $this->session->getFlashBag()->add('error', $e->getMessage());
-        }
-
+    /**
+     * @param Request $request
+     * @param FormView $createTransactionFormView
+     * @param WalletDto $walletDto
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    private function renderTransactionShowNew(
+        Request $request,
+        FormView $createTransactionFormView,
+        WalletDto $walletDto
+    )
+    {
         $template = $this->getBaseTemplatePrefix() . ':Transaction:show_new.html';
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
-            array(
-                // TODO: move to base controller and merge arrays
-                'is_home' => false,
-                'user' => array('is_authenticated' => true),
-                'messages' => array(),
-                //
-                'coin_symbol' => 'btc',
-                'transaction_form' => $createTransactionForm->createView(),
-                'wallet_id' => $walletId,
-                'wallet' => $walletDto,
+            array_merge($this->getBasicTemplateVariables($request),
+                array(
+                    'transaction_form' => $createTransactionFormView,
+                    'wallet' => $walletDto,
+                )
             )
         );
     }

@@ -4,6 +4,7 @@ namespace BlockCypher\AppCommon\Infrastructure\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -80,5 +81,70 @@ class AppCommonController extends Controller
     protected function addFlash($type, $message)
     {
         $this->session->getFlashBag()->add($type, $message);
+    }
+
+    /**
+     * @param $form
+     * @return string
+     */
+    protected function getAllFormErrorMessagesAsString($form)
+    {
+        $msgArr = $this->getAllFormErrorMessages($form);
+
+        // DEBUG
+        //var_dump($msgArr);
+        //die();
+
+        $message = '';
+        if (is_array($msgArr) && count($msgArr) > 0) {
+            foreach ($msgArr as $childName => $messages) {
+                $message .= 'Error in field ' . $childName . '. ';
+                if (is_array($messages)) {
+                    foreach ($messages as $msg) {
+                        $message .= $msg . ' ';
+                    }
+                } else {
+                    $message .= $messages . ' ';
+                }
+                $message .= PHP_EOL;
+            }
+        }
+        return $message;
+    }
+
+    /**
+     * Get form validation errors.
+     * @param Form| $form
+     * @return array
+     */
+    protected function getAllFormErrorMessages($form)
+    {
+        // DEBUG
+        //var_dump($form->getErrors($deep));
+        //die();
+
+        $messagesArray = array();
+        foreach ($form->getErrors() as $key => $error) {
+            if ($error->getMessagePluralization() !== null) {
+                $messagesArray['message'] = $this->translator->transChoice(
+                    $error->getMessage(),
+                    $error->getMessagePluralization(),
+                    $error->getMessageParameters(),
+                    'validators'
+                );
+            } else {
+                $messagesArray['message'] = $this->translator->trans($error->getMessage(), array(), 'validators');
+            }
+        }
+
+        // Children errors
+        foreach ($form->all() as $name => $child) {
+            $errors = $this->getAllFormErrorMessages($child);
+            if (!empty($errors)) {
+                $messagesArray[$name] = $errors;
+            }
+        }
+
+        return $messagesArray;
     }
 }

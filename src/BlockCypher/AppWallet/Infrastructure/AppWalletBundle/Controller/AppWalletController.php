@@ -6,6 +6,7 @@ use BlockCypher\AppCommon\Infrastructure\Controller\AppCommonController;
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
 use BlockCypher\AppWallet\App\Command\CreateTransactionCommand;
 use BlockCypher\AppWallet\App\Command\CreateWalletCommand;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class AppWalletController
@@ -70,5 +71,24 @@ class AppWalletController extends AppCommonController
     )
     {
         return $this->translator->trans($id, $parameters, $domain, $locale);
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    protected function getBasicTemplateVariables(Request $request)
+    {
+        $coinSymbol = $request->get('CoinSymbol');
+        if ($coinSymbol === null) {
+            $coinSymbol = 'btc';
+        }
+
+        return array(
+            'is_home' => false,
+            'user' => array('is_authenticated' => true),
+            'messages' => array(), // DEPRECATED
+            'coin_symbol' => $coinSymbol,
+        );
     }
 }

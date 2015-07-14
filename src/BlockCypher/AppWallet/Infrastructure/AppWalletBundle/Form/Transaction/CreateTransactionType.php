@@ -7,6 +7,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
 
 /**
  * Class CreateTransactionType
@@ -50,10 +52,23 @@ class CreateTransactionType extends AbstractType
                 'required' => true,
                 'data' => $this->defaultWalletId
             ))
-            ->add('payToAddress', 'text', array('required' => true))
-            ->add('description', 'text', array('required' => false))
-            ->add('amount', 'text', array('required' => true)
-            );
+            ->add('payToAddress', 'text', array(
+                'required' => true,
+                'constraints' => array(
+                    new NotBlank(),
+                    new Type(array('type' => 'string')),
+                )))
+            ->add('description', 'text', array(
+                'required' => false
+            ))
+            ->add('amount', 'text', array(
+                'required' => true,
+                'constraints' => array(
+                    new NotBlank(),
+                    new Type(array('type' => 'integer')),
+                )));
+
+// TODO: Code Review. Use money type for amount
 //            ->add('amount', 'money', array(
 //                'divisor' => 100000000,
 //                'scale' => 8,
