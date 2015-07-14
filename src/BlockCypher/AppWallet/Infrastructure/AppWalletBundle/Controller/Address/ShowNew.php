@@ -51,9 +51,7 @@ class ShowNew extends AppWalletController
 
         $walletDto = $this->walletServiceFacade->getWallet($walletId);
 
-        $tag = '';
-        $callbackUrl = '';
-        $createAddressCommand = $this->createCreateAddressCommand($walletId, $tag, $callbackUrl);
+        $createAddressCommand = $this->createCreateAddressCommand($walletId);
 
         $createAddressForm = $this->addressFormFactory->createCreateForm($createAddressCommand, $walletId);
 
@@ -61,16 +59,11 @@ class ShowNew extends AppWalletController
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
-            array(
-                // TODO: move to base controller and merge arrays
-                'is_home' => false,
-                'user' => array('is_authenticated' => true),
-                'messages' => $this->getMessageBag(),
-                //
-                'coin_symbol' => 'btc',
-                'address_form' => $createAddressForm->createView(),
-                'wallet_id' => $walletId,
-                'wallet' => $walletDto,
+            array_merge($this->getBasicTemplateVariables($request),
+                array(
+                    'address_form' => $createAddressForm->createView(),
+                    'wallet' => $walletDto,
+                )
             )
         );
     }
