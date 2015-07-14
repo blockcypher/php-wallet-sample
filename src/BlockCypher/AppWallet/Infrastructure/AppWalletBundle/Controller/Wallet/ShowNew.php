@@ -46,14 +46,10 @@ class ShowNew extends AppWalletController
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
-            array(
-                // TODO: move to base controller and merge arrays
-                'is_home' => false,
-                'user' => array('is_authenticated' => true),
-                'messages' => $this->getMessageBag(),
-                //
-                'coin_symbol' => 'btc',
-                'wallet_form' => $createWalletForm->createView(),
+            array_merge($this->getBasicTemplateVariables($request),
+                array(
+                    'wallet_form' => $createWalletForm->createView(),
+                )
             )
         );
     }
