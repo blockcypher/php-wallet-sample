@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Type;
 
 /**
@@ -65,7 +66,7 @@ class CreateTransactionType extends AbstractType
                 'required' => true,
                 'constraints' => array(
                     new NotBlank(),
-                    new Type(array('type' => 'integer')),
+                    new Range(array('min' => 0, 'max' => 21000000))
                 )));
 
 // TODO: Code Review. Use money type for amount

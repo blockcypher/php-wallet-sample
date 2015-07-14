@@ -51,10 +51,11 @@ class ShowNew extends AppWalletController
 
         $walletDto = $this->walletServiceFacade->getWallet($walletId);
 
+        // Default form data
         $createTransactionCommand = $this->createCreateTransactionCommand(
             $walletId,
-            "n3D2YXwvpoPg8FhcWpzJiS3SvKKGD8AXZ4", // BTC Testnet
-            "Description",
+            "mwmabpJVisvti3WEP5vhFRtn3yqHRD9KNP", // BTC Testnet faucet return address
+            "Your transaction description",
             1000
         );
 
@@ -64,16 +65,11 @@ class ShowNew extends AppWalletController
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
-            array(
-                // TODO: move to base controller and merge arrays
-                'is_home' => false,
-                'user' => array('is_authenticated' => true),
-                'messages' => $this->getMessageBag(),
-                //
-                'coin_symbol' => 'btc',
-                'transaction_form' => $createTransactionForm->createView(),
-                'wallet_id' => $walletId,
-                'wallet' => $walletDto,
+            array_merge($this->getBasicTemplateVariables($request),
+                array(
+                    'transaction_form' => $createTransactionForm->createView(),
+                    'wallet' => $walletDto,
+                )
             )
         );
     }
