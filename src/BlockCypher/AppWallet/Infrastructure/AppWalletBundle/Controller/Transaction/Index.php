@@ -51,38 +51,21 @@ class Index extends AppWalletController
 
         $template = $this->getBaseTemplatePrefix() . ':Transaction:index.html';
 
-        // DEBUG
-        //var_dump($walletTransactionDto);
-        //die();
-
-        // TODO
+        // TODO: paging
         $currentPage = 1;
         $maxPages = 0; // get_max_pages(num_items=address_details['final_n_tx'], items_per_page=TXNS_PER_PAGE),
 
-        $BLOCKCYPHER_PUBLIC_KEY = "c0afcccdde5081d6429de37d16166ead";
-
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
-            array(
-                // TODO: move to base controller and merge arrays
-                'is_home' => false,
-                'user' => array('is_authenticated' => true),
-                'messages' => $this->getMessageBag(),
-                //
-                'coin_symbol' => 'btc',
-                'current_page' => $currentPage,
-                'num_all_wallets' => count($transactions),
-                'max_pages' => $maxPages,
-                'wallet_id' => $walletId,
-//                'total_sent_satoshis' => $walletTransactionDto->getTotalSent(),
-//                'total_received_satoshis' => $walletTransactionDto->getTotalReceived(),
-//                'total_balance_satoshis' => $walletTransactionDto->getFinalBalance(),
-//                'unconfirmed_balance_satoshis' => $walletTransactionDto->getUnconfirmedBalance(),
-                'num_all_txns' => $walletTransactionDto->getNTx(),
-                'num_unconfirmed_txns' => $walletTransactionDto->getUnconfirmedNTx(),
-                'wallet' => $walletDto,
-                'all_transactions' => $transactions,
-                'BLOCKCYPHER_PUBLIC_KEY' => $BLOCKCYPHER_PUBLIC_KEY
+            array_merge($this->getBasicTemplateVariables($request),
+                array(
+                    'current_page' => $currentPage,
+                    'max_pages' => $maxPages,
+                    'wallet' => $walletDto,
+                    'num_all_txns' => $walletTransactionDto->getNTx(),
+                    'num_unconfirmed_txns' => $walletTransactionDto->getUnconfirmedNTx(),
+                    'all_transactions' => $transactions,
+                )
             )
         );
     }

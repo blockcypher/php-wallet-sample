@@ -1,6 +1,6 @@
 {% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
 
-{% block title %}Transactions - Wallet {{ wallet_id }}{% endblock title %}
+{% block title %}Transactions - Wallet {{ wallet.id }}{% endblock title %}
 
 {% block page_header %}
     <h1>
@@ -8,9 +8,10 @@
         History
     </h1>
 
-    <h2 class="tagline wrapit semi">
-        Transactions in wallet {{ wallet_id }}
+    <h2 class="tagline wrapit semi">Transactions in wallet {{ wallet.name }}
+        <small>(Wallet id: {{ wallet.id }})</small>
     </h2>
+
 {% endblock page_header %}
 
 {% block content %}
