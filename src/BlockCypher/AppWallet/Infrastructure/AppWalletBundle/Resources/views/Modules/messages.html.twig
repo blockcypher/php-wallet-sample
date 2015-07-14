@@ -1,0 +1,53 @@
+<!-- notifications -->
+<div>
+    <!-- alert -->
+    {% for message in messages.get("alert") %}
+        <div class="alert alert-danger">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+    <!-- success -->
+    {% for message in messages.get("success") %}
+        <div class="alert alert-success">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            {{ message }}
+        </div>
+    {% endfor %}
+    <!-- error -->
+    {% for message in messages.get("error") %}
+        <div class="alert alert-danger">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+    <!-- warning -->
+    {% for message in messages.get("warning") %}
+        <div class="alert alert-danger">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+    <!-- notice -->
+    {% for message in messages.get("notice") %}
+        <div class="alert alert-info">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+    <!-- information -->
+    {% for message in messages.get("information") %}
+        <div class="alert alert-info">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+    <!-- confirm -->
+    {% for message in messages.get("confirm") %}
+        <div class="alert alert-info">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert">×</button>
+        </div>
+    {% endfor %}
+</div>
+<!-- // notifications -->

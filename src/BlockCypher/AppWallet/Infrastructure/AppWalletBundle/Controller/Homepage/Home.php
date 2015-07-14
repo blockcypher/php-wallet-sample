@@ -36,7 +36,7 @@ class Home extends AppWalletController
     {
         $data = array(
             'is_home' => true,
-            'messages' => array(),
+            'messages' => $this->getMessageBag(),
             'coin_symbol' => '',
             'user' => array('is_authenticated' => true),
         );

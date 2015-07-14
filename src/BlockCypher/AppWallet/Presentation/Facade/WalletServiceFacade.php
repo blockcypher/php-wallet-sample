@@ -212,6 +212,6 @@ class WalletServiceFacade
             return null;
         }
 
-        return WalletDto::from($blockCypherAddress);
+        return WalletDto::from($wallet, $blockCypherAddress);
     }
 }

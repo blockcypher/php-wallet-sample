@@ -5,11 +5,11 @@
 {% block page_header %}
     <h1>
         <i class="fa fa-qrcode"></i>
-        Create New Address
+        Generate New Address
     </h1>
 
-    <h2 class="tagline wrapit semi">
-    </h2>
+    <h2 class="tagline wrapit semi"></h2>
+
 {% endblock page_header %}
 
 {% block content %}
@@ -24,7 +24,11 @@
         </div>
 
         <div class="col-md-12">
-            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:notifications.html.twig" %}
+            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:messages.html.twig" %}
+        </div>
+
+        <div class="col-md-12">
+            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:flash_messages.html.twig" %}
         </div>
 
         <div class="col-md-12">

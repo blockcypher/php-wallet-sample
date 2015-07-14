@@ -30,6 +30,11 @@ class AppCommonController extends Controller
     protected $session;
 
     /**
+     * @var MessageBag
+     */
+    protected $messageBag;
+
+    /**
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
@@ -43,6 +48,7 @@ class AppCommonController extends Controller
         $this->templating = $templating;
         $this->translator = $translator;
         $this->session = $session;
+        $this->messageBag = new MessageBag();
     }
 
     /**
@@ -68,6 +74,25 @@ class AppCommonController extends Controller
         $locale = null)
     {
         return $this->translator->trans($id, $parameters, $domain, $locale);
+    }
+
+    /**
+     * Adds a message to the current response.
+     *
+     * @param string $type The type
+     * @param string $message The message
+     */
+    protected function addMessage($type, $message)
+    {
+        $this->getMessageBag()->add($type, $message);
+    }
+
+    /**
+     * @return MessageBag
+     */
+    public function getMessageBag()
+    {
+        return $this->messageBag;
     }
 
     /**

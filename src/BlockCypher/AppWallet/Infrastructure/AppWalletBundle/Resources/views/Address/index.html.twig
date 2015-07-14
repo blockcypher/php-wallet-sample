@@ -1,16 +1,15 @@
 {% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
 
-{% block title %}Addresses - Wallet {{ wallet_id }}{% endblock title %}
+{% block title %}Addresses - Wallet {{ wallet.id }}{% endblock title %}
 
 {% block page_header %}
-    <h1>
-        <i class="fa fa-qrcode"></i>
-        Addresses
-    </h1>
 
-    <h2 class="tagline wrapit semi">
-        Addresses in wallet {{ wallet_id }}
+    <h1><i class="fa fa-qrcode"></i>Addresses</h1>
+
+    <h2 class="tagline wrapit semi">Addresses in wallet {{ wallet.name }}
+        <small>(Wallet id: {{ wallet.id }})</small>
     </h2>
+
 {% endblock page_header %}
 
 {% block content %}
@@ -25,7 +24,11 @@
         </div>
 
         <div class="col-md-12">
-            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:notifications.html.twig" %}
+            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:messages.html.twig" %}
+        </div>
+
+        <div class="col-md-12">
+            {% include "BlockCypherAppWalletInfrastructureAppWalletBundle:Modules:flash_messages.html.twig" %}
         </div>
 
         {% if addresses %}
@@ -81,17 +84,7 @@
                                 <td class="truncate">{{ address.tag }}</td>
                                 <td class="">{{ address.finalBalance }}</td>
                                 <td class="">{{ address.nTx }}</td>
-                                <td class="truncate">
-                                    {% if address.address %}
-                                        <a href="TODO LINK TO ADDRESS"
-                                           class="hidden-xs tx-list small">
-                                            {{ address.address }}
-                                        </a>
-                                        <a href="TODO LINK TO ADDRESS"
-                                           class="visible-xs">
-                                            View Address
-                                        </a>
-                                    {% endif %}
+                                <td class="truncate">{{ address.address }}
                                 </td>
                                 <td>
                                     <time class="timeago"

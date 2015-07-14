@@ -65,7 +65,7 @@ class ShowNew extends AppWalletController
                 // TODO: move to base controller and merge arrays
                 'is_home' => false,
                 'user' => array('is_authenticated' => true),
-                'messages' => array(),
+                'messages' => $this->getMessageBag(),
                 //
                 'coin_symbol' => 'btc',
                 'address_form' => $createAddressForm->createView(),

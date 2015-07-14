@@ -87,7 +87,7 @@ class AppWalletController extends AppCommonController
         return array(
             'is_home' => false,
             'user' => array('is_authenticated' => true),
-            'messages' => array(), // DEPRECATED
+            'messages' => $this->getMessageBag(),
             'coin_symbol' => $coinSymbol,
         );
     }

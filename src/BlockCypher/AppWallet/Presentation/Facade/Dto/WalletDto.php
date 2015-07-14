@@ -3,6 +3,7 @@
 namespace BlockCypher\AppWallet\Presentation\Facade\Dto;
 
 use BlockCypher\Api\Address as BlockCypherAddress;
+use BlockCypher\AppWallet\Domain\Wallet\Wallet;
 
 /**
  * Class WalletDto
@@ -14,6 +15,11 @@ class WalletDto
      * @var string
      */
     private $id;
+
+    /**
+     * @var string
+     */
+    private $name;
 
     /**
      * @var int
@@ -56,12 +62,18 @@ class WalletDto
     private $finalNTx;
 
     /**
+     * @param Wallet $wallet
      * @param BlockCypherAddress $blockCypherAddress
      * @return WalletDto
      */
-    public static function from(BlockCypherAddress $blockCypherAddress)
+    public static function from(Wallet $wallet, BlockCypherAddress $blockCypherAddress)
     {
         $walletDto = new WalletDto();
+
+        // From Wallet
+        $walletDto->setName($wallet->getName());
+
+        // From BlockCypherAddress
         $walletDto->setId($blockCypherAddress->getWallet()->getName());
         $walletDto->setTotalSent($blockCypherAddress->getTotalSent());
         $walletDto->setTotalReceived($blockCypherAddress->getTotalReceived());
@@ -90,6 +102,24 @@ class WalletDto
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
         return $this;
     }
 

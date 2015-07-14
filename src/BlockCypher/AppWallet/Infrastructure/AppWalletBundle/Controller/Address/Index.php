@@ -46,33 +46,24 @@ class Index extends AppWalletController
         $walletId = $request->get('walletId');
 
         $walletDto = $this->walletServiceFacade->getWallet($walletId);
-        $addresses = $this->walletServiceFacade->listWalletAddresses($walletId);
-
-        // DEBUG
-        //var_dump($addresses);
-        //die();
+        $AddressListItemDtos = $this->walletServiceFacade->listWalletAddresses($walletId);
 
         $template = $this->getBaseTemplatePrefix() . ':Address:index.html';
 
-        // TODO
+        // TODO: paging
         $currentPage = 1;
         $maxPages = 0; // get_max_pages(num_items=address_details['final_n_tx'], items_per_page=TXNS_PER_PAGE),
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
-            array(
-                // TODO: move to base controller and merge arrays
-                'is_home' => false,
-                'user' => array('is_authenticated' => true),
-                'messages' => array(),
-                //
-                'coin_symbol' => 'btc',
-                'current_page' => $currentPage,
-                'max_pages' => $maxPages,
-                'wallet_id' => $walletId,
-                'num_all_addresses' => count($addresses),
-                'wallet' => $walletDto,
-                'addresses' => $addresses,
+            array_merge($this->getBasicTemplateVariables($request),
+                array(
+                    'current_page' => $currentPage,
+                    'max_pages' => $maxPages,
+                    'num_all_addresses' => count($AddressListItemDtos),
+                    'wallet' => $walletDto,
+                    'addresses' => $AddressListItemDtos,
+                )
             )
         );
     }
