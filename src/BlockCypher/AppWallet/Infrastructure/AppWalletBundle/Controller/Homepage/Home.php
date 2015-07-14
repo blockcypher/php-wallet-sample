@@ -34,16 +34,16 @@ class Home extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $data = array(
-            'is_home' => true,
-            'messages' => $this->getMessageBag(),
-            'coin_symbol' => '',
-            'user' => array('is_authenticated' => true),
-        );
-
         $template = $this->getBaseTemplatePrefix() . ':Homepage:home.html';
 
-        return $this->templating->renderResponse($template . '.' . $this->getEngine(), $data);
+        return $this->templating->renderResponse(
+            $template . '.' . $this->getEngine(),
+            array_merge($this->getBasicTemplateVariables($request),
+                array(
+                    'is_home' => true,
+                )
+            )
+        );
     }
 }
 
