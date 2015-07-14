@@ -7,8 +7,10 @@ use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletCon
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Wallet\WalletFormFactory;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -65,70 +67,52 @@ class Create extends AppWalletController
 
         $createWalletForm->handleRequest($request);
 
-        $messages = array();
-
         if (!$createWalletForm->isValid()) {
 
-            $message = $this->trans('wallet_form.invalid_fields');
-            $errors = $createWalletForm->getErrors();
-            foreach ($errors as $error) {
-                $message .= $error->getMessage();
+            $validationMsg = $this->getAllFormErrorMessagesAsString($createWalletForm);
+            $this->addFlash('error', $this->trans('create_transaction_form.flash.invalid_form') . ' ' . $validationMsg);
+
+        } else {
+
+            /** @var CreateWalletCommand $createWalletCommand */
+            $createWalletCommand = $createWalletForm->getData();
+
+            try {
+
+                $this->commandBus->handle($createWalletCommand);
+
+                $this->addFlash('success', $this->trans('wallet.flash.create_successfully'));
+
+                $url = $this->router->generate('bc_app_wallet_wallet.index');
+
+                return new RedirectResponse($url);
+
+            } catch (\Exception $e) {
+                $this->addFlash('error', $e->getMessage());
             }
-            $messages[] = $message;
-
-            // TODO: render messages in template
-            throw new \Exception(print_r($messages, true));
-
-            $template = $this->getBaseTemplatePrefix() . ':Wallet:show_new.html';
-
-            return $this->templating->renderResponse(
-                $template . '.' . $this->getEngine(),
-                array(
-                    // TODO: move to base controller and merge arrays
-                    'is_home' => false,
-                    'user' => array('is_authenticated' => true),
-                    'messages' => $this->getMessageBag(),
-                    //
-                    'coin_symbol' => 'btc',
-                    'wallet_form' => $createWalletForm->createView(),
-                )
-            );
         }
 
-        /** @var CreateWalletCommand $createWalletCommand */
-        $createWalletCommand = $createWalletForm->getData();
+        return $this->renderWalletShowNew($request, $createWalletForm->createView());
+    }
 
-        try {
-
-            $this->commandBus->handle($createWalletCommand);
-
-            $message = $this->trans('wallet.flash.create_successfully');
-
-            $url = $this->router->generate('bc_app_wallet_wallet.index');
-
-            return new RedirectResponse($url);
-
-        } catch (\Exception $e) {
-
-            // TODO: build message
-            //$message = $this->trans('wallet.flash.create_wallet_fail') . '. ' . $e->getMessage();
-            //$messages[] = $message;
-
-            throw $e;
-        }
-
+    /**
+     * @param Request $request
+     * @param FormView $createWalletFormView
+     * @return Response
+     */
+    private function renderWalletShowNew(
+        Request $request,
+        FormView $createWalletFormView
+    )
+    {
         $template = $this->getBaseTemplatePrefix() . ':Wallet:show_new.html';
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
-            array(
-                // TODO: move to base controller and merge arrays
-                'is_home' => false,
-                'user' => array('is_authenticated' => true),
-                'messages' => $this->getMessageBag(),
-                //
-                'coin_symbol' => 'btc',
-                'wallet_form' => $createWalletForm->createView(),
+            array_merge($this->getBasicTemplateVariables($request),
+                array(
+                    'wallet_form' => $createWalletFormView
+                )
             )
         );
     }
