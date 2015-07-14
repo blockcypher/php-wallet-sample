@@ -38,31 +38,23 @@ class Index extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $wallets = $this->walletServiceFacade->listWallets();
+        $walletListItemDtos = $this->walletServiceFacade->listWallets();
 
         $template = $this->getBaseTemplatePrefix() . ':Wallet:index.html';
 
-        // DEBUG
-        //var_dump($wallets);
-        //die();
-
-        // TODO
+        // TODO: paging
         $currentPage = 1;
         $maxPages = 0; // get_max_pages(num_items=address_details['final_n_tx'], items_per_page=TXNS_PER_PAGE),
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
-            array(
-                // TODO: move to base controller and merge arrays
-                'is_home' => false,
-                'user' => array('is_authenticated' => true),
-                'messages' => $this->getMessageBag(),
-                //
-                'coin_symbol' => 'btc',
-                'current_page' => $currentPage,
-                'num_all_wallets' => count($wallets),
-                'max_pages' => $maxPages,
-                'wallets' => $wallets
+            array_merge($this->getBasicTemplateVariables($request),
+                array(
+                    'current_page' => $currentPage,
+                    'max_pages' => $maxPages,
+                    'num_all_wallets' => count($walletListItemDtos),
+                    'wallets' => $walletListItemDtos,
+                )
             )
         );
     }
