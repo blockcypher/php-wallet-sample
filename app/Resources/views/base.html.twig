@@ -12,7 +12,7 @@
 
     <title>
         {% block title %}
-            {% trans %}"Block Explorer for Bitcoin, Litecoin, Dogecoin and More"{% endtrans %}
+            Block Explorer for Bitcoin, Litecoin, Dogecoin and More
         {% endblock %}
         | BlockCypher
     </title>
@@ -128,17 +128,16 @@
                         </a>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="{{ path('bc_dashboard') }}">{% trans %}"Dashboard"{% endtrans %}</a>
+                                <a href="{{ path('bc_dashboard') }}">Dashboard</a>
                             </li>
                             <li>
-                                <a href="{{ path('bc_app_common_todo.logout_request') }}">{% trans %}"Sign
-                                    Out"{% endtrans %}</a>
+                                <a href="{{ path('bc_app_common_todo.logout_request') }}">Sign Out</a>
                             </li>
                         </ul>
                     </li>
                 {% else %}
                     <li>
-                        <a href="{{ path('bc_app_common_todo.user_login') }}">{% trans %}"Sign In"{% endtrans %}</a>
+                        <a href="{{ path('bc_app_common_todo.user_login') }}">Sign In</a>
                     </li>
                 {% endif %}
                 {#
