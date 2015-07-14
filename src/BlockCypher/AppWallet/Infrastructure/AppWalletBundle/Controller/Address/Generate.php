@@ -13,6 +13,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Class Generate
+ * @package BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Address
+ */
 class Generate extends AppWalletController
 {
     /**

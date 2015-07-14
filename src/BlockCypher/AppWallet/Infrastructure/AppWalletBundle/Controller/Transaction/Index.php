@@ -9,6 +9,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Class Index
+ * @package BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Transaction
+ */
 class Index extends AppWalletController
 {
     /**

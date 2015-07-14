@@ -4,6 +4,10 @@ namespace BlockCypher\AppWallet\App\Command;
 
 use SimpleBus\Message\Name\NamedMessage;
 
+/**
+ * Class CreateAddressCommand
+ * @package BlockCypher\AppWallet\App\Command
+ */
 class CreateAddressCommand implements NamedMessage
 {
     /**

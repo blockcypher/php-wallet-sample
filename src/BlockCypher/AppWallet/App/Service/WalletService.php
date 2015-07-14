@@ -12,6 +12,10 @@ use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 use Money\BigMoney;
 
+/**
+ * Class WalletService
+ * @package BlockCypher\AppWallet\App\Service
+ */
 class WalletService
 {
     /**

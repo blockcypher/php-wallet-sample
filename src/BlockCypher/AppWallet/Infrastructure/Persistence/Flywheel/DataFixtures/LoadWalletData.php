@@ -11,6 +11,10 @@ use BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\FlywheelFixtureInt
 use BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\FlywheelWalletRepository;
 use JamesMoss\Flywheel\Repository;
 
+/**
+ * Class LoadWalletData
+ * @package BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\DataFixtures
+ */
 class LoadWalletData implements FlywheelFixtureInterface
 {
     /**

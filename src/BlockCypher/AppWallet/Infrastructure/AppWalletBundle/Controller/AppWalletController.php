@@ -7,6 +7,10 @@ use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
 use BlockCypher\AppWallet\App\Command\CreateTransactionCommand;
 use BlockCypher\AppWallet\App\Command\CreateWalletCommand;
 
+/**
+ * Class AppWalletController
+ * @package BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller
+ */
 class AppWalletController extends AppCommonController
 {
     public function getBaseTemplatePrefix()

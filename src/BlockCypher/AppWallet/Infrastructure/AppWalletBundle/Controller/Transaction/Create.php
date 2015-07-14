@@ -14,6 +14,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+/**
+ * Class Create
+ * @package BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Transaction
+ */
 class Create extends AppWalletController
 {
     /**

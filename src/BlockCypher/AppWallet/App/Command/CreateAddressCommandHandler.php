@@ -9,6 +9,10 @@ use BlockCypher\AppWallet\Domain\Address\AddressRepository;
 use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 
+/**
+ * Class CreateAddressCommandHandler
+ * @package BlockCypher\AppWallet\App\Command
+ */
 class CreateAddressCommandHandler
 {
     /**

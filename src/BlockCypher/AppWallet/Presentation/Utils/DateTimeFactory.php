@@ -4,6 +4,10 @@ namespace BlockCypher\AppWallet\Presentation\Utils;
 
 use DateTime;
 
+/**
+ * Class DateTimeFactory
+ * @package BlockCypher\AppWallet\Presentation\Utils
+ */
 class DateTimeFactory
 {
     /**
