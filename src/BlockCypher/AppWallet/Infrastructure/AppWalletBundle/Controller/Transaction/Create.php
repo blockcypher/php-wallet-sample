@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -70,7 +71,7 @@ class Create extends AppWalletController
 
     /**
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      * @throws \Exception
      */
     public function __invoke(Request $request)

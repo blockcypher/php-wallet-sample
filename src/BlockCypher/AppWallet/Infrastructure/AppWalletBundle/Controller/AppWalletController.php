@@ -25,7 +25,7 @@ class AppWalletController extends AppCommonController
      * @param string $callbackUrl
      * @return CreateAddressCommand
      */
-    protected function createCreateAddressCommand($walletId, $tag, $callbackUrl)
+    protected function createCreateAddressCommand($walletId, $tag = '', $callbackUrl = '')
     {
         $createAddressCommand = new CreateAddressCommand($walletId, $tag, $callbackUrl);
         return $createAddressCommand;

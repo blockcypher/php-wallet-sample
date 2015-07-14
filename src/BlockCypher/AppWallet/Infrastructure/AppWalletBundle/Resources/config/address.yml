@@ -54,6 +54,7 @@ services:
          - @router
          - @bc_app_wallet_address.address_form_factory
          - @command_bus
+         - @bc_app_wallet_wallet.wallet_service_facade
 
     # sercice facades
 
