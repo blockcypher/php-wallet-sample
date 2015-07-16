@@ -2,6 +2,7 @@
 
 namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Transaction;
 
+use BlockCypher\AppCommon\Domain\User\UserId;
 use BlockCypher\AppWallet\App\Command\CreateTransactionCommand;
 use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 use Symfony\Component\Form\Form;
@@ -56,11 +57,18 @@ class TransactionFormFactory
 
     /**
      * @param CreateTransactionCommand $createTransactionCommand
+     * @param string $userId
      * @return Form The form
      */
-    public function createCreateForm(CreateTransactionCommand $createTransactionCommand = null)
+    public function createCreateForm(CreateTransactionCommand $createTransactionCommand, $userId)
     {
-        $walletChoices = $this->generateWalletHtmlSelectChoices();
+        // TODO: Code Review. Pass array of user's wallets (with same the format as $walletChoices) like this:
+        // array(
+        //  'WALLET_ID' => 'WALLET_NAME
+        // )
+        // instead of $userId
+
+        $walletChoices = $this->generateWalletHtmlSelectChoices($userId);
         $defaultSelectedWalletId = $createTransactionCommand->getWalletId();
 
         $form = $this->formFactory->create(
@@ -79,12 +87,13 @@ class TransactionFormFactory
 
     /**
      * Returns an array of choices for to be used in a form select type listing wallets.
+     * @param string $userId
      * @return array
      */
-    private function generateWalletHtmlSelectChoices()
+    private function generateWalletHtmlSelectChoices($userId)
     {
         $walletChoices = array();
-        $wallets = $this->walletRepository->findAll();
+        $wallets = $this->walletRepository->walletsOfUserId(new UserId($userId));
         foreach ($wallets as $wallet) {
             $walletChoices[$wallet->getId()->getValue()] = $wallet->getName();
         }

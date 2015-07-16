@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -14,6 +15,11 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class AppCommonController extends Controller
 {
+    /**
+     * @var TokenStorageInterface
+     */
+    protected $tokenStorage;
+
     /**
      * @var EngineInterface
      */
@@ -35,16 +41,19 @@ class AppCommonController extends Controller
     protected $messageBag;
 
     /**
+     * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
      */
     public function __construct(
+        TokenStorageInterface $tokenStorage,
         EngineInterface $templating,
         TranslatorInterface $translator,
         Session $session
     )
     {
+        $this->tokenStorage = $tokenStorage;
         $this->templating = $templating;
         $this->translator = $translator;
         $this->session = $session;

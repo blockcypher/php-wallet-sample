@@ -38,28 +38,31 @@ services:
     bc_app_wallet_wallet.index_controller:
         class: %bc_app_wallet_wallet.index_controller.class%
         arguments:
-         - @templating
-         - @translator
-         - @session
-         - @bc_app_wallet_wallet.wallet_service_facade
+          - @security.token_storage
+          - @templating
+          - @translator
+          - @session
+          - @bc_app_wallet_wallet.wallet_service_facade
 
     bc_app_wallet_wallet.show_new_controller:
         class: %bc_app_wallet_wallet.show_new_controller.class%
         arguments:
-         - @templating
-         - @translator
-         - @session
-         - @bc_app_wallet_wallet.wallet_form_factory
+          - @security.token_storage
+          - @templating
+          - @translator
+          - @session
+          - @bc_app_wallet_wallet.wallet_form_factory
 
     bc_app_wallet_wallet.create_controller:
         class: %bc_app_wallet_wallet.create_controller.class%
         arguments:
-         - @templating
-         - @translator
-         - @session
-         - @router
-         - @bc_app_wallet_wallet.wallet_form_factory
-         - @command_bus
+          - @security.token_storage
+          - @templating
+          - @translator
+          - @session
+          - @router
+          - @bc_app_wallet_wallet.wallet_form_factory
+          - @command_bus
 
     # sercice facades
 

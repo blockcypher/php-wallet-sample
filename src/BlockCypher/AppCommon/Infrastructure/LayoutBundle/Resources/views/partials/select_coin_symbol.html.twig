@@ -1,0 +1,38 @@
+{% if coin_symbol %}
+    <li class="hidden-sm">
+        <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': coin_symbol}) }}"
+           style="padding:7px 0 7px 15px;" title="{{ coin_symbol|coin_symbol_to_display_name }}">
+            <div class="header-coin {{ coin_symbol }} acc">{{ coin_symbol|coin_symbol_to_display_name }}</div>
+        </a>
+    </li>
+{% endif %}
+<li class="dropdown hidden-sm">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+        {% if not coin_symbol %}
+            Blockchains
+        {% endif %}
+        <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu" role="menu">
+        <li>
+            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'btc'}) }}">Bitcoin</a>
+        </li>
+        <li>
+            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'btc-tesnet'}) }}">Bitcoin
+                Testnet</a>
+        </li>
+        <li>
+            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'ltc'}) }}">Litecoin</a>
+        </li>
+        <li>
+            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'doge'}) }}">Dogecoin</a>
+        </li>
+        <li>
+            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'uro'}) }}">URO</a>
+        </li>
+        <li>
+            <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'bty'}) }}">BlockCypher
+                Testnet</a>
+        </li>
+    </ul>
+</li>

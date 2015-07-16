@@ -4,6 +4,10 @@ namespace BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Controller;
 
 use BlockCypher\AppCommon\Infrastructure\Controller\AppCommonController as BaseController;
 
+/**
+ * Class AppCommonController
+ * @package BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Controller
+ */
 class AppCommonController extends BaseController
 {
     public function getBaseTemplatePrefix()

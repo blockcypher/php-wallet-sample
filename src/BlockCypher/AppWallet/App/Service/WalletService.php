@@ -3,6 +3,7 @@
 namespace BlockCypher\AppWallet\App\Service;
 
 use BlockCypher\AppCommon\App\Service\Internal\BlockCypherWalletService;
+use BlockCypher\AppCommon\Domain\User\UserId;
 use BlockCypher\AppWallet\Domain\Address\Address;
 use BlockCypher\AppWallet\Domain\Address\AddressRepository;
 use BlockCypher\AppWallet\Domain\Transaction\Transaction;
@@ -150,17 +151,21 @@ class WalletService
     }
 
     /**
+     * @param UserId $userId
+     * @return Wallet[]
+     */
+    public function listWalletsOfUserId(UserId $userId)
+    {
+        $wallets = $this->walletRepository->walletsOfUserId($userId);
+        return $wallets;
+    }
+
+    /**
      * @param WalletId $walletId
      * @return Address[]
      */
     public function listWalletAddresses(WalletId $walletId)
     {
-        // DEBUG
-        //$addresses = $this->addressRepository->addressesOfWalletId($walletId);
-        //var_dump($walletId);
-        //var_dump($addresses);
-        //die();
-
         return $this->addressRepository->addressesOfWalletId($walletId);
     }
 

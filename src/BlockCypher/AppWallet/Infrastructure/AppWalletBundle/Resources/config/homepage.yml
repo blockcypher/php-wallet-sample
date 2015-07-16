@@ -7,6 +7,7 @@ services:
     bc_app_wallet_homepage.homepage_controller:
         class: %bc_app_wallet_homepage.homepage_controller.class%
         arguments:
+          - @security.token_storage
           - @templating
           - @translator
           - @session

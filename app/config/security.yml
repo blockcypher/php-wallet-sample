@@ -11,12 +11,15 @@ security:
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+#    providers:
+#        in_memory:
+#            memory:
+#                users:
+#                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
+#                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
     providers:
-        in_memory:
-            memory:
-                users:
-                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
-                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+        blockcypher:
+            id: blockcypher_user_provider
 
     # the main part of the security, where you can set up firewalls
     # for specific sections of your app
@@ -26,21 +29,26 @@ security:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
             security: false
         # the login page has to be accessible for everybody
-        demo_login:
-            pattern:  ^/demo/secured/login$
+        login_firewall:
+            pattern:  ^/login$
             security: false
-
+        # the homepage page has to be accessible for everybody
+        homepage_firewall:
+            pattern:  ^/$
+            security: false
         # secures part of the application
-        demo_secured_area:
-            pattern:    ^/demo/secured/
-            # it's important to notice that in this case _demo_security_check and _demo_login
-            # are route names and that they are specified in the AcmeDemoBundle
-            form_login:
-                check_path: _demo_security_check
-                login_path: _demo_login
+        secured_area:
+            pattern:    ^/
+            stateless: false
+            blockcypher: true
+            #form_login:
+            #    check_path: login_check
+            #    login_path: login_route
             logout:
-                path:   _demo_logout
-                target: _demo
+                path:   /logout
+                target: /
+                # PHP bug in version <= 5.4.4 https://github.com/symfony/symfony/issues/5868
+                #invalidate_session: true
             #anonymous: ~
             #http_basic:
             #    realm: "Secured Demo Area"
@@ -49,4 +57,6 @@ security:
     # of your application based on roles, ip, host or methods
     # http://symfony.com/doc/current/cookbook/security/access_control.html
     access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }

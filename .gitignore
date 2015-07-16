@@ -3,14 +3,10 @@
 # Cache and logs (Symfony2)
 /app/cache/*
 /app/logs/*
+/app/sessions/*
 !app/cache/.gitkeep
 !app/logs/.gitkeep
-
-# Cache and logs (Symfony3)
-/var/cache/*
-/var/logs/*
-!var/cache/.gitkeep
-!var/logs/.gitkeep
+!app/sessions/.gitkeep
 
 # Parameters
 /app/config/parameters.yml

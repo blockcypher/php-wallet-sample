@@ -4,6 +4,7 @@ namespace BlockCypher\AppWallet\App\Command;
 
 use BlockCypher\AppCommon\App\Service\Clock;
 use BlockCypher\AppCommon\App\Service\Internal\BlockCypherWalletService;
+use BlockCypher\AppCommon\Domain\User\UserId;
 use BlockCypher\AppWallet\Domain\Wallet\Wallet;
 use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
 
@@ -57,18 +58,18 @@ class CreateWalletCommandHandler
         $commandValidator = new CreateWalletCommandValidator();
         $commandValidator->validate($command);
 
+        $walletOwnerId = $command->getWalletOwnerId();
         $walletName = $command->getName();
         $walletCoinSymbol = $command->getCoinSymbol();
-
-        // TODO: get token from user profile/url/form?
-        $token = 'c0afcccdde5081d6429de37d16166ead';
+        $walletToken = $command->getToken();
 
         // Create app wallet
         $wallet = new Wallet(
             $this->walletRepository->nextIdentity(),
+            new UserId($walletOwnerId),
             $walletName,
             $walletCoinSymbol,
-            $token,
+            $walletToken,
             $this->clock->now(),
             array()
         );

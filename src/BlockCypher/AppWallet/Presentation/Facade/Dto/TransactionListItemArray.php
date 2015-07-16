@@ -19,6 +19,11 @@ class TransactionListItemArray
         /** @var TransactionListItem[] $transactionListItems */
         $transactionListItems = array();
 
+        if (!is_array($blockCypherTXRefs)) {
+            return $transactionListItems;
+        }
+
+        /** @var BlockCypherTXRef $blockCypherTXRef */
         foreach ($blockCypherTXRefs as $blockCypherTXRef) {
 
             $txHash = $blockCypherTXRef->getTxHash();

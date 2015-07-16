@@ -6,6 +6,7 @@ use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletCon
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -15,17 +16,19 @@ use Symfony\Component\Translation\TranslatorInterface;
 class Home extends AppWalletController
 {
     /**
+     * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
      */
     public function __construct(
+        TokenStorageInterface $tokenStorage,
         EngineInterface $templating,
         TranslatorInterface $translator,
         Session $session
     )
     {
-        parent::__construct($templating, $translator, $session);
+        parent::__construct($tokenStorage, $templating, $translator, $session);
     }
 
     /**

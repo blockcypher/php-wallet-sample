@@ -19,6 +19,11 @@ class WalletDto
     /**
      * @var string
      */
+    private $userId;
+
+    /**
+     * @var string
+     */
     private $name;
 
     /**
@@ -71,6 +76,7 @@ class WalletDto
         $walletDto = new WalletDto();
 
         // From Wallet
+        $walletDto->setUserId($wallet->getUserId()->getValue());
         $walletDto->setName($wallet->getName());
 
         // From BlockCypherAddress
@@ -102,6 +108,24 @@ class WalletDto
     public function setId($id)
     {
         $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param string $userId
+     * @return $this
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
         return $this;
     }
 

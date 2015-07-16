@@ -1,2 +1,5 @@
+bc_app_common_security:
+    resource: "@BlockCypherAppCommonInfrastructureAppCommonBundle/Resources/config/routing/security.yml"
+
 bc_app_common_homepage:
-    resource: "@BlockCypherAppCoomonInfrastructureAppCommonBundle/Resources/config/routing/homepage.yml"
+    resource: "@BlockCypherAppCommonInfrastructureAppCommonBundle/Resources/config/routing/homepage.yml"

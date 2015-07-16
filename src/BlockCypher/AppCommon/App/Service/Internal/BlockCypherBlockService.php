@@ -4,8 +4,17 @@ namespace BlockCypher\AppCommon\App\Service\Internal;
 
 use BlockCypher\Api\Block;
 
+/**
+ * Class BlockCypherBlockService
+ * @package BlockCypher\AppCommon\App\Service\Internal
+ */
 class BlockCypherBlockService
 {
+    /**
+     * @var BlockCypherApiContextFactory
+     */
+    private $apiContextFactory;
+
     /**
      * @param BlockCypherApiContextFactory $apiContextFactory
      */

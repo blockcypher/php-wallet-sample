@@ -1,12 +1,12 @@
 # TODO: list of not implemented routes
 
-bc_app_common_todo.logout_request:
-    path:     /logout
-    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
-
-bc_app_common_todo.user_login:
-    path:     /login
-    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+#bc_app_common_todo.logout_request:
+#    path:     /logout
+#    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
+#
+#bc_app_common_todo.user_login:
+#    path:     /login
+#    defaults: { _controller: "bc_app_explorer_homepage.homepage_controller:homeAction" }
 
 # /btc/latest-unconfirmed-tx/
 bc_app_common_todo.latest_unconfirmed_tx:

@@ -1,0 +1,23 @@
+login_route:
+    path: /login
+    defaults: { _controller: BlockCypherAppCommonInfrastructureAppCommonBundle:Security:login }
+
+login_check:
+    path: /login_check
+    # no controller is bound to this route
+    # as it's handled by the Security system
+
+login_check_with_blockcypher_token:
+    path: /login_check_bc_token
+    defaults: { _controller: BlockCypherAppCommonInfrastructureAppCommonBundle:Security:loginCheckWithBlockCypherToken }
+
+logout:
+    path: /logout
+
+# PHP bug in version <= 5.4.4 https://github.com/symfony/symfony/issues/5868
+# For PHP 5.4.11+ you can use logout route
+terminate:
+    path: /terminate
+    defaults: { _controller: BlockCypherAppCommonInfrastructureAppCommonBundle:Security:terminate }
+
+

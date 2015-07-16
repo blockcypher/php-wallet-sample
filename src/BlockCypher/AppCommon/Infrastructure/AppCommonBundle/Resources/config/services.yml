@@ -2,3 +2,4 @@ imports:
   - { resource: clock.yml }
   - { resource: encryptor.yml }
   - { resource: homepage.yml }
+  - { resource: security.yml }

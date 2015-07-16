@@ -10,9 +10,18 @@ use BlockCypher\Exception\BlockCypherConnectionException;
 use Money\BigMoney;
 use Money\Currency;
 
+/**
+ * Class BlockCypherWalletService
+ * @package BlockCypher\AppCommon\App\Service\Internal
+ */
 class BlockCypherWalletService
 {
     const ERROR_WALLET_NOT_FOUND = 404;
+
+    /**
+     * @var BlockCypherApiContextFactory
+     */
+    private $apiContextFactory;
 
     /**
      * @param BlockCypherApiContextFactory $apiContextFactory
@@ -26,6 +35,7 @@ class BlockCypherWalletService
      * @param $walletName
      * @param $coinSymbol
      * @param $token
+     * @return BlockCypherWallet
      */
     public function createWallet($walletName, $coinSymbol, $token)
     {
@@ -36,7 +46,7 @@ class BlockCypherWalletService
         $bcWallet->setToken($token);
         $bcWallet->setName($walletName);
 
-        $bcWallet->create(array(), $apiContext);
+        return $bcWallet->create(array(), $apiContext);
     }
 
     /**

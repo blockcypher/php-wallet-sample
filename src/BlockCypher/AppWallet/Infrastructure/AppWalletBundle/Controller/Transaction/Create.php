@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -44,6 +45,7 @@ class Create extends AppWalletController
     private $walletServiceFacade;
 
     /**
+     * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
@@ -53,6 +55,7 @@ class Create extends AppWalletController
      * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
+        TokenStorageInterface $tokenStorage,
         EngineInterface $templating,
         TranslatorInterface $translator,
         Session $session,
@@ -62,7 +65,7 @@ class Create extends AppWalletController
         WalletServiceFacade $walletServiceFacade
     )
     {
-        parent::__construct($templating, $translator, $session);
+        parent::__construct($tokenStorage, $templating, $translator, $session);
         $this->router = $router;
         $this->transactionFormFactory = $transactionFormFactory;
         $this->commandBus = $commandBus;
@@ -78,9 +81,14 @@ class Create extends AppWalletController
     {
         $walletId = $request->get('walletId');
 
+        $walletDto = $this->walletServiceFacade->getWallet($walletId);
+
+        $this->checkAuthorizationForWallet($walletDto);
+
         $createTransactionCommand = $this->createCreateTransactionCommand($walletId);
 
-        $createTransactionForm = $this->transactionFormFactory->createCreateForm($createTransactionCommand);
+        $user = $this->getLoggedInUser();
+        $createTransactionForm = $this->transactionFormFactory->createCreateForm($createTransactionCommand, $user->getId()->getValue());
 
         $createTransactionForm->handleRequest($request);
 

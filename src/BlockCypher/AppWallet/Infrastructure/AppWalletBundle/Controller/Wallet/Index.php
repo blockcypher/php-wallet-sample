@@ -7,6 +7,7 @@ use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class Index extends AppWalletController
@@ -17,18 +18,20 @@ class Index extends AppWalletController
     private $walletServiceFacade;
 
     /**
+     * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
      * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
+        TokenStorageInterface $tokenStorage,
         EngineInterface $templating,
         TranslatorInterface $translator,
         Session $session,
         WalletServiceFacade $walletServiceFacade)
     {
-        parent::__construct($templating, $translator, $session);
+        parent::__construct($tokenStorage, $templating, $translator, $session);
         $this->walletServiceFacade = $walletServiceFacade;
     }
 
@@ -38,7 +41,13 @@ class Index extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $walletListItemDtos = $this->walletServiceFacade->listWallets();
+        $user = $this->getLoggedInUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $walletListItemDtos = $this->walletServiceFacade->listWalletsOfUserId($user->getId()->getValue());
 
         $template = $this->getBaseTemplatePrefix() . ':Wallet:index.html';
 

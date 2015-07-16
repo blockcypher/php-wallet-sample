@@ -6,6 +6,7 @@ use BlockCypher\Api\Address as BlockCypherAddress;
 use BlockCypher\Api\AddressBalance as BlockCypherAddressBalance;
 use BlockCypher\AppCommon\App\Service\Internal\BlockCypherAddressService;
 use BlockCypher\AppCommon\App\Service\Internal\BlockCypherWalletService;
+use BlockCypher\AppCommon\Domain\User\UserId;
 use BlockCypher\AppWallet\App\Service\ApiRouter;
 use BlockCypher\AppWallet\App\Service\ExplorerRouter;
 use BlockCypher\AppWallet\App\Service\WalletService;
@@ -151,6 +152,21 @@ class WalletServiceFacade
             $wallet->getToken()
         );
         return $balance;
+    }
+
+    /**
+     * @param string $userId
+     * @return WalletListItemDto[]
+     */
+    public function listWalletsOfUserId($userId)
+    {
+        $wallets = $this->walletService->listWalletsOfUserId(new UserId($userId));
+
+        $walletBalances = $this->getMultipleWalletBalances($wallets);
+
+        $walletListItemDtos = WalletListItemDtoArray::from($wallets, $walletBalances, $this->apiRouter);
+
+        return $walletListItemDtos;
     }
 
     /**

@@ -59,6 +59,18 @@ class WalletId
     }
 
     /**
+     * @param WalletId $walletId
+     * @return bool
+     */
+    public function equals(WalletId $walletId)
+    {
+        if ($this->value === $walletId->getValue())
+            return true;
+        else
+            return false;
+    }
+
+    /**
      * @return string
      */
     public function getValue()

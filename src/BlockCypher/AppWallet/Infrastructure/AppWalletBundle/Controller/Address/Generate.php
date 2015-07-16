@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -44,6 +45,7 @@ class Generate extends AppWalletController
     private $walletServiceFacade;
 
     /**
+     * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
@@ -53,6 +55,7 @@ class Generate extends AppWalletController
      * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
+        TokenStorageInterface $tokenStorage,
         EngineInterface $templating,
         TranslatorInterface $translator,
         Session $session,
@@ -62,7 +65,7 @@ class Generate extends AppWalletController
         WalletServiceFacade $walletServiceFacade
     )
     {
-        parent::__construct($templating, $translator, $session);
+        parent::__construct($tokenStorage, $templating, $translator, $session);
         $this->router = $router;
         $this->addressFormFactory = $addressFormFactory;
         $this->commandBus = $commandBus;
@@ -77,6 +80,10 @@ class Generate extends AppWalletController
     public function __invoke(Request $request)
     {
         $walletId = $request->get('walletId');
+
+        $walletDto = $this->walletServiceFacade->getWallet($walletId);
+
+        $this->checkAuthorizationForWallet($walletDto);
 
         $createAddressCommand = $this->createCreateAddressCommand($walletId);
 

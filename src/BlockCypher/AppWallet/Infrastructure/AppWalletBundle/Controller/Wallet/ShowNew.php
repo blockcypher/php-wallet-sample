@@ -7,6 +7,7 @@ use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Wallet\WalletFormF
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ShowNew extends AppWalletController
@@ -17,18 +18,20 @@ class ShowNew extends AppWalletController
     private $walletFormFactory;
 
     /**
+     * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
      * @param WalletFormFactory $walletFormFactory
      */
     public function __construct(
+        TokenStorageInterface $tokenStorage,
         EngineInterface $templating,
         TranslatorInterface $translator,
         Session $session,
         WalletFormFactory $walletFormFactory)
     {
-        parent::__construct($templating, $translator, $session);
+        parent::__construct($tokenStorage, $templating, $translator, $session);
         $this->walletFormFactory = $walletFormFactory;
     }
 
@@ -38,6 +41,12 @@ class ShowNew extends AppWalletController
      */
     public function __invoke(Request $request)
     {
+        $user = $this->getLoggedInUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
         $createWalletCommand = $this->createCreateWalletCommand();
 
         $createWalletForm = $this->walletFormFactory->createCreateForm($createWalletCommand);

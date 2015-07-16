@@ -1,0 +1,143 @@
+{% extends "BlockCypherAppCommonInfrastructureLayoutBundle::base.html.twig" %}
+
+{% block content %}
+    {# {% load i18n %} #}
+
+    <div class="bg-primary-gradient page-header">
+        <div class="container">
+
+            {% include "BlockCypherAppCommonInfrastructureLayoutBundle:partials:messages.html.twig" %}
+
+            <div class="row">
+                <div class="col-lg-6 col-lg-offset-3">
+
+                    <h1 class="text-center">Blockcypher Wallet</h1>
+
+                    <p class="lead text-center">Online bitcoin wallet using Blockcypher API</p>
+
+                    {% if error %}
+                        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    {% for flashMessage in app.session.flashbag.get("error") %}
+                        <div class="alert alert-danger">
+                            {{ flashMessage }}
+                            <button type="button" class="close" data-dismiss="alert">×</button>
+                        </div>
+                    {% endfor %}
+
+                    <div class="form-well">
+
+                        <form action="{{ path('login_check_with_blockcypher_token') }}" method="post">
+
+                            <div id="blockcypher_token" class="form-group">
+                                <label for="blockcypher_token" class="control-label requiredField">Token<span
+                                            class="asteriskField">*</span></label>
+
+                                <div class="controls ">
+                                    <input autofocus="autofocus" class="input-lg textinput textInput form-control"
+                                           id="blockcypher_token" name="blockcypher_token"
+                                           placeholder="your blockcypher token" type="text">
+                                </div>
+                            </div>
+
+                            <!--<label for="blockcypher_token">Token:</label>
+                            <input type="text" id="blockcypher_token" name="blockcypher_token" value="" />-->
+
+                            <!--<label for="username">Username:</label>
+                        <input type="text" id="username" name="_username" value="{{ last_username }}" />
+
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="_password" />-->
+
+                            {#
+                                If you want to control the URL the user
+                                is redirected to on success (more details below)
+                                <input type="hidden" name="_target_path" value="/account" />
+                            #}
+
+                            <!--<button type="submit">login</button>-->
+
+                            <p class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg btn-xl"><i
+                                            class="fa fa-sign-in"></i>&nbsp;Login with BlockCypher token
+                                </button>
+                            </p>
+
+                            <!--<p class="text-center">
+                            <a href="{{ path('bc_app_wallet_wallet.index') }}" class="btn btn-primary btn-lg btn-xl"
+                               role="button"><i class="fa fa-sign-in"></i>&nbsp;Login with BlockCypher Token</a>
+                        </p>-->
+
+                        </form>
+
+                    </div>
+
+                    <p class="text-center reset">
+                        *If you don't have a token yet <a href="http://accounts.blockcypher.com/">register for a user
+                            token</a>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white">
+        <div class="container">
+
+            <div class="row text-center">
+                <h2>Multi-currency wallet</h2>
+
+                <div class="col-lg-10 col-lg-offset-1">
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+                        <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'btc'}) }}" class="btc coin">
+                            <span class="mpsb">Bitcoin</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+                        <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'btc-tesnet'}) }}"
+                           class="btc-testnet coin">
+                            <span class="mpsb">Bitcoin Testnet</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+                        <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'ltc'}) }}" class="ltc coin">
+                            <span class="mpsb">Litecoin</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+                        <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'doge'}) }}" class="doge coin">
+                            <span class="mpsb">Dogecoin</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+                        <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'uro'}) }}" class="uro coin">
+                            <span class="mpsb">URO</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
+                        <a href="{{ path('bc_app_explorer_coin.overview', {'coinSymbol': 'bty'}) }}"
+                           class="bc-testnet coin">
+                            <span class="mpsb">BlockCypher Testnet</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <br/>
+            <br/>
+
+            <div class="row">
+                <p class="text-center">
+                    Read more about this wallet
+                    <a href="https://github.com/blockcypher/php-wallet-sample">here</a>.
+                </p>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

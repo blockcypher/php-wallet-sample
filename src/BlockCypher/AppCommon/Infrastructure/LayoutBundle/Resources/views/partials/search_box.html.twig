@@ -1,0 +1,39 @@
+{% if not is_home %}
+    <li>
+        <form class="navbar-form navbar-search" role="search" method="post"
+              action="{{ path('bc_homepage') }}">
+            {#{% csrf_token %}#}
+            {#<input type="hidden" value="{% firstof coin_symbol 'btc' %}" id="id_coin_symbol" name="coin_symbol">#}
+            <input type="hidden" value="{{ [coin_symbol,'btc']|first }}" id="id_coin_symbol"
+                   name="coin_symbol">
+
+            <div class="input-group">
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"
+                            aria-expanded="false">
+                        <span id="search-dropdown-label">{% if coin_symbol %}{{ coin_symbol|coin_symbol_to_display_shortname }}{% else %}BTC{% endif %}</span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="javascript:void(0);" onclick="setCoin('btc', 'BTC')">Bitcoin</a>
+                        </li>
+                        <li><a href="javascript:void(0);"
+                               onclick="setCoin('btc-testnet', 'BTC Testnet')">Bitcoin Testnet</a></li>
+                        <li><a href="javascript:void(0);" onclick="setCoin('ltc', 'LTC')">Litecoin</a>
+                        </li>
+                        <li><a href="javascript:void(0);" onclick="setCoin('doge', 'DOGE')">DogeCoin</a>
+                        </li>
+                        <li><a href="javascript:void(0);" onclick="setCoin('uro', 'URO')">URO</a></li>
+                        <li><a href="javascript:void(0);" onclick="setCoin('bcy', 'BC Testnet')">BlockCypher
+                                Testnet</a></li>
+                    </ul>
+                </div>
+                <input name="search_string" id="id_search_string" type="text"
+                       class="form-control search-input" placeholder="Address, transaction or block">
+                  <span class="input-group-btn">
+                    <button type="submit" class="btn btn-primary" title="Search"><i class="fa fa-search"></i></button>
+                  </span>
+            </div>
+        </form>
+    </li>
+{% endif %}

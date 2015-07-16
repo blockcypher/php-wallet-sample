@@ -8,6 +8,7 @@ use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -22,6 +23,7 @@ class ShowNew extends AppWalletController
     private $transactionFormFactory;
 
     /**
+     * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
@@ -29,6 +31,7 @@ class ShowNew extends AppWalletController
      * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
+        TokenStorageInterface $tokenStorage,
         EngineInterface $templating,
         TranslatorInterface $translator,
         Session $session,
@@ -36,7 +39,7 @@ class ShowNew extends AppWalletController
         WalletServiceFacade $walletServiceFacade
     )
     {
-        parent::__construct($templating, $translator, $session);
+        parent::__construct($tokenStorage, $templating, $translator, $session);
         $this->transactionFormFactory = $transactionFormFactory;
         $this->walletServiceFacade = $walletServiceFacade;
     }
@@ -51,6 +54,8 @@ class ShowNew extends AppWalletController
 
         $walletDto = $this->walletServiceFacade->getWallet($walletId);
 
+        $this->checkAuthorizationForWallet($walletDto);
+
         // Default form data
         $createTransactionCommand = $this->createCreateTransactionCommand(
             $walletId,
@@ -59,7 +64,9 @@ class ShowNew extends AppWalletController
             1000
         );
 
-        $createTransactionForm = $this->transactionFormFactory->createCreateForm($createTransactionCommand, $walletId);
+        $user = $this->getLoggedInUser();
+
+        $createTransactionForm = $this->transactionFormFactory->createCreateForm($createTransactionCommand, $user->getId()->getValue());
 
         $template = $this->getBaseTemplatePrefix() . ':Transaction:show_new.html';
 

@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class Create extends AppWalletController
@@ -33,6 +34,7 @@ class Create extends AppWalletController
     private $commandBus;
 
     /**
+     * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
@@ -41,6 +43,7 @@ class Create extends AppWalletController
      * @param MessageBus $commandBus
      */
     public function __construct(
+        TokenStorageInterface $tokenStorage,
         EngineInterface $templating,
         TranslatorInterface $translator,
         Session $session,
@@ -48,7 +51,7 @@ class Create extends AppWalletController
         WalletFormFactory $walletFormFactory,
         MessageBus $commandBus)
     {
-        parent::__construct($templating, $translator, $session);
+        parent::__construct($tokenStorage, $templating, $translator, $session);
         $this->router = $router;
         $this->walletFormFactory = $walletFormFactory;
         $this->commandBus = $commandBus;
@@ -61,6 +64,12 @@ class Create extends AppWalletController
      */
     public function __invoke(Request $request)
     {
+        $user = $this->getLoggedInUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
         $createWalletCommand = $this->createCreateWalletCommand();
 
         $createWalletForm = $this->walletFormFactory->createCreateForm($createWalletCommand);
@@ -76,6 +85,9 @@ class Create extends AppWalletController
 
             /** @var CreateWalletCommand $createWalletCommand */
             $createWalletCommand = $createWalletForm->getData();
+
+            $createWalletCommand->setWalletOwnerId($user->getId()->getValue());
+            $createWalletCommand->setToken($user->getBlockCypherToken());
 
             try {
 

@@ -6,6 +6,7 @@ use BlockCypher\AppCommon\App\Service\Encryptor;
 use BlockCypher\AppCommon\Domain\ArrayConversion;
 use BlockCypher\AppCommon\Domain\Encryptable;
 use BlockCypher\AppCommon\Domain\Model;
+use BlockCypher\AppCommon\Domain\User\UserId;
 
 /**
  * Class Wallet
@@ -18,6 +19,11 @@ class Wallet extends Model implements ArrayConversion, Encryptable
      * @var WalletId
      */
     private $id;
+
+    /**
+     * @var UserId
+     */
+    private $userId;
 
     /**
      * @var string
@@ -45,13 +51,16 @@ class Wallet extends Model implements ArrayConversion, Encryptable
      * Constructor
      *
      * @param WalletId $walletId
+     * @param UserId $userId
      * @param string $name
      * @param string $coinSymbol
      * @param $token
      * @param \DateTime $creationTime
+     * @throws \Exception
      */
     function __construct(
         WalletId $walletId,
+        UserId $userId,
         $name,
         $coinSymbol,
         $token,
@@ -61,6 +70,7 @@ class Wallet extends Model implements ArrayConversion, Encryptable
         WalletCoinSymbol::validate($coinSymbol, 'WalletCoinSymbol');
 
         $this->id = $walletId;
+        $this->userId = $userId;
         $this->name = $name;
         $this->coinSymbol = $coinSymbol;
         $this->token = $token;
@@ -75,6 +85,7 @@ class Wallet extends Model implements ArrayConversion, Encryptable
     {
         $wallet = new self(
             WalletId::fromArray($entityAsArray['id']),
+            UserId::fromArray($entityAsArray['userId']),
             $entityAsArray['name'],
             $entityAsArray['coinSymbol'],
             $entityAsArray['token'],
@@ -102,6 +113,7 @@ class Wallet extends Model implements ArrayConversion, Encryptable
     {
         $entityAsArray = array();
         $entityAsArray['id'] = $this->id->toArray();
+        $entityAsArray['userId'] = $this->userId->toArray();
         $entityAsArray['name'] = $this->name;
         $entityAsArray['coinSymbol'] = $this->coinSymbol;
         $entityAsArray['token'] = $this->token;
@@ -118,6 +130,7 @@ class Wallet extends Model implements ArrayConversion, Encryptable
     {
         $encryptedWallet = new EncryptedWallet(
             $this->id,
+            $this->userId,
             $this->name,
             $this->coinSymbol,
             $this->token,
@@ -133,6 +146,14 @@ class Wallet extends Model implements ArrayConversion, Encryptable
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return UserId
+     */
+    public function getUserId()
+    {
+        return $this->userId;
     }
 
     /**

@@ -2,10 +2,13 @@
 
 namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller;
 
+use BlockCypher\AppCommon\Domain\User\User;
+use BlockCypher\AppCommon\Domain\User\UserId;
 use BlockCypher\AppCommon\Infrastructure\Controller\AppCommonController;
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
 use BlockCypher\AppWallet\App\Command\CreateTransactionCommand;
 use BlockCypher\AppWallet\App\Command\CreateWalletCommand;
+use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletDto;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -14,6 +17,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class AppWalletController extends AppCommonController
 {
+    /**
+     * @return string
+     */
     public function getBaseTemplatePrefix()
     {
         return 'BlockCypherAppWalletInfrastructureAppWalletBundle';
@@ -46,12 +52,14 @@ class AppWalletController extends AppCommonController
 
     /**
      * @param string $name
-     * @param string $coin
+     * @param string $coinSymbol
+     * @param string $walletOwnerId
+     * @param string $token
      * @return CreateWalletCommand
      */
-    protected function createCreateWalletCommand($name = '', $coin = '')
+    protected function createCreateWalletCommand($name = '', $coinSymbol = '', $walletOwnerId = '', $token = '')
     {
-        $createWalletCommand = new CreateWalletCommand($name, $coin);
+        $createWalletCommand = new CreateWalletCommand($name, $coinSymbol, $walletOwnerId, $token);
         return $createWalletCommand;
     }
 
@@ -84,11 +92,67 @@ class AppWalletController extends AppCommonController
             $coinSymbol = 'btc';
         }
 
+        $userDto = array();
+        $userDto['is_authenticated'] = false;
+
+        $token = $this->tokenStorage->getToken();
+        if ($token !== null && $token->getUser() !== null) {
+            $userDto['is_authenticated'] = true;
+        }
+
+        // DEBUG
+        //var_dump($userDto);
+        //die();
+
         return array(
             'is_home' => false,
-            'user' => array('is_authenticated' => true),
+            'user' => $userDto,
             'messages' => $this->getMessageBag(),
             'coin_symbol' => $coinSymbol,
         );
+    }
+
+    /**
+     * @param WalletDto $walletDto
+     */
+    protected function checkAuthorizationForWallet(WalletDto $walletDto)
+    {
+        $token = $this->tokenStorage->getToken();
+
+        if (!$token) {
+            throw $this->createAccessDeniedException();
+        }
+
+        /** @var User $user */
+        $user = $token->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException();
+        }
+
+        // Is the user the owner of this wallet?
+        if (!$user->getId()->equals(new UserId($walletDto->getUserId()))) {
+            throw $this->createAccessDeniedException();
+        }
+    }
+
+    /**
+     * @return User|null
+     */
+    protected function getLoggedInUser()
+    {
+        $token = $this->tokenStorage->getToken();
+
+        if (!$token) {
+            return null;
+        }
+
+        $user = $token->getUser();
+
+        if (!$user) {
+            return null;
+        }
+
+        return $user;
     }
 }

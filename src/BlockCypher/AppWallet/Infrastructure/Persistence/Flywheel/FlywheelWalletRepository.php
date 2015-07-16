@@ -4,6 +4,7 @@ namespace BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel;
 
 use BlockCypher\AppCommon\App\Service\Decryptor;
 use BlockCypher\AppCommon\App\Service\Encryptor;
+use BlockCypher\AppCommon\Domain\User\UserId;
 use BlockCypher\AppWallet\Domain\Wallet\EncryptedWallet;
 use BlockCypher\AppWallet\Domain\Wallet\EncryptedWalletRepository;
 use BlockCypher\AppWallet\Domain\Wallet\Wallet;
@@ -71,6 +72,35 @@ class FlywheelWalletRepository implements WalletRepository
     {
         $wallet = $this->encryptedWalletRepository->walletOfId($walletId)->decryptUsing($this->decryptor);
         return $wallet;
+    }
+
+    /**
+     * @param UserId $userId
+     * @return Wallet[]
+     */
+    public function walletsOfUserId(UserId $userId)
+    {
+        $encryptedWallets = $this->encryptedWalletRepository->walletsOfUserId($userId);
+        $wallets = $this->decryptEncryptedWalletArray($encryptedWallets);
+        return $wallets;
+    }
+
+    /**
+     * @param EncryptedWallet[] $encryptedWallets
+     * @return Wallet[]
+     */
+    private function decryptEncryptedWalletArray($encryptedWallets)
+    {
+        if ($encryptedWallets === null)
+            return null;
+
+        $wallets = array();
+        foreach ($encryptedWallets as $encryptedWallet) {
+            $wallet = $encryptedWallet->decryptUsing($this->decryptor);
+            $wallets[] = $wallet;
+        }
+
+        return $wallets;
     }
 
     /**
@@ -162,22 +192,6 @@ class FlywheelWalletRepository implements WalletRepository
 
         $wallets = $this->decryptEncryptedWalletArray($encryptedWallets);
 
-        return $wallets;
-    }
-
-    /**
-     * @param EncryptedWallet[] $encryptedWallets
-     * @return Wallet[]
-     */
-    private function decryptEncryptedWalletArray($encryptedWallets)
-    {
-        if ($encryptedWallets === null)
-            return null;
-
-        $wallets = array();
-        foreach ($encryptedWallets as $encryptedWallet) {
-            $wallets[] = $encryptedWallet->decryptUsing($this->decryptor);
-        }
         return $wallets;
     }
 }

@@ -5,8 +5,17 @@ namespace BlockCypher\AppCommon\App\Service\Internal;
 use BlockCypher\Api\Address;
 use BlockCypher\Api\AddressBalance;
 
+/**
+ * Class BlockCypherAddressService
+ * @package BlockCypher\AppCommon\App\Service\Internal
+ */
 class BlockCypherAddressService
 {
+    /**
+     * @var BlockCypherApiContextFactory
+     */
+    private $apiContextFactory;
+
     /**
      * @param BlockCypherApiContextFactory $apiContextFactory
      */

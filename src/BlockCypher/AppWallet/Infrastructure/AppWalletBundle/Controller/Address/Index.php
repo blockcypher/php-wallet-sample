@@ -7,6 +7,7 @@ use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -21,19 +22,21 @@ class Index extends AppWalletController
     private $walletServiceFacade;
 
     /**
+     * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
      * @param WalletServiceFacade $walletServiceFacade
      */
     public function __construct(
+        TokenStorageInterface $tokenStorage,
         EngineInterface $templating,
         TranslatorInterface $translator,
         Session $session,
         WalletServiceFacade $walletServiceFacade
     )
     {
-        parent::__construct($templating, $translator, $session);
+        parent::__construct($tokenStorage, $templating, $translator, $session);
         $this->walletServiceFacade = $walletServiceFacade;
     }
 
@@ -46,6 +49,9 @@ class Index extends AppWalletController
         $walletId = $request->get('walletId');
 
         $walletDto = $this->walletServiceFacade->getWallet($walletId);
+
+        $this->checkAuthorizationForWallet($walletDto);
+
         $AddressListItemDtos = $this->walletServiceFacade->listWalletAddresses($walletId);
 
         $template = $this->getBaseTemplatePrefix() . ':Address:index.html';

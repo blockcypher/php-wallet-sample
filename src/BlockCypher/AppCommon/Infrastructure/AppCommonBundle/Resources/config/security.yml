@@ -1,0 +1,24 @@
+parameters:
+    bc_app_common.security_controller.class: BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Controller\SecurityController
+
+services:
+
+    bc_app_common.security_controller:
+        class: %bc_app_common.security_controller.class%
+
+    blockcypher_user_provider:
+        class: BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Security\User\BlockCypherUserProvider
+
+    blockcypher.security.authentication.provider:
+        class: BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Security\Authentication\Provider\BlockCypherProvider
+        arguments:
+          - @blockcypher_user_provider
+          - @bc_app_common_blockcypher.authentication_service
+
+    blockcypher.security.authentication.listener:
+        class: BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Security\Firewall\BlockCypherListener
+        arguments:
+          - @security.token_storage
+          - @security.authentication.manager
+          - @session
+          - @router

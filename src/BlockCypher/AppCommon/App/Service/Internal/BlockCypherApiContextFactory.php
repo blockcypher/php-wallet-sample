@@ -6,6 +6,10 @@ use BlockCypher\Auth\SimpleTokenCredential;
 use BlockCypher\Core\BlockCypherCoinSymbolConstants;
 use BlockCypher\Rest\ApiContext;
 
+/**
+ * Class BlockCypherApiContextFactory
+ * @package BlockCypher\AppCommon\App\Service\Internal
+ */
 class BlockCypherApiContextFactory extends ApiContext
 {
     /**

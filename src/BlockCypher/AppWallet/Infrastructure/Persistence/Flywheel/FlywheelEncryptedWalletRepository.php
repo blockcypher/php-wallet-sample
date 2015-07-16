@@ -2,6 +2,7 @@
 
 namespace BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel;
 
+use BlockCypher\AppCommon\Domain\User\UserId;
 use BlockCypher\AppWallet\Domain\Wallet\EncryptedWallet;
 use BlockCypher\AppWallet\Domain\Wallet\EncryptedWalletRepository;
 use BlockCypher\AppWallet\Domain\Wallet\EncryptedWalletSpecification;
@@ -79,6 +80,36 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
     }
 
     /**
+     * @param UserId $userId
+     * @return EncryptedWallet[]
+     */
+    public function walletsOfUserId(UserId $userId)
+    {
+        /** @var EncryptedWalletDocument[] $result */
+        $result = $this->repository->query()
+            ->where('userId', '==', $userId->getValue())
+            ->execute();
+
+        $encryptedWallets = $this->documentArrayToObjectArray($result);
+
+        return $encryptedWallets;
+    }
+
+    /**
+     * @param EncryptedWalletDocument[] $encryptedWalletDocuments
+     * @return Wallet[]
+     */
+    private function documentArrayToObjectArray($encryptedWalletDocuments)
+    {
+        $encryptedWallets = array();
+        foreach ($encryptedWalletDocuments as $encryptedWalletDocument) {
+            $encryptedWallet = $this->documentToEncryptedWallet($encryptedWalletDocument);
+            $encryptedWallets[] = $encryptedWallet;
+        }
+        return $encryptedWallets;
+    }
+
+    /**
      * @param EncryptedWallet $encryptedWallet
      */
     public function insert(EncryptedWallet $encryptedWallet)
@@ -95,6 +126,7 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
     {
         $searchFields = array(
             'id' => $encryptedWallet->getId()->getValue(),
+            'userId' => $encryptedWallet->getUserId()->getValue(),
             'name' => $encryptedWallet->getName(),
             'coinSymbol' => $encryptedWallet->getCoinSymbol(),
             'creationTime' => clone $encryptedWallet->getCreationTime(),
@@ -190,19 +222,5 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
         $wallets = $this->documentArrayToObjectArray($result);
 
         return $wallets;
-    }
-
-    /**
-     * @param EncryptedWalletDocument[] $encryptedWalletDocuments
-     * @return Wallet[]
-     */
-    private function documentArrayToObjectArray($encryptedWalletDocuments)
-    {
-        $encryptedWallets = array();
-        foreach ($encryptedWalletDocuments as $encryptedWalletDocument) {
-            $encryptedWallet = $this->documentToEncryptedWallet($encryptedWalletDocument);
-            $encryptedWallets[] = $encryptedWallet;
-        }
-        return $encryptedWallets;
     }
 }

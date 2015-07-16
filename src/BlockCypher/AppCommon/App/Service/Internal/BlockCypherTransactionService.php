@@ -9,8 +9,17 @@ use BlockCypher\Api\TXSkeleton;
 use BlockCypher\AppCommon\App\Service\Internal\Exception\InvalidTransaction;
 use BlockCypher\Exception\BlockCypherConnectionException;
 
+/**
+ * Class BlockCypherTransactionService
+ * @package BlockCypher\AppCommon\App\Service\Internal
+ */
 class BlockCypherTransactionService
 {
+    /**
+     * @var BlockCypherApiContextFactory
+     */
+    private $apiContextFactory;
+
     /**
      * @param BlockCypherApiContextFactory $apiContextFactory
      */
