@@ -2,7 +2,8 @@
 
 namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Transaction;
 
-use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
+use BlockCypher\AppWallet\App\Command\CreateTransactionCommand;
+use BlockCypher\AppWallet\App\Command\CreateTransactionCommandValidator;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Transaction\TransactionFormFactory;
 use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletDto;
@@ -99,10 +100,13 @@ class Create extends AppWalletController
 
         } else {
 
-            /** @var CreateAddressCommand $createTransactionCommand */
+            /** @var CreateTransactionCommand $createTransactionCommand */
             $createTransactionCommand = $createTransactionForm->getData();
 
             try {
+
+                $commandValidator = new CreateTransactionCommandValidator();
+                $commandValidator->validate($createTransactionCommand);
 
                 $this->commandBus->handle($createTransactionCommand);
 

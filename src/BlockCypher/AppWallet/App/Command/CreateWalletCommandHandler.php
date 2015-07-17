@@ -55,9 +55,6 @@ class CreateWalletCommandHandler
         // DEBUG
         //var_dump($command);
 
-        $commandValidator = new CreateWalletCommandValidator();
-        $commandValidator->validate($command);
-
         $walletOwnerId = $command->getWalletOwnerId();
         $walletName = $command->getName();
         $walletCoinSymbol = $command->getCoinSymbol();

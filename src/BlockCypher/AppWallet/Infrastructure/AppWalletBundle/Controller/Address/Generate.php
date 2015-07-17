@@ -3,6 +3,7 @@
 namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Address;
 
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
+use BlockCypher\AppWallet\App\Command\CreateAddressCommandValidator;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address\AddressFormFactory;
 use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletDto;
@@ -102,6 +103,9 @@ class Generate extends AppWalletController
             $createAddressCommand = $createAddressForm->getData();
 
             try {
+
+                $commandValidator = new CreateAddressCommandValidator();
+                $commandValidator->validate($createAddressCommand);
 
                 $this->commandBus->handle($createAddressCommand);
 

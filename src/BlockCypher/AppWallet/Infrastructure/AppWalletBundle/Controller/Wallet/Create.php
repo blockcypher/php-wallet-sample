@@ -3,6 +3,7 @@
 namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet;
 
 use BlockCypher\AppWallet\App\Command\CreateWalletCommand;
+use BlockCypher\AppWallet\App\Command\CreateWalletCommandValidator;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Wallet\WalletFormFactory;
 use SimpleBus\Message\Bus\MessageBus;
@@ -90,6 +91,9 @@ class Create extends AppWalletController
             $createWalletCommand->setToken($user->getBlockCypherToken());
 
             try {
+
+                $commandValidator = new CreateWalletCommandValidator();
+                $commandValidator->validate($createWalletCommand);
 
                 $this->commandBus->handle($createWalletCommand);
 

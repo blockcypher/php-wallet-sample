@@ -71,8 +71,6 @@ class CreateTransactionCommandHandler
      */
     public function handle(CreateTransactionCommand $command)
     {
-        $this->validateCommand($command);
-
         $walletId = $command->getWalletId();
         $payToAddress = $command->getPayToAddress();
         $description = $command->getDescription();
@@ -126,15 +124,6 @@ class CreateTransactionCommandHandler
 
         // Store new local app transaction
         $this->transactionRepository->insert($transaction);
-    }
-
-    /**
-     * @param CreateTransactionCommand $command
-     */
-    private function validateCommand(CreateTransactionCommand $command)
-    {
-        $commandValidator = new CreateTransactionCommandValidator();
-        $commandValidator->validate($command);
     }
 
     /**

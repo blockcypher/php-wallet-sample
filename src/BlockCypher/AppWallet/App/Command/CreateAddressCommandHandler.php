@@ -64,9 +64,6 @@ class CreateAddressCommandHandler
         // DEBUG
         //var_dump($command);
 
-        $commandValidator = new CreateAddressCommandValidator();
-        $commandValidator->validate($command);
-
         $walletId = $command->getWalletId();
         $addressTag = $command->getTag();
         $addressCallbackUrl = $command->getCallbackUrl();
