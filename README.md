@@ -3,7 +3,7 @@ BlockCypher REST API PHP Sample
 
 [![Build Status](https://travis-ci.org/blockcypher/php-wallet-sample.svg)](https://travis-ci.org/blockcypher/php-wallet-sample)
 
-> **WARNING: WORK IN PROGRESS**
+> **WARNING: IT'S ONLY A SAMPLE!. If you use this sample, you do so at your own risk.**
 
 Overview
 --------
