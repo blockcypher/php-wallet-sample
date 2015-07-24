@@ -7,6 +7,7 @@ use BlockCypher\Api\TXInput;
 use BlockCypher\Api\TXOutput;
 use BlockCypher\Api\TXSkeleton;
 use BlockCypher\AppCommon\App\Service\Internal\Exception\InvalidTransaction;
+use BlockCypher\Client\TXClient;
 use BlockCypher\Exception\BlockCypherConnectionException;
 
 /**
@@ -38,8 +39,9 @@ class BlockCypherTransactionService
     public function getTransaction($hash, $params, $coinSymbol, $token)
     {
         $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $txClient = new TXClient($apiContext);
 
-        $transaction = TX::get($hash, $params, $apiContext);
+        $transaction = $txClient->get($hash, $params);
 
         return $transaction;
     }
@@ -54,15 +56,25 @@ class BlockCypherTransactionService
     public function getTransactions($hashArray, $params, $coinSymbol, $token)
     {
         $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $txClient = new TXClient($apiContext);
 
-        $transaction = TX::getMultiple($hashArray, $params, $apiContext);
+        $transaction = $txClient->getMultiple($hashArray, $params);
 
         return $transaction;
     }
 
+    /**
+     * @param string $walletName
+     * @param string $coinSymbol
+     * @param string $token
+     * @param string $payToAddress
+     * @param int $amount
+     * @return TXSkeleton
+     */
     public function create($walletName, $coinSymbol, $token, $payToAddress, $amount)
     {
         $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $txClient = new TXClient($apiContext);
 
         // DEBUG
         //var_dump($amount);
@@ -84,7 +96,7 @@ class BlockCypherTransactionService
         $output->setValue($amount); // Satoshis
 
         try {
-            $txSkeleton = $tx->create($apiContext);
+            $txSkeleton = $txClient->create($tx);
         } catch (BlockCypherConnectionException $e) {
 
             $data = $e->getData();
@@ -101,6 +113,39 @@ class BlockCypherTransactionService
 
             throw new InvalidTransaction($txSkeleton->getAllErrorMessages());
         }
+
+        return $txSkeleton;
+    }
+
+    /**
+     * @param TXSkeleton $txSkeleton
+     * @param $privateKeys
+     * @param $coinSymbol
+     * @param $token
+     * @return TXSkeleton
+     */
+    public function sign(TXSkeleton $txSkeleton, $privateKeys, $coinSymbol, $token)
+    {
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $txClient = new TXClient($apiContext);
+
+        $txSkeleton = $txClient->sign($txSkeleton, $privateKeys);
+
+        return $txSkeleton;
+    }
+
+    /**
+     * @param TXSkeleton $txSkeleton
+     * @param $coinSymbol
+     * @param $token
+     * @return TXSkeleton
+     */
+    public function send(TXSkeleton $txSkeleton, $coinSymbol, $token)
+    {
+        $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $txClient = new TXClient($apiContext);
+
+        $txSkeleton = $txClient->send($txSkeleton);
 
         return $txSkeleton;
     }
