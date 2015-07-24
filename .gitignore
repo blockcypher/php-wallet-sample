@@ -31,7 +31,8 @@
 /app/phpunit.xml
 
 # Build data
-/build/
+/build/*
+!build/.gitkeep
 
 # Composer PHAR
 /composer.phar
