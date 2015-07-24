@@ -80,17 +80,6 @@ class User extends Model implements UserInterface, EquatableInterface
     }
 
     /**
-     * Returns the username used to authenticate the user.
-     *
-     * @return string The username
-     */
-    public function getUsername()
-    {
-        // For the time being users are not registered in the app and we use BlockCypher token as username.
-        return $this->blockCypherToken;
-    }
-
-    /**
      * Removes sensitive data from the user.
      *
      * This is important if, at any given point, sensitive information like
@@ -149,6 +138,22 @@ class User extends Model implements UserInterface, EquatableInterface
      */
     public function getBlockCypherToken()
     {
+        return $this->blockCypherToken;
+    }
+
+    public function __toString()
+    {
+        return (string)$this->getUsername();
+    }
+
+    /**
+     * Returns the username used to authenticate the user.
+     *
+     * @return string The username
+     */
+    public function getUsername()
+    {
+        // For the time being users are not registered in the app and we use BlockCypher token as username.
         return $this->blockCypherToken;
     }
 }

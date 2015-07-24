@@ -1,6 +1,9 @@
 imports:
     - { resource: config_dev.yml }
 
+parameters:
+    bc_app_wallet_address_flywheel_data_dir: "%kernel.logs_dir%/../data/test"
+
 framework:
     test: ~
     session:
@@ -11,6 +14,11 @@ framework:
 web_profiler:
     toolbar: false
     intercept_redirects: false
+
+monolog:
+    handlers:
+        main:
+            level: info
 
 swiftmailer:
     disable_delivery: true

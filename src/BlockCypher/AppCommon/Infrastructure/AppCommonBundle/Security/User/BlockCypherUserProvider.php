@@ -32,6 +32,10 @@ class BlockCypherUserProvider implements UserProviderInterface
 
         $blockCypherToken = $username;
 
+        // DEBUG
+        //var_dump($blockCypherToken);
+        //die('loadUserByUsername');
+
         return new User(new UserId($blockCypherToken), $blockCypherToken);
 
 //        throw new UsernameNotFoundException(

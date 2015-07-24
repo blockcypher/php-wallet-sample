@@ -68,7 +68,7 @@ services:
     bc_app_wallet_address.encrypted_address_repository:
         class: %bc_app_wallet_address.encrypted_address_repository.class%
         arguments:
-          - "%kernel.logs_dir%/../data"
+          - %bc_app_wallet_address_flywheel_data_dir%
 
     bc_app_wallet_address.address_repository:
         class: %bc_app_wallet_address.address_repository.class%

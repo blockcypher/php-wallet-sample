@@ -64,7 +64,7 @@ class ShowNew extends AppWalletController
             1000
         );
 
-        $user = $this->getLoggedInUser();
+        $user = $this->getUser();
 
         $createTransactionForm = $this->transactionFormFactory->createCreateForm($createTransactionCommand, $user->getId()->getValue());
 

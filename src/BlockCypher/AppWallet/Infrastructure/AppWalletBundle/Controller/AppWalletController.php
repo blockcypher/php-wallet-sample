@@ -26,6 +26,27 @@ class AppWalletController extends AppCommonController
     }
 
     /**
+     * @return User|null
+     */
+    public function getUser()
+    {
+        $token = $this->tokenStorage->getToken();
+
+        if ($token === null) {
+            return;
+        }
+
+        $user = $token->getUser();
+
+        if (!is_object($user)) {
+            // e.g. anonymous authentication
+            return;
+        }
+
+        return $user;
+    }
+
+    /**
      * @param string $walletId
      * @param string $tag
      * @param string $callbackUrl
@@ -134,25 +155,5 @@ class AppWalletController extends AppCommonController
         if (!$user->getId()->equals(new UserId($walletDto->getUserId()))) {
             throw $this->createAccessDeniedException();
         }
-    }
-
-    /**
-     * @return User|null
-     */
-    protected function getLoggedInUser()
-    {
-        $token = $this->tokenStorage->getToken();
-
-        if (!$token) {
-            return null;
-        }
-
-        $user = $token->getUser();
-
-        if (!$user) {
-            return null;
-        }
-
-        return $user;
     }
 }

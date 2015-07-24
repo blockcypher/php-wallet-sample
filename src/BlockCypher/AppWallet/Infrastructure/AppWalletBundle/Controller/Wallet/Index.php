@@ -41,7 +41,11 @@ class Index extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $user = $this->getLoggedInUser();
+        $user = $this->getUser();
+
+        //$token = $this->tokenStorage->getToken();
+        //var_dump($token);
+        //die();
 
         if (!$user) {
             throw $this->createAccessDeniedException();

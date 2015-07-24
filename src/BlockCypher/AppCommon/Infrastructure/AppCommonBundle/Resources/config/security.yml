@@ -1,4 +1,5 @@
 parameters:
+
     bc_app_common.security_controller.class: BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Controller\SecurityController
 
 services:
@@ -10,7 +11,7 @@ services:
         class: BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Security\User\BlockCypherUserProvider
 
     blockcypher.security.authentication.provider:
-        class: BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Security\Authentication\Provider\BlockCypherProvider
+        class: BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Security\Authentication\Provider\BlockCypherAuthenticationProvider
         arguments:
           - @blockcypher_user_provider
           - @bc_app_common_blockcypher.authentication_service

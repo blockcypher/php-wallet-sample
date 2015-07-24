@@ -6,16 +6,19 @@ use BlockCypher\AppCommon\App\Service\Internal\BlockCypherAuthenticationService;
 use BlockCypher\AppCommon\Domain\User\User;
 use BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Security\BlockCypherUserToken;
 use BlockCypher\Validation\TokenValidator;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerInterface;
 
 /**
- * Class BlockCypherProvider
+ * Class BlockCypherAuthenticationProvider
  * @package BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Security\Authentication\Provider
  */
-class BlockCypherProvider implements AuthenticationProviderInterface
+class BlockCypherAuthenticationProvider implements AuthenticationProviderInterface, AuthenticationFailureHandlerInterface
 {
     /**
      * @var UserProviderInterface
@@ -47,10 +50,30 @@ class BlockCypherProvider implements AuthenticationProviderInterface
      */
     public function authenticate(TokenInterface $token)
     {
-        $blockCypherToken = null;
+//        if (!$userProvider instanceof ApiKeyUserProvider) {
+//            throw new \InvalidArgumentException(
+//                sprintf(
+//                    'The user provider must be an instance of ApiKeyUserProvider (%s was given).',
+//                    get_class($userProvider)
+//                )
+//            );
+//        }
+
+        //$blockCypherToken = null;
+
+        $blockCypherToken = $token->getCredentials();
+        $username = $blockCypherToken;
+
+        // DEBUG
+        //var_dump($blockCypherToken);
+        //die();
 
         /** @var User $user */
-        $user = $this->userProvider->loadUserByUsername($token->getUsername());
+        $user = $this->userProvider->loadUserByUsername($username);
+
+        // DEBUG
+        //var_dump($user);
+        //die();
 
         if ($user) {
             $blockCypherToken = $user->getBlockCypherToken();
@@ -58,8 +81,13 @@ class BlockCypherProvider implements AuthenticationProviderInterface
 
         if ($user && $this->validateBlockCypherToken($blockCypherToken)) {
 
-            $authenticatedToken = new BlockCypherUserToken($user->getRoles());
-            $authenticatedToken->setUser($user);
+            $authenticatedToken = new BlockCypherUserToken(
+                $user,
+                $blockCypherToken,
+                'blockcypher',
+                $user->getRoles()
+            );
+            //$authenticatedToken->setUser($user);
 
             return $authenticatedToken;
         }
@@ -68,15 +96,10 @@ class BlockCypherProvider implements AuthenticationProviderInterface
     }
 
     /**
-     * This function is specific to BlockCypher authentication and is only used to help this example
-     *
-     * For more information specific to the logic here, see
-     * https://github.com/symfony/symfony-docs/pull/3134#issuecomment-27699129
-     *
      * @param string $token
      * @return bool
      */
-    protected function validateBlockCypherToken($token)
+    private function validateBlockCypherToken($token)
     {
         if (!TokenValidator::validate($token)) {
             return false;
@@ -85,6 +108,21 @@ class BlockCypherProvider implements AuthenticationProviderInterface
         $isTokenAuthenticated = $this->blockCypherAuthenticationService->authenticate($token);
 
         return $isTokenAuthenticated;
+    }
+
+    /**
+     * This is called when an interactive authentication attempt fails. This is
+     * called by authentication listeners inheriting from
+     * AbstractAuthenticationListener.
+     *
+     * @param Request $request
+     * @param AuthenticationException $exception
+     *
+     * @return Response The response to return, never null
+     */
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    {
+        return new Response("Authentication Failed.", 403);
     }
 
     public function supports(TokenInterface $token)

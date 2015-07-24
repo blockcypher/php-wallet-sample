@@ -3,6 +3,7 @@
 namespace BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\DataFixtures;
 
 use BlockCypher\AppCommon\App\Service\Clock;
+use BlockCypher\AppCommon\Domain\User\UserId;
 use BlockCypher\AppWallet\App\Service\WalletService;
 use BlockCypher\AppWallet\Domain\Wallet\Wallet;
 use BlockCypher\AppWallet\Domain\Wallet\WalletCoinSymbol;
@@ -47,19 +48,21 @@ class LoadWalletData implements FlywheelFixtureInterface
     /**
      * Create a sample wallet
      * @param FlywheelWalletRepository $repository
+     * @param string $token
+     * @return Wallet
      */
-    public function loadFixtures($repository)
+    public function loadFixtures($repository, $token)
     {
-        $token = 'c0afcccdde5081d6429de37d16166ead';
-
         $wallet = new Wallet(
             new WalletId("5564B09652AFA054401239"),
+            new UserId(new UserId($token), $token),
             'alice',
-            WalletCoinSymbol::BTC,
+            WalletCoinSymbol::BTC_TESTNET,
             $token,
-            $this->clock->now(),
-            array()
+            $this->clock->now()
         );
         $repository->insert($wallet);
+
+        return $wallet;
     }
 }

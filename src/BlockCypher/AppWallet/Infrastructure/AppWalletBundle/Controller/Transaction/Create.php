@@ -88,7 +88,7 @@ class Create extends AppWalletController
 
         $createTransactionCommand = $this->createCreateTransactionCommand($walletId);
 
-        $user = $this->getLoggedInUser();
+        $user = $this->getUser();
         $createTransactionForm = $this->transactionFormFactory->createCreateForm($createTransactionCommand, $user->getId()->getValue());
 
         $createTransactionForm->handleRequest($request);

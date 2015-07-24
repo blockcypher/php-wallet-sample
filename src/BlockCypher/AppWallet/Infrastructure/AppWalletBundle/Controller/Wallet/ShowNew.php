@@ -41,7 +41,7 @@ class ShowNew extends AppWalletController
      */
     public function __invoke(Request $request)
     {
-        $user = $this->getLoggedInUser();
+        $user = $this->getUser();
 
         if (!$user) {
             throw $this->createAccessDeniedException();

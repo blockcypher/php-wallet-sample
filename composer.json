@@ -29,11 +29,13 @@
     "simple-bus/symfony-bridge": "^4.0",
     "blockcypher/php-client": "dev-master",
     "phpspec/phpspec": "^2.2",
-    "beberlei/assert": "^2.3"
+    "beberlei/assert": "^2.3",
+    "behat/behat": "~3.0.15"
   },
   "require-dev": {
     "phpunit/phpunit": "3.7.*",
-    "sensio/generator-bundle": "~2.3"
+    "sensio/generator-bundle": "~2.3",
+    "liip/functional-test-bundle": "^1.2"
   },
   "repositories": [
     {
@@ -59,10 +61,6 @@
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::removeSymfonyStandardFiles",
       "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
-    ],
-    "compile": [
-      "rm web/app_dev.php",
-      "php app/console assetic:dump --no-debug"
     ]
   },
   "config": {

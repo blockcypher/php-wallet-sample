@@ -2,8 +2,6 @@
 
 namespace BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Security\Firewall;
 
-use BlockCypher\AppCommon\Domain\User\User;
-use BlockCypher\AppCommon\Domain\User\UserId;
 use BlockCypher\AppCommon\Infrastructure\AppCommonBundle\Security\BlockCypherUserToken;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -67,28 +65,50 @@ class BlockCypherListener implements ListenerInterface
     {
         $token = $this->tokenStorage->getToken();
 
-        if ($token !== null) {
+        // DEBUG
+        //var_dump($token);
+        //die();
+
+        if ($token !== null && $token->isAuthenticated()) {
             return null;
         }
 
         $request = $event->getRequest();
-
         $blockCypherToken = $request->get('blockcypher_token');
 
-        if ($request->getMethod() == 'post') {
-            if (empty($blockCypherToken) || trim($blockCypherToken) == '') {
-                return $this->redirectToLogin($event, 'Empty token. Please type your BlockCypher token.');
-            }
-        }
+//        if (!$blockCypherToken) {
+//            return null;
+//        }
 
-        $token = new BlockCypherUserToken();
+//        if ($request->getMethod() == 'post') {
+//            if (empty($blockCypherToken) || trim($blockCypherToken) == '') {
+//                return $this->redirectToLogin($event, 'Empty token. Please type your BlockCypher token.');
+//            }
+//        }
 
-        $user = new User(new UserId($blockCypherToken), $blockCypherToken);
-        $token->setUser($user);
+        //DEBUG
+        //var_dump($blockCypherToken);
+        //die('BCToken');
+
+        // Create token
+        //$user = new User(new UserId($blockCypherToken), $blockCypherToken);
+        $preAuthToken = new BlockCypherUserToken(
+            'anon.',
+            $blockCypherToken,
+            'blockcypher'
+        );
+        //$this->tokenStorage->setToken($preAuthToken);
+
+        //$user = new User(new UserId($blockCypherToken), $blockCypherToken);
+        //$token->setUser($user);
+
+        // DEBUG
+        //var_dump($token);
+        //die('BlockCypherListener');
 
         try {
 
-            $authToken = $this->authenticationManager->authenticate($token);
+            $authToken = $this->authenticationManager->authenticate($preAuthToken);
             $this->tokenStorage->setToken($authToken);
 
             return null;
