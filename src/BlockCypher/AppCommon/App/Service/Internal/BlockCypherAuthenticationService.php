@@ -3,6 +3,7 @@
 namespace BlockCypher\AppCommon\App\Service\Internal;
 
 use BlockCypher\Api\Wallet as BlockCypherWallet;
+use BlockCypher\Client\WalletClient;
 use BlockCypher\Exception\BlockCypherConnectionException;
 
 /**
@@ -36,13 +37,15 @@ class BlockCypherAuthenticationService
     public function authenticate($token)
     {
         $apiContext = $this->apiContextFactory->getApiContext(self::AUTH_WALLET_COIN_SYMBOL, $token);
+        $walletClient = new WalletClient($apiContext);
 
         try {
             // Create BlockCypher wallet
             $bcWallet = new BlockCypherWallet();
             $bcWallet->setToken($token);
             $bcWallet->setName(self::AUTH_WALLET_NAME);
-            $bcWallet->create(array(), $apiContext);
+
+            $bcWallet = $walletClient->create($bcWallet);
 
             if ($bcWallet && $bcWallet->getName() == self::AUTH_WALLET_NAME) {
                 return true;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bd9f254308d693d192f5b1cff9245b9d",
+    "hash": "b8e53327f4b1c0d7f21ca45501240d18",
     "packages": [
         {
             "name": "beberlei/assert",
@@ -378,7 +378,7 @@
         },
         {
             "name": "blockcypher/php-client",
-            "version": "dev-master",
+            "version": "v1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/blockcypher/php-client.git",
@@ -4056,8 +4056,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "jamesmoss/flywheel": 20,
-        "mathiasverraes/money": 20,
-        "blockcypher/php-client": 20
+        "mathiasverraes/money": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

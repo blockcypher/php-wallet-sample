@@ -3,6 +3,7 @@
 namespace BlockCypher\AppCommon\App\Service\Internal;
 
 use BlockCypher\Api\Block;
+use BlockCypher\Client\BlockClient;
 
 /**
  * Class BlockCypherBlockService
@@ -32,8 +33,9 @@ class BlockCypherBlockService
     public function getBlock($hashOrHeight, $coinSymbol, $token)
     {
         $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $blockClient = new BlockClient($apiContext);
 
-        $block = Block::get($hashOrHeight, array(), $apiContext);
+        $block = $blockClient->get($hashOrHeight);
 
         return $block;
     }

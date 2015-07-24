@@ -2,9 +2,10 @@
 
 namespace BlockCypher\AppCommon\App\Service\Internal;
 
-use BlockCypher\Api\Address as BlockCypherAddress;
 use BlockCypher\Api\Wallet as BlockCypherWallet;
 use BlockCypher\Api\WalletGenerateAddressResponse;
+use BlockCypher\Client\AddressClient;
+use BlockCypher\Client\WalletClient;
 use BlockCypher\Core\BlockCypherCoinSymbolConstants;
 use BlockCypher\Exception\BlockCypherConnectionException;
 use Money\BigMoney;
@@ -40,13 +41,14 @@ class BlockCypherWalletService
     public function createWallet($walletName, $coinSymbol, $token)
     {
         $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $walletClient = new WalletClient($apiContext);
 
         // Create BlockCypher wallet
         $bcWallet = new BlockCypherWallet();
         $bcWallet->setToken($token);
         $bcWallet->setName($walletName);
 
-        return $bcWallet->create(array(), $apiContext);
+        return $walletClient->create($bcWallet);
     }
 
     /**
@@ -60,11 +62,12 @@ class BlockCypherWalletService
     public function getWallet($walletName, $coinSymbol, $token)
     {
         $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $walletClient = new WalletClient($apiContext);
 
         $wallet = null;
 
         try {
-            $wallet = BlockCypherWallet::get($walletName, array(), $apiContext);
+            $wallet = $walletClient->get($walletName);
         } catch (BlockCypherConnectionException $e) {
             if ($e->getCode() == self::ERROR_WALLET_NOT_FOUND) {
                 // return null
@@ -88,12 +91,13 @@ class BlockCypherWalletService
     public function getWalletFinalBalance($walletName, $coinSymbol, $token)
     {
         $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $addressClient = new AddressClient($apiContext);
 
         $balance = null;
         $address = null;
 
         try {
-            $address = BlockCypherAddress::get($walletName, array(), $apiContext);
+            $address = $addressClient->get($walletName);
         } catch (BlockCypherConnectionException $e) {
             if ($e->getCode() == self::ERROR_WALLET_NOT_FOUND) {
                 // return null
@@ -120,9 +124,9 @@ class BlockCypherWalletService
     public function generateAddress($walletName, $coinSymbol, $token)
     {
         $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $walletClient = new WalletClient($apiContext);
 
-        $wallet = BlockCypherWallet::get($walletName, array(), $apiContext);
-        $walletGenerateAddressResponse = $wallet->generateAddress(array(), $apiContext);
+        $walletGenerateAddressResponse = $walletClient->generateAddress($walletName);
 
         return $walletGenerateAddressResponse;
     }
@@ -136,9 +140,10 @@ class BlockCypherWalletService
     public function getWalletAddresses($walletName, $coinSymbol, $token)
     {
         $apiContext = $this->apiContextFactory->getApiContext($coinSymbol, $token);
+        $walletClient = new WalletClient($apiContext);
 
-        $wallet = BlockCypherWallet::get($walletName, array(), $apiContext);
-        $addresses = $wallet->getAddresses();
+        $addressList = $walletClient->getWalletAddresses($walletName);
+        $addresses = $addressList->getAddresses();
 
         return $addresses;
     }

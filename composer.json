@@ -27,7 +27,7 @@
     "ramsey/uuid": "~2.8",
     "mathiasverraes/money": "dev-master",
     "simple-bus/symfony-bridge": "^4.0",
-    "blockcypher/php-client": "dev-master",
+    "blockcypher/php-client": "1.2.*",
     "phpspec/phpspec": "^2.2",
     "beberlei/assert": "^2.3",
     "behat/behat": "~3.0.15"

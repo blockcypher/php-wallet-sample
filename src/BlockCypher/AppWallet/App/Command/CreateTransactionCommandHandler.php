@@ -104,7 +104,6 @@ class CreateTransactionCommandHandler
         );
 
         // Get all addresses from all tx inputs.
-        // TODO: Code Review. Inputs addresses can be pubkeys for multisig addresses instead of network addresses.
         $allInputsAddresses = $txSkeleton->getInputsAddresses();
 
         // Get private keys from repository
@@ -114,13 +113,13 @@ class CreateTransactionCommandHandler
         $this->checkPrivateKeys($privateKeys, $txSkeleton->getTosign());
 
         // Sign transaction
-        $txSkeleton->sign($privateKeys);
+        $txSkeletonSigned = $this->blockCypherTransactionService->sign($txSkeleton, $privateKeys, $wallet->getCoinSymbol(), $wallet->getToken());
 
         // Send transaction to the network
-        $txSkeleton->send();
+        $txSkeletonSent = $this->blockCypherTransactionService->send($txSkeletonSigned, $wallet->getCoinSymbol(), $wallet->getToken());
 
         // Map real network tx with app transaction
-        $transaction->assignNetworkTransactionHash($txSkeleton->getTx()->getHash());
+        $transaction->assignNetworkTransactionHash($txSkeletonSent->getTx()->getHash());
 
         // Store new local app transaction
         $this->transactionRepository->insert($transaction);
