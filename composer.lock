@@ -378,16 +378,16 @@
         },
         {
             "name": "blockcypher/php-client",
-            "version": "v1.2.0",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/blockcypher/php-client.git",
-                "reference": "cc74db7471e413e4ba070c25e02fde0244dd3e15"
+                "reference": "80b78c6b41d8736f7ca5b3ad87c63f666ddcb1ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/blockcypher/php-client/zipball/cc74db7471e413e4ba070c25e02fde0244dd3e15",
-                "reference": "cc74db7471e413e4ba070c25e02fde0244dd3e15",
+                "url": "https://api.github.com/repos/blockcypher/php-client/zipball/80b78c6b41d8736f7ca5b3ad87c63f666ddcb1ef",
+                "reference": "80b78c6b41d8736f7ca5b3ad87c63f666ddcb1ef",
                 "shasum": ""
             },
             "require": {
@@ -425,7 +425,7 @@
                 "rest",
                 "sdk"
             ],
-            "time": "2015-07-24 12:48:21"
+            "time": "2015-07-25 12:05:34"
         },
         {
             "name": "doctrine/annotations",
