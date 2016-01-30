@@ -60,7 +60,7 @@ class BlockCypherApiContextFactory extends ApiContext
             'log.FileName' => $this->logDir.DIRECTORY_SEPARATOR .'BlockCypher.log',
             'log.LogLevel' => 'DEBUG', // PLEASE USE `INFO` LEVEL FOR LOGGING IN LIVE ENVIRONMENTS
             //'validation.level' => 'log',
-            'validation.level' => 'disable',
+            'validation.level' => 'disabled',
             // 'http.CURLOPT_CONNECTTIMEOUT' => 30
         );
 
