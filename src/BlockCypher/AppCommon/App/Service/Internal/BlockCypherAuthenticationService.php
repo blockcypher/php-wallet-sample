@@ -33,6 +33,7 @@ class BlockCypherAuthenticationService
     /**
      * @param string $token
      * @return bool
+     * @throws BlockCypherConnectionException
      */
     public function authenticate($token)
     {
@@ -56,11 +57,8 @@ class BlockCypherAuthenticationService
         } catch (BlockCypherConnectionException $e) {
             if ($e->getCode() == self::ERROR_WALLET_ALREADY_EXISTS) {
                 return true;
-            } else {
-                return false;
             }
-        } catch (\Exception $e) {
-            return false;
+            throw $e;
         }
     }
 }
