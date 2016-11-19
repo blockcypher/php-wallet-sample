@@ -18,7 +18,7 @@ use BlockCypher\AppWallet\Presentation\Facade\Dto\TransactionListDto;
 use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletDto;
 use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletListItemDto;
 use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletListItemDtoArray;
-use Money\BigMoney;
+use Money\Money;
 
 /**
  * Class WalletServiceFacade
@@ -128,7 +128,7 @@ class WalletServiceFacade
 
     /**
      * @param Wallet[] $wallets
-     * @return BigMoney[]
+     * @return Money[]
      */
     private function getMultipleWalletBalances($wallets)
     {
@@ -142,7 +142,7 @@ class WalletServiceFacade
 
     /**
      * @param Wallet $wallet
-     * @return BigMoney|null
+     * @return Money|null
      */
     private function getWalletBalance(Wallet $wallet)
     {

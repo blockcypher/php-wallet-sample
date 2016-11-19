@@ -4,7 +4,7 @@ namespace BlockCypher\AppWallet\Presentation\Facade\Dto;
 
 use BlockCypher\AppWallet\App\Service\ApiRouter;
 use BlockCypher\AppWallet\Domain\Wallet\Wallet;
-use Money\BigMoney;
+use Money\Money;
 
 /**
  * Class WalletListItemDtoArray
@@ -14,7 +14,7 @@ class WalletListItemDtoArray
 {
     /**
      * @param Wallet[] $wallets
-     * @param BigMoney[] $walletBalances
+     * @param Money[] $walletBalances
      * @param ApiRouter $apiRouter
      * @return array
      */

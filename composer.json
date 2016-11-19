@@ -14,7 +14,6 @@
     "php": ">=5.4",
     "ext-curl": "*",
     "ext-json": "*",
-    "ext-mysql": "*",
     "symfony/symfony": "2.7.*",
     "twig/extensions": "~1.0",
     "symfony/assetic-bundle": "~2.3",
@@ -25,9 +24,9 @@
     "incenteev/composer-parameter-handler": "~2.0",
     "jamesmoss/flywheel": "@dev",
     "ramsey/uuid": "~2.8",
-    "mathiasverraes/money": "dev-master",
+    "moneyphp/money": "^3.0",
     "simple-bus/symfony-bridge": "^4.0",
-    "blockcypher/php-client": "1.3.*",
+    "blockcypher/php-client": "^1.5.0",
     "phpspec/phpspec": "^2.2",
     "beberlei/assert": "^2.3",
     "behat/behat": "~3.0.15"
@@ -37,12 +36,6 @@
     "sensio/generator-bundle": "~2.3",
     "liip/functional-test-bundle": "^1.2"
   },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/josecelano/money"
-    }
-  ],
   "scripts": {
     "post-install-cmd": [
       "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",

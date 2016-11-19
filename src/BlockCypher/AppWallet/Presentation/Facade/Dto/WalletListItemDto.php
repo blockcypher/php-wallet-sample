@@ -3,7 +3,7 @@
 namespace BlockCypher\AppWallet\Presentation\Facade\Dto;
 
 use BlockCypher\AppWallet\Domain\Wallet\Wallet;
-use Money\BigMoney;
+use Money\Money;
 
 /**
  * Class WalletListItemDto
@@ -45,11 +45,11 @@ class WalletListItemDto
 
     /**
      * @param Wallet $wallet
-     * @param BigMoney|null $balance
+     * @param Money|null $balance
      * @param $apiUrl
      * @return WalletListItemDto
      */
-    public static function from(Wallet $wallet, BigMoney $balance, $apiUrl)
+    public static function from(Wallet $wallet, Money $balance, $apiUrl)
     {
         $walletListItemDto = new self();
         $walletListItemDto->setId($wallet->getId()->getValue());

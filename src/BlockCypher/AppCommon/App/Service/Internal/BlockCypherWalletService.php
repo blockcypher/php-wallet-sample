@@ -8,7 +8,7 @@ use BlockCypher\Client\AddressClient;
 use BlockCypher\Client\WalletClient;
 use BlockCypher\Core\BlockCypherCoinSymbolConstants;
 use BlockCypher\Exception\BlockCypherConnectionException;
-use Money\BigMoney;
+use Money\Money;
 use Money\Currency;
 
 /**
@@ -83,7 +83,7 @@ class BlockCypherWalletService
      * @param $walletName
      * @param $coinSymbol
      * @param $token
-     * @return BigMoney|null
+     * @return Money|null
      * @throws BlockCypherConnectionException
      * @throws \BlockCypher\Exception\BlockCypherConfigurationException
      * @throws \Exception
@@ -109,7 +109,7 @@ class BlockCypherWalletService
         if ($address !== null) {
             $currencyAbbrev = BlockCypherCoinSymbolConstants::getCurrencyAbbrev($coinSymbol);
             $currency = new Currency($currencyAbbrev);
-            $balance = BigMoney::fromInteger($address->getFinalBalance(), $currency);
+            $balance = new Money($address->getFinalBalance(), $currency);
         }
 
         return $balance;

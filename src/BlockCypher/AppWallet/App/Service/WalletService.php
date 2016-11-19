@@ -11,7 +11,7 @@ use BlockCypher\AppWallet\Domain\Transaction\TransactionRepository;
 use BlockCypher\AppWallet\Domain\Wallet\Wallet;
 use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
-use Money\BigMoney;
+use Money\Money;
 
 /**
  * Class WalletService
@@ -61,7 +61,7 @@ class WalletService
 
     /**
      * @param WalletId $walletId
-     * @return BigMoney
+     * @return Money
      * @throws \Exception
      */
     public function getWalletBalance(WalletId $walletId)
