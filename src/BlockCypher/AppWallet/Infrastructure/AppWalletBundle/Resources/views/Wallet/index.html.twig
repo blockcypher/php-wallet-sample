@@ -29,6 +29,11 @@
                         <i class="fa fa-plus"></i>
                         New Wallet
                     </a>
+                    <a href="{{ path('bc_app_wallet_faucet.show') }}"
+                       class="btn btn-lg btn-default">
+                        <i class="fa fa-money"></i>
+                        Faucet
+                    </a>
                 </p>
             </div>
         </div>
@@ -114,7 +119,7 @@
                                         {{ wallet.id }}
                                     </a>
                                 </td>
-                                <td class="truncate">
+                                <td>
                                     <a href="{{ path('bc_app_wallet_address.index', {'walletId': wallet.id }) }}"
                                        class="hidden-xs tx-list small">[Addresses]</a>
                                     <a href="{{ path('bc_app_wallet_transaction.index', {'walletId': wallet.id }) }}"

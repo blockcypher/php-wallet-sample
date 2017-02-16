@@ -3,6 +3,7 @@ parameters:
     bc_app_common_blockcypher.api_context_factory.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherApiContextFactory
     bc_app_common_blockcypher.address_service.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherAddressService
     bc_app_common_blockcypher.block_service.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherBlockService
+    bc_app_common_blockcypher.faucet_service.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherFaucetService
     bc_app_common_blockcypher.transaction_service.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherTransactionService
     bc_app_common_blockcypher.wallet_service.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherWalletService
     bc_app_common_blockcypher.authentication_service.class: BlockCypher\AppCommon\App\Service\Internal\BlockCypherAuthenticationService
@@ -21,6 +22,11 @@ services:
 
     bc_app_common_blockcypher.block_service:
         class: %bc_app_common_blockcypher.block_service.class%
+        arguments:
+          - @bc_app_common_blockcypher.api_context_factory
+
+    bc_app_common_blockcypher.faucet_service:
+        class: %bc_app_common_blockcypher.faucet_service.class%
         arguments:
           - @bc_app_common_blockcypher.api_context_factory
 

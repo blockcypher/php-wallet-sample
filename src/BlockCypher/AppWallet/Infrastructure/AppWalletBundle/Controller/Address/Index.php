@@ -52,7 +52,7 @@ class Index extends AppWalletController
 
         $this->checkAuthorizationForWallet($walletDto);
 
-        $AddressListItemDtos = $this->walletServiceFacade->listWalletAddresses($walletId);
+        $addressListItemDtos = $this->walletServiceFacade->listWalletAddresses($walletId);
 
         $template = $this->getBaseTemplatePrefix() . ':Address:index.html';
 
@@ -66,9 +66,9 @@ class Index extends AppWalletController
                 array(
                     'current_page' => $currentPage,
                     'max_pages' => $maxPages,
-                    'num_all_addresses' => count($AddressListItemDtos),
+                    'num_all_addresses' => count($addressListItemDtos),
                     'wallet' => $walletDto,
-                    'addresses' => $AddressListItemDtos,
+                    'addresses' => $addressListItemDtos,
                 )
             )
         );

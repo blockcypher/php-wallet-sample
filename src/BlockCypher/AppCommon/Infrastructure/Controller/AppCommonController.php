@@ -125,10 +125,6 @@ class AppCommonController extends Controller
     {
         $msgArr = $this->getAllFormErrorMessages($form);
 
-        // DEBUG
-        //var_dump($msgArr);
-        //die();
-
         $message = '';
         if (is_array($msgArr) && count($msgArr) > 0) {
             foreach ($msgArr as $childName => $messages) {
@@ -153,10 +149,6 @@ class AppCommonController extends Controller
      */
     protected function getAllFormErrorMessages($form)
     {
-        // DEBUG
-        //var_dump($form->getErrors($deep));
-        //die();
-
         $messagesArray = array();
         foreach ($form->getErrors() as $key => $error) {
             if ($error->getMessagePluralization() !== null) {

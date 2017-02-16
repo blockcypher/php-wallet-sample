@@ -1,0 +1,9 @@
+bc_app_wallet_faucet.show:
+    path:  /faucet/show
+    defaults: { _controller: "bc_app_wallet_faucet.show_controller" }
+    methods:  ['GET']
+
+bc_app_wallet_faucet.fund_address:
+    path:  /faucet/fund-address
+    defaults: { _controller: "bc_app_wallet_faucet.fund_address_controller" }
+    methods:  ['POST']

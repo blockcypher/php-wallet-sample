@@ -28,7 +28,7 @@ class ShowNew extends AppWalletController
      * @param TranslatorInterface $translator
      * @param Session $session
      * @param TransactionFormFactory $transactionFormFactory
-     * @param WalletServiceFacade $walletServiceFacade
+     * @param WalletServiceFacade $fundAddressServiceFacade
      */
     public function __construct(
         TokenStorageInterface $tokenStorage,
@@ -36,12 +36,12 @@ class ShowNew extends AppWalletController
         TranslatorInterface $translator,
         Session $session,
         TransactionFormFactory $transactionFormFactory,
-        WalletServiceFacade $walletServiceFacade
+        WalletServiceFacade $fundAddressServiceFacade
     )
     {
         parent::__construct($tokenStorage, $templating, $translator, $session);
         $this->transactionFormFactory = $transactionFormFactory;
-        $this->walletServiceFacade = $walletServiceFacade;
+        $this->walletServiceFacade = $fundAddressServiceFacade;
     }
 
     /**

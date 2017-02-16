@@ -13,6 +13,11 @@ transaction:
     flash:
         create_successfully: Transaction created successfully.
 
+# Faucet
+faucet:
+    flash:
+        fund_address_successfully: Address funded successfully.
+
 # CreateWalletForm
 create_wallet_form:
     flash:
@@ -25,5 +30,10 @@ create_address_form:
 
 # CreateTransactionForm
 create_transaction_form:
+    flash:
+        invalid_form: Invalid data. Please check input values.
+
+# FundAddressForm
+fund_address_form:
     flash:
         invalid_form: Invalid data. Please check input values.

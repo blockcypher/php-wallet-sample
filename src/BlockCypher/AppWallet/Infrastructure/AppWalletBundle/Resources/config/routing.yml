@@ -1,3 +1,6 @@
+bc_app_wallet_faucet:
+    resource: "@BlockCypherAppWalletInfrastructureAppWalletBundle/Resources/config/routing/faucet.yml"
+
 bc_app_wallet_wallet:
     resource: "@BlockCypherAppWalletInfrastructureAppWalletBundle/Resources/config/routing/wallet.yml"
 

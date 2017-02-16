@@ -1,11 +1,11 @@
 <?php
 
-namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet;
+namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Faucet;
 
-use BlockCypher\AppWallet\App\Command\CreateWalletCommand;
-use BlockCypher\AppWallet\App\Command\CreateWalletCommandValidator;
+use BlockCypher\AppWallet\App\Command\FundAddressCommand;
+use BlockCypher\AppWallet\App\Command\FundAddressCommandValidator;
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
-use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Wallet\WalletFormFactory;
+use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Faucet\FundAddressFormFactory;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\FormView;
@@ -17,7 +17,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class Create extends AppWalletController
+class FundAddress extends AppWalletController
 {
     /**
      * @var RouterInterface
@@ -25,9 +25,9 @@ class Create extends AppWalletController
     private $router;
 
     /**
-     * @var WalletFormFactory
+     * @var FundAddressFormFactory
      */
-    private $walletFormFactory;
+    private $fundAddressFormFactory;
 
     /**
      * @var MessageBus
@@ -40,7 +40,7 @@ class Create extends AppWalletController
      * @param TranslatorInterface $translator
      * @param Session $session
      * @param RouterInterface $router
-     * @param WalletFormFactory $fundAddressFormFactory
+     * @param FundAddressFormFactory $fundAddressFormFactory
      * @param MessageBus $commandBus
      */
     public function __construct(
@@ -49,12 +49,12 @@ class Create extends AppWalletController
         TranslatorInterface $translator,
         Session $session,
         RouterInterface $router,
-        WalletFormFactory $fundAddressFormFactory,
+        FundAddressFormFactory $fundAddressFormFactory,
         MessageBus $commandBus)
     {
         parent::__construct($tokenStorage, $templating, $translator, $session);
         $this->router = $router;
-        $this->walletFormFactory = $fundAddressFormFactory;
+        $this->fundAddressFormFactory = $fundAddressFormFactory;
         $this->commandBus = $commandBus;
     }
 
@@ -71,35 +71,33 @@ class Create extends AppWalletController
             throw $this->createAccessDeniedException();
         }
 
-        $createWalletCommand = $this->createCreateWalletCommand();
+        $fundAddressCommand = $this->createFundAddressCommand();
 
-        $createWalletForm = $this->walletFormFactory->createCreateForm($createWalletCommand);
+        $fundAddressForm = $this->fundAddressFormFactory->createCreateForm($fundAddressCommand);
 
-        $createWalletForm->handleRequest($request);
+        $fundAddressForm->handleRequest($request);
 
-        if (!$createWalletForm->isValid()) {
+        if (!$fundAddressForm->isValid()) {
 
-            $validationMsg = $this->getAllFormErrorMessagesAsString($createWalletForm);
-            $this->addFlash('error', $this->trans('create_transaction_form.flash.invalid_form') . ' ' . $validationMsg);
+            $validationMsg = $this->getAllFormErrorMessagesAsString($fundAddressForm);
+            $this->addFlash('error', $this->trans('fund_address_form.flash.invalid_form') . ' ' . $validationMsg);
 
         } else {
 
-            /** @var CreateWalletCommand $createWalletCommand */
-            $createWalletCommand = $createWalletForm->getData();
-
-            $createWalletCommand->setWalletOwnerId($user->getId()->getValue());
-            $createWalletCommand->setToken($user->getBlockCypherToken());
+            /** @var FundAddressCommand $fundAddressCommand */
+            $fundAddressCommand = $fundAddressForm->getData();
+            $fundAddressCommand->setToken($user->getBlockCypherToken());
 
             try {
 
-                $commandValidator = new CreateWalletCommandValidator();
-                $commandValidator->validate($createWalletCommand);
+                $commandValidator = new FundAddressCommandValidator();
+                $commandValidator->validate($fundAddressCommand);
 
-                $this->commandBus->handle($createWalletCommand);
+                $this->commandBus->handle($fundAddressCommand);
 
-                $this->addFlash('success', $this->trans('wallet.flash.create_successfully'));
+                $this->addFlash('success', $this->trans('faucet.flash.fund_address_successfully'));
 
-                $url = $this->router->generate('bc_app_wallet_wallet.index');
+                $url = $this->router->generate('bc_app_wallet_faucet.show');
 
                 return new RedirectResponse($url);
 
@@ -108,7 +106,7 @@ class Create extends AppWalletController
             }
         }
 
-        return $this->renderWalletShowNew($request, $createWalletForm->createView());
+        return $this->renderFaucetShowPage($request, $fundAddressForm->createView());
     }
 
     /**
@@ -116,18 +114,18 @@ class Create extends AppWalletController
      * @param FormView $createWalletFormView
      * @return Response
      */
-    private function renderWalletShowNew(
+    private function renderFaucetShowPage(
         Request $request,
         FormView $createWalletFormView
     )
     {
-        $template = $this->getBaseTemplatePrefix() . ':Wallet:show_new.html';
+        $template = $this->getBaseTemplatePrefix() . ':Faucet:show.html';
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
             array_merge($this->getBasicTemplateVariables($request),
                 array(
-                    'wallet_form' => $createWalletFormView
+                    'fund_address_form' => $createWalletFormView
                 )
             )
         );

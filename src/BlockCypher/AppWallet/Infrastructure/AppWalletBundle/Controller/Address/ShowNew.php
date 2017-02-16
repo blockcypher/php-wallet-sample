@@ -23,12 +23,17 @@ class ShowNew extends AppWalletController
     private $addressFormFactory;
 
     /**
+     * @var WalletServiceFacade
+     */
+    private $walletServiceFacade;
+
+    /**
      * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
      * @param AddressFormFactory $walletFormFactory
-     * @param WalletServiceFacade $walletServiceFacade
+     * @param WalletServiceFacade $fundAddressServiceFacade
      */
     public function __construct(
         TokenStorageInterface $tokenStorage,
@@ -36,12 +41,12 @@ class ShowNew extends AppWalletController
         TranslatorInterface $translator,
         Session $session,
         AddressFormFactory $walletFormFactory,
-        WalletServiceFacade $walletServiceFacade
+        WalletServiceFacade $fundAddressServiceFacade
     )
     {
         parent::__construct($tokenStorage, $templating, $translator, $session);
         $this->addressFormFactory = $walletFormFactory;
-        $this->walletServiceFacade = $walletServiceFacade;
+        $this->walletServiceFacade = $fundAddressServiceFacade;
     }
 
     /**
@@ -58,7 +63,7 @@ class ShowNew extends AppWalletController
 
         $createAddressCommand = $this->createCreateAddressCommand($walletId);
 
-        $createAddressForm = $this->addressFormFactory->createCreateForm($createAddressCommand, $walletId);
+        $createAddressForm = $this->addressFormFactory->createCreateForm($createAddressCommand);
 
         $template = $this->getBaseTemplatePrefix() . ':Address:show_new.html';
 

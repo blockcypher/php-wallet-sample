@@ -76,6 +76,10 @@
                             <th>Txs</th>
                             <th>Address</th>
                             <th>Creation Time</th>
+                            <th>{% if wallet.coinSymbol == 'btc-testnet' or wallet.coinSymbol == 'bcy' %}
+                                    Actions
+                                {% endif %}
+                            </th>
                             <th>API</th>
                             <th>EXP</th>
                         </tr>
@@ -91,6 +95,12 @@
                                           datetime="{{ address.creationTime|date('Y-m-d\TH:i:s') }}Z">
                                         {{ address.creationTime|date('Y-m-d H:i') }} GMT
                                     </time>
+                                </td>
+                                <td>
+                                    {% if wallet.coinSymbol == 'btc-testnet' or wallet.coinSymbol == 'bcy' %}
+                                        <a href="{{ path('bc_app_wallet_faucet.show', {'address': address.address, 'coinSymbol': wallet.coinSymbol }) }}"
+                                           class="hidden-xs tx-list small">[Fund]</a>
+                                    {% endif %}
                                 </td>
                                 <td><a target="_blank" href="{{ address.apiUrl }}"><i
                                                 class="fa fa-external-link"></i></a></td>

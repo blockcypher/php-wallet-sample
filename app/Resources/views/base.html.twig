@@ -127,24 +127,6 @@
         {% block content %}
         {% endblock %}
 
-        {% if coin_symbol == 'btc-testnet' %}
-            <div class="container">
-                <p>
-                    Check out our
-                    <a href="https://accounts.blockcypher.com/testnet-faucet{% if address %}?a={{ address }}{% endif %}">Free
-                        Bitcoin Testnet Faucet</a>.
-                </p>
-            </div>
-        {% elseif coin_symbol == 'bcy' %}
-            <div class="container">
-                <p>
-                    Check out our
-                    <a href="https://accounts.blockcypher.com/blockcypher-faucet{% if address %}?a={{ address }}{% endif %}">Blockcypher
-                        Faucet</a>.
-                </p>
-            </div>
-        {% endif %}
-
     </div>
 
     {# Footer #}

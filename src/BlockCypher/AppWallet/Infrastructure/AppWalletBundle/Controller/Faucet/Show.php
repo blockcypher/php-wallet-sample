@@ -1,38 +1,38 @@
 <?php
 
-namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Wallet;
+namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Faucet;
 
 use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\AppWalletController;
-use BlockCypher\AppWallet\Presentation\Facade\WalletServiceFacade;
+use BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Faucet\FundAddressFormFactory;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class Index extends AppWalletController
+class Show extends AppWalletController
 {
     /**
-     * @var WalletServiceFacade
+     * @var FundAddressFormFactory
      */
-    private $walletServiceFacade;
+    private $fundAddressFormFactory;
 
     /**
      * @param TokenStorageInterface $tokenStorage
      * @param EngineInterface $templating
      * @param TranslatorInterface $translator
      * @param Session $session
-     * @param WalletServiceFacade $walletServiceFacade
+     * @param FundAddressFormFactory $fundAddressFormFactory
      */
     public function __construct(
         TokenStorageInterface $tokenStorage,
         EngineInterface $templating,
         TranslatorInterface $translator,
         Session $session,
-        WalletServiceFacade $walletServiceFacade)
+        FundAddressFormFactory $fundAddressFormFactory)
     {
         parent::__construct($tokenStorage, $templating, $translator, $session);
-        $this->walletServiceFacade = $walletServiceFacade;
+        $this->fundAddressFormFactory = $fundAddressFormFactory;
     }
 
     /**
@@ -47,22 +47,21 @@ class Index extends AppWalletController
             throw $this->createAccessDeniedException();
         }
 
-        $walletListItemDtos = $this->walletServiceFacade->listWalletsOfUserId($user->getId()->getValue());
+        $fundAddressCommand = $this->createFundAddressCommand(
+            $request->get('address'),
+            (int)$request->get('amount'),
+            $request->get('coinSymbol')
+        );
 
-        $template = $this->getBaseTemplatePrefix() . ':Wallet:index.html';
+        $fundAddressForm = $this->fundAddressFormFactory->createCreateForm($fundAddressCommand);
 
-        // TODO: paging
-        $currentPage = 1;
-        $maxPages = 0; // get_max_pages(num_items=address_details['final_n_tx'], items_per_page=TXNS_PER_PAGE),
+        $template = $this->getBaseTemplatePrefix() . ':Faucet:show.html';
 
         return $this->templating->renderResponse(
             $template . '.' . $this->getEngine(),
             array_merge($this->getBasicTemplateVariables($request),
                 array(
-                    'current_page' => $currentPage,
-                    'max_pages' => $maxPages,
-                    'num_all_wallets' => count($walletListItemDtos),
-                    'wallets' => $walletListItemDtos,
+                    'fund_address_form' => $fundAddressForm->createView(),
                 )
             )
         );

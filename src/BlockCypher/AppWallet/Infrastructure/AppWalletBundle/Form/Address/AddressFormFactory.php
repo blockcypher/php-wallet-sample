@@ -4,7 +4,6 @@ namespace BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Address;
 
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
 use BlockCypher\AppWallet\Domain\Wallet\WalletRepository;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -55,8 +54,8 @@ class AddressFormFactory
     }
 
     /**
-     * @param CreateAddressCommand $createAddressCommand
-     * @return Form The form
+     * @param CreateAddressCommand|null $createAddressCommand
+     * @return \Symfony\Component\Form\FormInterface
      */
     public function createCreateForm(CreateAddressCommand $createAddressCommand = null)
     {
@@ -70,7 +69,7 @@ class AddressFormFactory
                 'action' => $this->router->generate('bc_app_wallet_address.generate', array('walletId' => $defaultSelectedWalletId)),
                 'method' => 'POST',
                 'csrf_protection' => true,
-        ));
+            ));
 
         //$form->add('submit', 'submit'); // Using bootstrap button
 

@@ -27,6 +27,11 @@ class WalletDto
     private $name;
 
     /**
+     * @var string
+     */
+    private $coinSymbol;
+
+    /**
      * @var int
      */
     private $totalSent;
@@ -78,6 +83,7 @@ class WalletDto
         // From Wallet
         $walletDto->setUserId($wallet->getUserId()->getValue());
         $walletDto->setName($wallet->getName());
+        $walletDto->setCoinSymbol($wallet->getCoinSymbol());
 
         // From BlockCypherAddress
         $walletDto->setId($blockCypherAddress->getWallet()->getName());
@@ -144,6 +150,24 @@ class WalletDto
     public function setName($name)
     {
         $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCoinSymbol()
+    {
+        return $this->coinSymbol;
+    }
+
+    /**
+     * @param string $coinSymbol
+     * @return $this
+     */
+    public function setCoinSymbol($coinSymbol)
+    {
+        $this->coinSymbol = $coinSymbol;
         return $this;
     }
 

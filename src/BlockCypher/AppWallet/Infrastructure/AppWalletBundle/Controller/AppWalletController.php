@@ -8,6 +8,7 @@ use BlockCypher\AppCommon\Infrastructure\Controller\AppCommonController;
 use BlockCypher\AppWallet\App\Command\CreateAddressCommand;
 use BlockCypher\AppWallet\App\Command\CreateTransactionCommand;
 use BlockCypher\AppWallet\App\Command\CreateWalletCommand;
+use BlockCypher\AppWallet\App\Command\FundAddressCommand;
 use BlockCypher\AppWallet\Presentation\Facade\Dto\WalletDto;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -85,6 +86,19 @@ class AppWalletController extends AppCommonController
     }
 
     /**
+     * @param string $address
+     * @param int $amount
+     * @param string $coinSymbol
+     * @param string $token
+     * @return FundAddressCommand
+     */
+    protected function createFundAddressCommand($address = '', $amount = 0, $coinSymbol = '', $token = '')
+    {
+        $fundAddressCommand = new FundAddressCommand($address, $amount, $coinSymbol, $token);
+        return $fundAddressCommand;
+    }
+
+    /**
      * Shortcut to trans. Consider to put it in some common parent controller.
      * @param $id
      * @param array $parameters
@@ -108,7 +122,7 @@ class AppWalletController extends AppCommonController
      */
     protected function getBasicTemplateVariables(Request $request)
     {
-        $coinSymbol = $request->get('CoinSymbol');
+        $coinSymbol = $request->get('coinSymbol');
         if ($coinSymbol === null) {
             $coinSymbol = 'btc';
         }
@@ -120,10 +134,6 @@ class AppWalletController extends AppCommonController
         if ($token !== null && $token->getUser() !== null) {
             $userDto['is_authenticated'] = true;
         }
-
-        // DEBUG
-        //var_dump($userDto);
-        //die();
 
         return array(
             'is_home' => false,

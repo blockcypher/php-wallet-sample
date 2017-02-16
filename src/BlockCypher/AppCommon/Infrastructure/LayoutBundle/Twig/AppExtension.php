@@ -67,7 +67,7 @@ class AppExtension extends \Twig_Extension
      */
     public function satoshisToBtcRoundingFilter($amount)
     {
-        $value = BtcConverter::satoshisToBtcRounded($amount);
+        $value = BtcConverter::satoshisToBtcRounded($amount, 0);
         return $value;
     }
 
@@ -86,7 +86,7 @@ class AppExtension extends \Twig_Extension
      * @param int $decimals
      * @return string
      */
-    public function intCommaFilter($number, $decimals = 4)
+    public function intCommaFilter($number, $decimals = 8)
     {
         $decimalPoint = '.';
         $thousandSep = ',';

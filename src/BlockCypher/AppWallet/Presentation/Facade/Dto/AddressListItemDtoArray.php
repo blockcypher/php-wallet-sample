@@ -1,11 +1,12 @@
 <?php
 
 namespace BlockCypher\AppWallet\Presentation\Facade\Dto;
+
 use BlockCypher\Api\AddressBalance as BlockCypherAddressBalance;
-use BlockCypher\AppWallet\Domain\Wallet\Wallet;
-use BlockCypher\AppWallet\Domain\Address\Address;
 use BlockCypher\AppWallet\App\Service\ApiRouter;
 use BlockCypher\AppWallet\App\Service\ExplorerRouter;
+use BlockCypher\AppWallet\Domain\Address\Address;
+use BlockCypher\AppWallet\Domain\Wallet\Wallet;
 
 /**
  * Class AddressListItemDtoArray
@@ -19,7 +20,7 @@ class AddressListItemDtoArray
      * @param BlockCypherAddressBalance[] $blockCypherAddressBalances
      * @param ApiRouter $apiRouter
      * @param ExplorerRouter $explorerRouter
-     * @return AddressListItemDto
+     * @return AddressListItemDto[]
      */
     public static function from(
         $wallet,

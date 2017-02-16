@@ -1,0 +1,67 @@
+parameters:
+
+    # controllers
+
+    bc_app_wallet_faucet.show_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Faucet\Show
+    bc_app_wallet_faucet.fund_address_controller.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Controller\Faucet\FundAddress
+
+    # command validator
+
+    bc_app_wallet_faucet.fund_address_command_validator.class: BlockCypher\AppWallet\App\Command\FundAddressCommandValidator
+
+    # command handlers
+
+    bc_app_wallet_faucet.fund_address_command_handler.class: BlockCypher\AppWallet\App\Command\FundAddressCommandHandler
+
+    # form factories
+
+    bc_app_wallet_faucet.fund_address_form_factory.class: BlockCypher\AppWallet\Infrastructure\AppWalletBundle\Form\Faucet\FundAddressFormFactory
+
+services:
+
+    # controllers
+
+    bc_app_wallet_faucet.show_controller:
+        class: %bc_app_wallet_faucet.show_controller.class%
+        arguments:
+          - @security.token_storage
+          - @templating
+          - @translator
+          - @session
+          - @bc_app_wallet_faucet.fund_address_form_factory
+
+    bc_app_wallet_faucet.fund_address_controller:
+        class: %bc_app_wallet_faucet.fund_address_controller.class%
+        arguments:
+          - @security.token_storage
+          - @templating
+          - @translator
+          - @session
+          - @router
+          - @bc_app_wallet_faucet.fund_address_form_factory
+          - @command_bus
+
+    # command validators
+
+    bc_app_wallet_faucet.fund_address_command_validator:
+        class: %bc_app_wallet_faucet.fund_address_command_validator.class%
+
+    # command handlers
+
+    bc_app_wallet_faucet.fund_address_command_handler:
+        class: %bc_app_wallet_faucet.fund_address_command_handler.class%
+        arguments:
+            - @bc_app_wallet_faucet.fund_address_command_validator
+            - @bc_app_common_blockcypher.faucet_service
+        tags:
+            - { name: command_handler, handles: bc_app_wallet_faucet_fund_address }
+
+    # form factory
+
+    bc_app_wallet_faucet.fund_address_form_factory:
+        class: "%bc_app_wallet_faucet.fund_address_form_factory.class%"
+        public: false
+        arguments:
+            - "@form.factory"
+            - "@router"
+            - "@translator"
