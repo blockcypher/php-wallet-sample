@@ -11,6 +11,7 @@ use BlockCypher\AppWallet\Domain\Wallet\WalletId;
 use BlockCypher\AppWallet\Infrastructure\Persistence\Flywheel\Document\EncryptedWalletDocument;
 use JamesMoss\Flywheel\Config;
 use JamesMoss\Flywheel\Document;
+use JamesMoss\Flywheel\DocumentInterface;
 use JamesMoss\Flywheel\Repository;
 use JamesMoss\Flywheel\Result;
 
@@ -37,7 +38,7 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
 
     /**
      * @param WalletId $walletId
-     * @return Wallet
+     * @return EncryptedWallet
      */
     public function walletOfId(WalletId $walletId)
     {
@@ -65,16 +66,8 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
      */
     private function documentToEncryptedWallet($walletDocument)
     {
-        //DEBUG
-        //var_dump($walletDocument);
-        //die();
-
         /** @var EncryptedWallet $encryptedWallet */
         $encryptedWallet = unserialize($walletDocument->data);
-
-        //DEBUG
-        //var_dump($wallet);
-        //die();
 
         return $encryptedWallet;
     }
@@ -97,7 +90,7 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
 
     /**
      * @param EncryptedWalletDocument[] $encryptedWalletDocuments
-     * @return Wallet[]
+     * @return EncryptedWallet[]
      */
     private function documentArrayToObjectArray($encryptedWalletDocuments)
     {
@@ -120,7 +113,7 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
 
     /**
      * @param EncryptedWallet $encryptedWallet
-     * @return EncryptedWalletDocument
+     * @return DocumentInterface
      */
     private function walletToDocument(EncryptedWallet $encryptedWallet)
     {
@@ -138,11 +131,6 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
         $walletDocument = new Document($docArray);
         $walletDocument->setId($encryptedWallet->getId()->getValue());
 
-        // DEBUG
-        //var_dump($wallet);
-        //var_dump($walletDocument);
-        //die();
-
         return $walletDocument;
     }
 
@@ -157,17 +145,16 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
     }
 
     /**
-     * @param EncryptedWallet $wallet
+     * @param EncryptedWallet $encryptedWallet
      * @throws \Exception
      */
-    public function update(EncryptedWallet $wallet)
+    public function update(EncryptedWallet $encryptedWallet)
     {
-        $walletDocument = $this->walletToDocument($wallet);
+        $walletDocument = $this->walletToDocument($encryptedWallet);
         if (!$this->repository->update($walletDocument)) {
             // TODO: custom exception
             throw new \Exception("Error updating wallet repository");
         };
-
     }
 
     /**
@@ -212,7 +199,7 @@ class FlywheelEncryptedWalletRepository implements EncryptedWalletRepository
     }
 
     /**
-     * @return Wallet[]
+     * @return EncryptedWallet[]
      */
     public function findAll()
     {

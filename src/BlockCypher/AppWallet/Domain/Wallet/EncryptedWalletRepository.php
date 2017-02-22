@@ -33,10 +33,10 @@ interface EncryptedWalletRepository
     public function insertAll($wallets);
 
     /**
-     * @param EncryptedWallet $wallet
+     * @param EncryptedWallet $encryptedWallet
      * @throws \Exception
      */
-    public function update(EncryptedWallet $wallet);
+    public function update(EncryptedWallet $encryptedWallet);
 
     /**
      * @param EncryptedWallet[] $wallets
