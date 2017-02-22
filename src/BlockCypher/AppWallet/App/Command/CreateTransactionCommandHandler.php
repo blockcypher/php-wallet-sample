@@ -110,7 +110,7 @@ class CreateTransactionCommandHandler
         $privateKeys = $this->getPrivateKeysFromRepository($allInputsAddresses, $walletId);
 
         // Check private keys
-        $this->checkPrivateKeys($privateKeys, $txSkeleton->getTosign());
+        $this->checkPrivateKeys($privateKeys);
 
         // Sign transaction
         $txSkeletonSigned = $this->blockCypherTransactionService->sign($txSkeleton, $privateKeys, $wallet->getCoinSymbol(), $wallet->getToken());
@@ -142,10 +142,6 @@ class CreateTransactionCommandHandler
 
             $address = $this->addressRepository->addressOfWalletId($addressInTransaction, new WalletId($walletId));
 
-            // DEBUG
-            //echo "AddressInTransaction: $addressInTransaction";
-            //var_dump($address->getAddress());
-
             if ($address === null) {
                 throw new\Exception(sprintf("Address %s not found in wallet %s", $addressInTransaction, $walletId));
             }
@@ -159,17 +155,12 @@ class CreateTransactionCommandHandler
 
     /**
      * @param string[] $privateKeys
-     * @param string[] $tosign
      * @throws \Exception
      */
-    private function checkPrivateKeys($privateKeys, $tosign)
+    private function checkPrivateKeys($privateKeys)
     {
         if (!is_array($privateKeys)) {
             throw new \Exception("Invalid private keys format. Array expected.");
-        }
-
-        if (count($privateKeys) !== count($tosign)) {
-            throw new \Exception("Missing private keys");
         }
 
         foreach ($privateKeys as $privateKey) {
@@ -189,7 +180,7 @@ class CreateTransactionCommandHandler
 
         try {
             PrivateKeyFactory::fromHex($privateKey);
-        } catch (\Exception $e) {
+        } catch (\Exception $e) {2
             throw new \Exception("Invalid private key format. Hex format expected.");
         }
     }
