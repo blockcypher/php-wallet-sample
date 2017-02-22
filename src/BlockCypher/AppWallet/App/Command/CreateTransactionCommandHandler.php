@@ -180,7 +180,7 @@ class CreateTransactionCommandHandler
 
         try {
             PrivateKeyFactory::fromHex($privateKey);
-        } catch (\Exception $e) {2
+        } catch (\Exception $e) {
             throw new \Exception("Invalid private key format. Hex format expected.");
         }
     }
