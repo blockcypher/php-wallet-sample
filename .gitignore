@@ -43,5 +43,7 @@
 # App data
 /app/data/*
 !app/data/.gitkeep
-
+!app/data/addresses/.gitkeep
+!app/data/transactions/.gitkeep
+!app/data/wallets/.gitkeep
 
