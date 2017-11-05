@@ -25,6 +25,13 @@ Running the app
    * Copy the php-wallet-sample folder to your htdocs folder.
    * Run 'composer install' from the root directory.
    * You are ready. Bring up http://localhost/php-wallet-sample on your favorite browser.
+   
+You can use the PHP Built-in web server:
+
+```
+cd web
+php -S localhost:8000 server.php
+```
 
 References
 ----------
